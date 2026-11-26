@@ -63,6 +63,38 @@ body {
 @keyframes globe { from{transform:translateX(0)} to{transform:translateX(-384px)} }
 .breathe2 { animation: breathe2 3.8s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
 @keyframes breathe2 { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(1.006)} }
+.room { transition: opacity 1.6s ease; }
+.drift { animation: drift 70s linear infinite; }
+.drift.d2 { animation-duration: 95s; animation-delay: -40s; }
+.drift.d3 { animation-duration: 80s; animation-delay: -15s; }
+@keyframes drift { from{transform:translateX(-120px)} to{transform:translateX(160px)} }
+.drop { animation: fall linear infinite; }
+@keyframes fall { from{transform:translate(0,-200px)} to{transform:translate(-30px,220px)} }
+.flake { animation: flake linear infinite; }
+@keyframes flake { 0%{transform:translate(0,-200px)} 50%{transform:translate(8px,0)} 100%{transform:translate(-4px,220px)} }
+#thermoLiquid { transition: y 1.2s ease, height 1.2s ease; }
+/* lighting that follows the painted time of day */
+#hot-me > g, #hot-cat image { transition: filter 1.6s ease; }
+[data-phase="night"] .lampPulse, [data-phase="dusk"] .lampPulse { opacity: .5; }
+[data-phase="dawn"] .lampPulse { opacity: .25; animation: none; }
+[data-phase="day"] .lampPulse { opacity: 0; animation: none; }
+[data-phase="day"] .flick { opacity: .2 !important; animation: none; }
+.twinkle { transition: opacity 1.6s; }
+[data-phase="day"] .twinkle, [data-phase="dusk"] .twinkle, [data-phase="dawn"] .twinkle { opacity: 0; }
+[data-phase="day"] #hot-me > g { filter: brightness(1.32) saturate(1.06) contrast(.97); }
+[data-phase="dawn"] #hot-me > g { filter: brightness(1.12) sepia(.12) hue-rotate(-12deg) saturate(1.05); }
+[data-phase="dusk"] #hot-me > g { filter: brightness(1.06) sepia(.2) hue-rotate(-14deg) saturate(1.15); }
+[data-phase="day"] #hot-cat image { filter: brightness(1.35) saturate(.95); }
+[data-phase="dawn"] #hot-cat image { filter: brightness(1.15) sepia(.1); }
+[data-phase="dusk"] #hot-cat image { filter: brightness(1.08) sepia(.2) saturate(1.1); }
+/* preview panel (open with #preview) */
+.preview { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 14px; padding: 10px 14px;
+  background: #1b0f24; border: 3px solid var(--ink); border-radius: 12px; font-size: 13px; color: var(--muted); }
+.preview b { color: var(--gold); font-family: var(--f-show); font-weight: 400; font-size: 17px; }
+.preview .grp { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.preview button { font: 600 13px var(--f-body); color: var(--ink); background: var(--paper); border: 2px solid var(--ink); border-radius: 999px; padding: 2px 10px; cursor: inherit; }
+.preview button[aria-pressed="true"] { background: var(--gold); }
+.preview button:focus-visible { outline: 3px solid var(--crt); outline-offset: 2px; }
 .zzz text { animation: zzz 3s ease-in-out infinite; opacity: 0; }
 .zzz text:nth-child(2){animation-delay:1s} .zzz text:nth-child(3){animation-delay:2s}
 @keyframes zzz { 0%{opacity:0; transform:translate(0,0)} 30%{opacity:1} 100%{opacity:0; transform:translate(16px,-30px)} }
@@ -172,15 +204,38 @@ body {
     <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
     <radialGradient id="gCrt"><stop offset="0" stop-color="#7cf2c4" stop-opacity=".8"/><stop offset="1" stop-color="#7cf2c4" stop-opacity="0"/></radialGradient>
     <radialGradient id="gLamp"><stop offset="0" stop-color="#ffcf6a" stop-opacity=".9"/><stop offset="1" stop-color="#ff9a3a" stop-opacity="0"/></radialGradient>
+    <mask id="mGlass" maskUnits="userSpaceOnUse" x="660" y="80" width="340" height="400"><image href="room/glass-mask.png" x="660" y="80" width="340" height="400"/></mask>
+    <clipPath id="clipWin"><path d="M757 112 Q830 92 895 97 Q960 100 985 110 L987 460 L680 452 Q676 400 690 340 Q705 270 735 225 Z"/></clipPath>
+    <filter id="cloudBlur" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="14"/></filter>
     <clipPath id="clipGlobe"><circle cx="1208" cy="315" r="15.5"/></clipPath>
     <radialGradient id="gGlobeShade" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#fff" stop-opacity=".25"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#0a0414" stop-opacity=".6"/></radialGradient>
     <clipPath id="clipGlass"><path d="M690 100 Q830 60 985 98 L985 470 L680 470 Z"/></clipPath>
   </defs>
 
-  <image href="room/room.webp" x="0" y="0" width="1536" height="1024"/>
+  <g id="rooms">
+    <image id="room-night" class="room" data-phase="night" href="room/room-night.webp" x="0" y="0" width="1536" height="1024"/>
+    <image id="room-dawn" class="room" data-phase="dawn" data-src="room/room-dawn.webp" x="0" y="0" width="1536" height="1024" opacity="0"/>
+    <image id="room-day" class="room" data-phase="day" data-src="room/room-day.webp" x="0" y="0" width="1536" height="1024" opacity="0"/>
+    <image id="room-dusk" class="room" data-phase="dusk" data-src="room/room-dusk.webp" x="0" y="0" width="1536" height="1024" opacity="0"/>
+  </g>
+
+  <!-- live Toronto weather, inside the window glass only -->
+  <g id="wx" mask="url(#mGlass)" style="pointer-events:none">
+    <rect id="wxTint" x="660" y="80" width="340" height="400" fill="#7c86a0" opacity="0"/>
+    <g id="wxClouds" opacity="0" filter="url(#cloudBlur)">
+      <g class="drift"><ellipse cx="780" cy="130" rx="150" ry="34" fill="#b9c0d0"/></g>
+      <g class="drift d2"><ellipse cx="900" cy="190" rx="170" ry="30" fill="#a9b1c4"/></g>
+      <g class="drift d3"><ellipse cx="740" cy="250" rx="130" ry="26" fill="#c3c9d6"/></g>
+      <g class="drift d2"><ellipse cx="960" cy="110" rx="120" ry="26" fill="#cfd4df"/></g>
+    </g>
+    <rect id="wxFog" x="660" y="80" width="340" height="400" fill="#dfe3ea" opacity="0"/>
+    <g id="wxRain" stroke="#cfe0f5" stroke-width="1.6" stroke-linecap="round" opacity=".75" style="display:none"></g>
+    <g id="wxSnow" fill="#ffffff" style="display:none"></g>
+    <rect id="wxFlash" x="660" y="80" width="340" height="400" fill="#f4f6ff" opacity="0"/>
+  </g>
 
   <!-- ambient life on the painting -->
-  <g class="twinkle" clip-path="url(#clipGlass)" fill="#fff8d6">
+  <g class="twinkle" mask="url(#mGlass)" fill="#fff8d6">
     <circle cx="742" cy="140" r="2.2"/><circle cx="790" cy="118" r="1.8"/><circle cx="872" cy="150" r="2.4"/><circle cx="960" cy="200" r="1.8"/>
     <circle cx="890" cy="214" r="1.6"/><circle cx="760" cy="230" r="2"/><circle cx="970" cy="130" r="1.6"/>
   </g>
@@ -207,6 +262,14 @@ body {
   <g id="hot-globe" class="hot" tabindex="0" role="button" aria-label="Globe on the bookshelf: spin it" data-label="Spin the globe">
     <rect class="hit" pointer-events="all" x="1184" y="288" width="50" height="74"/>
     <svg x="1196" y="304" width="24" height="24" viewBox="0 0 24 24" overflow="hidden"><g id="globeStrip"><image href="room/globe-spin.webp" x="0" y="0" width="384" height="24"/></g></svg>
+  </g>
+
+  <!-- window thermometer: the painted tube is empty; the liquid is live -->
+  <g id="hot-thermo" class="hot" tabindex="0" role="button" aria-label="Window thermometer: Toronto temperature" data-label="Check the thermometer">
+    <rect class="hit" pointer-events="all" x="946" y="148" width="30" height="100"/>
+    <rect id="thermoLiquid" x="960" y="200" width="2.6" height="34" rx="1.3" fill="#d8322a"/>
+    <circle cx="960.6" cy="235.6" r="3.6" fill="#d8322a"/>
+    <circle cx="959.6" cy="234.4" r="1.1" fill="#ff9a8a"/>
   </g>
 
   <!-- still props are part of the painting: cursor + tooltip only -->
@@ -325,6 +388,20 @@ body {
     <div class="say" id="say" aria-live="polite"><span>Look around. Click on anything that looks interesting.</span></div>
   </div>
 
+  <div class="preview" id="preview" hidden>
+    <b>Preview</b>
+    <div class="grp" role="group" aria-label="Time of day"><span>Time</span>
+      <button type="button" data-ph="auto" aria-pressed="true">Live</button><button type="button" data-ph="dawn" aria-pressed="false">Dawn</button><button type="button" data-ph="day" aria-pressed="false">Day</button><button type="button" data-ph="dusk" aria-pressed="false">Dusk</button><button type="button" data-ph="night" aria-pressed="false">Night</button>
+    </div>
+    <div class="grp" role="group" aria-label="Weather"><span>Weather</span>
+      <button type="button" data-wx="auto" aria-pressed="true">Live</button><button type="button" data-wx="0" aria-pressed="false">Clear</button><button type="button" data-wx="3" aria-pressed="false">Overcast</button><button type="button" data-wx="45" aria-pressed="false">Fog</button><button type="button" data-wx="63" aria-pressed="false">Rain</button><button type="button" data-wx="73" aria-pressed="false">Snow</button><button type="button" data-wx="95" aria-pressed="false">Storm</button>
+    </div>
+    <div class="grp" role="group" aria-label="Temperature"><span>Temp</span>
+      <button type="button" data-t="auto" aria-pressed="true">Live</button><button type="button" data-t="-20" aria-pressed="false">&minus;20&deg;</button><button type="button" data-t="0" aria-pressed="false">0&deg;</button><button type="button" data-t="22" aria-pressed="false">22&deg;</button><button type="button" data-t="35" aria-pressed="false">35&deg;</button>
+    </div>
+    <span id="wxStatus">Loading Toronto weather&hellip;</span>
+  </div>
+
   <nav class="foot" aria-label="Elsewhere">
     <span><b>Gabriel Ciolac</b> · Toronto</span>
     <a href="https://github.com/GabrielCiolac" rel="me">GitHub</a>
@@ -332,6 +409,7 @@ body {
   </nav>
 </div>
 
+<script src="room/logic.js"></script>
 <script>
 (() => {
   const $ = (s) => document.querySelector(s);
@@ -414,6 +492,7 @@ body {
       clearTimeout(catT); catT = setTimeout(() => { $('#catSleep').style.display = ''; $('#catAwake').style.display = 'none'; $('#zzz').style.visibility = ''; }, 3200);
       return;
     }
+    if (el.id === 'hot-thermo') { speak(616, 330, R.weatherLine(state.tempC, R.weatherFor(state.code))); talk(1800); return; }
     if (el.id === 'hot-window') { speak(840, 120, 'Toronto at night. The CN Tower is blinking.'); return; }
     if (el.id === 'hot-plaque') { $('#lightbox').tabIndex = -1; setTimeout(() => openLayer('#lightbox'), 200); return; }
     if (el.id === 'hot-pc') { $('#crtMsg').textContent = 'One click opens things.'; loadRepos(); setTimeout(() => openLayer('#deskOv', '#ico-gh'), 200); return; }
@@ -460,6 +539,76 @@ body {
   $('#noteClose').addEventListener('click', closeLayers);
   $('#scrim').addEventListener('click', (e) => { if (e.target.id === 'scrim') closeLayers(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLayers(); });
+
+  /* ---------- Toronto time of day + live weather ---------- */
+  const R = window.RoomLogic, NS = 'http://www.w3.org/2000/svg';
+  const state = { tempC: null, code: null, sunriseMin: null, sunsetMin: null, phaseSel: 'auto', wxSel: 'auto', tSel: 'auto', fetched: false };
+  const rand = (a, b) => a + Math.random() * (b - a);
+  for (let i = 0; i < 60; i++) {
+    const x = rand(670, 1000), y = rand(90, 470), l = document.createElementNS(NS, 'line');
+    l.setAttribute('x1', x); l.setAttribute('y1', y); l.setAttribute('x2', x - 3); l.setAttribute('y2', y + 13); l.setAttribute('class', 'drop');
+    l.style.animationDuration = rand(.5, .85) + 's'; l.style.animationDelay = -rand(0, 1) + 's'; $('#wxRain').appendChild(l);
+  }
+  for (let i = 0; i < 55; i++) {
+    const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', rand(670, 1000)); c.setAttribute('cy', rand(90, 470)); c.setAttribute('r', rand(1.2, 2.8));
+    c.setAttribute('class', 'flake'); c.style.animationDuration = rand(4, 9) + 's'; c.style.animationDelay = -rand(0, 9) + 's'; $('#wxSnow').appendChild(c);
+  }
+  let flashT;
+  function applyWeather() {
+    const code = state.wxSel === 'auto' ? state.code : Number(state.wxSel), w = R.weatherFor(code);
+    const tint = { clear: 0, clouds: .18 * w.intensity + .05, fog: .1, rain: .32, snow: .2, storm: .45 }[w.kind];
+    $('#wxTint').setAttribute('opacity', tint);
+    $('#wxClouds').setAttribute('opacity', w.kind === 'clear' ? 0 : w.kind === 'fog' ? .3 : Math.min(1, .45 + w.intensity * .5));
+    $('#wxFog').setAttribute('opacity', w.kind === 'fog' ? .5 : 0);
+    $('#wxRain').style.display = (w.kind === 'rain' || w.kind === 'storm') ? '' : 'none';
+    $('#wxRain').setAttribute('opacity', w.kind === 'storm' ? .9 : .4 + w.intensity * .4);
+    $('#wxSnow').style.display = w.kind === 'snow' ? '' : 'none';
+    clearInterval(flashT);
+    if (w.kind === 'storm' && !matchMedia('(prefers-reduced-motion: reduce)').matches) flashT = setInterval(() => {
+      if (Math.random() > .35) return; const f = $('#wxFlash');
+      f.setAttribute('opacity', .85); setTimeout(() => f.setAttribute('opacity', 0), 90); setTimeout(() => f.setAttribute('opacity', .6), 180); setTimeout(() => f.setAttribute('opacity', 0), 260);
+    }, 2500);
+    const t = state.tSel === 'auto' ? state.tempC : Number(state.tSel), top = R.thermoTopY(t == null ? -30 : t);
+    $('#thermoLiquid').setAttribute('y', top.toFixed(1)); $('#thermoLiquid').setAttribute('height', (R.THERMO.bulbY - top).toFixed(1));
+    $('#hot-thermo').dataset.label = t == null ? 'Check the thermometer' : `${Math.round(t)}°C outside`;
+    return w;
+  }
+  function currentPhase() {
+    if (state.phaseSel !== 'auto') return state.phaseSel;
+    return R.phaseFor(R.torontoMinutes(new Date()), state.sunriseMin, state.sunsetMin);
+  }
+  function applyPhase() {
+    const ph = currentPhase();
+    document.documentElement.dataset.phase = ph;
+    document.querySelectorAll('.room').forEach((img) => {
+      const on = img.dataset.phase === ph;
+      if (on && !img.getAttribute('href')) img.setAttribute('href', img.dataset.src);
+      img.setAttribute('opacity', on ? 1 : 0);
+    });
+    return ph;
+  }
+  function status() {
+    const w = applyWeather(), ph = applyPhase();
+    if (!$('#preview').hidden) $('#wxStatus').textContent = state.fetched
+      ? `Toronto now: ${state.tempC == null ? '?' : Math.round(state.tempC) + '°C'}, ${R.weatherFor(state.code).label}. Showing ${ph}, ${w.label}.`
+      : `No live weather yet. Showing ${ph}, ${w.label}.`;
+  }
+  async function fetchWeather() {
+    try {
+      const r = await fetch(R.openMeteoUrl()); if (!r.ok) throw new Error(r.status);
+      Object.assign(state, R.parseOpenMeteo(await r.json())); state.fetched = true;
+    } catch (e) { /* keep the last reading; the room still follows the clock */ }
+    status();
+  }
+  status(); fetchWeather();
+  setInterval(fetchWeather, 15 * 60 * 1000); setInterval(status, 60 * 1000);
+  // preview panel: open with #preview to flip through every time of day and weather
+  function showPreview() { $('#preview').hidden = location.hash !== '#preview'; status(); }
+  window.addEventListener('hashchange', showPreview); showPreview();
+  const group = (attr, key) => document.querySelectorAll(`[${attr}]`).forEach((b, _, all) => b.addEventListener('click', () => {
+    state[key] = b.getAttribute(attr); all.forEach(x => x.setAttribute('aria-pressed', String(x === b))); status();
+  }));
+  group('data-ph', 'phaseSel'); group('data-wx', 'wxSel'); group('data-t', 'tSel');
 
   const pan = $('#pan'); requestAnimationFrame(() => { pan.scrollLeft = (pan.scrollWidth - pan.clientWidth) / 2; });
 })();

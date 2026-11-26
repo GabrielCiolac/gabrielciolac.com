@@ -1,0 +1,27 @@
+#!/bin/bash
+# Pulls ghcr.io/gabrielciolac/gabrielciolac.com:latest and redeploys the
+# gabrielciolac-site TrueNAS app when the image changes. Run via TrueNAS cron.
+set -euo pipefail
+APP=gabrielciolac-site
+IMAGE=ghcr.io/gabrielciolac/gabrielciolac.com:latest
+CONTAINER=ix-${APP}-web-1
+log() { logger -t site-autodeploy "$*"; }
+
+exec 9>/run/site-autodeploy.lock
+flock -n 9 || exit 0
+
+if ! docker pull -q "$IMAGE" >/dev/null 2>&1; then
+  log "pull failed for $IMAGE"; exit 1
+fi
+latest=$(docker image inspect -f '{{.Id}}' "$IMAGE")
+running=$(docker inspect -f '{{.Image}}' "$CONTAINER" 2>/dev/null || echo none)
+
+if [ "$latest" != "$running" ]; then
+  log "new image ${latest:7:12} (was ${running:7:12}); redeploying $APP"
+  if midclt call -j app.redeploy "\"$APP\"" >/dev/null 2>&1; then
+    log "redeploy ok"
+    docker image prune -f >/dev/null 2>&1 || true
+  else
+    log "redeploy FAILED"; exit 1
+  fi
+fi

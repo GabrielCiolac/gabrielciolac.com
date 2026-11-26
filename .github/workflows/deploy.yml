@@ -14,7 +14,20 @@ env:
   IMAGE: ghcr.io/gabrielciolac/gabrielciolac.com
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Page and logic tests
+        run: node --test test/*.test.js
+      - name: Deploy hook tests
+        run: python3 -m unittest discover -s test -p 'test_*.py' -v
+
   build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

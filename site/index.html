@@ -72,7 +72,8 @@ body {
 @keyframes fall { from{transform:translate(0,-200px)} to{transform:translate(-30px,220px)} }
 .flake { animation: flake linear infinite; }
 @keyframes flake { 0%{transform:translate(0,-200px)} 50%{transform:translate(8px,0)} 100%{transform:translate(-4px,220px)} }
-#thermoLiquid { transition: y 1.2s ease, height 1.2s ease; }
+#thermoLiquid { transition: y 2.4s cubic-bezier(.2,.8,.3,1), height 2.4s cubic-bezier(.2,.8,.3,1); }
+#thermoLiquid.bob { transition-duration: .35s; }
 /* lighting that follows the painted time of day */
 #hot-me > g, #hot-cat image { transition: filter 1.6s ease; }
 [data-phase="night"] .lampPulse, [data-phase="dusk"] .lampPulse { opacity: .5; }
@@ -492,7 +493,13 @@ body {
       clearTimeout(catT); catT = setTimeout(() => { $('#catSleep').style.display = ''; $('#catAwake').style.display = 'none'; $('#zzz').style.visibility = ''; }, 3200);
       return;
     }
-    if (el.id === 'hot-thermo') { speak(616, 330, R.weatherLine(state.tempC, R.weatherFor(state.code))); talk(1800); return; }
+    if (el.id === 'hot-thermo') {
+      const liq = $('#thermoLiquid'), y = Number(liq.getAttribute('y')), h = Number(liq.getAttribute('height'));
+      liq.classList.add('bob'); liq.setAttribute('y', y - 5); liq.setAttribute('height', h + 5);
+      setTimeout(() => { liq.setAttribute('y', y); liq.setAttribute('height', h); setTimeout(() => liq.classList.remove('bob'), 400); }, 380);
+      const t = state.tSel === 'auto' ? state.tempC : Number(state.tSel), code = state.wxSel === 'auto' ? state.code : Number(state.wxSel);
+      speak(616, 330, R.weatherLine(t, R.weatherFor(code))); talk(1800); return;
+    }
     if (el.id === 'hot-window') { speak(840, 120, 'Toronto at night. The CN Tower is blinking.'); return; }
     if (el.id === 'hot-plaque') { $('#lightbox').tabIndex = -1; setTimeout(() => openLayer('#lightbox'), 200); return; }
     if (el.id === 'hot-pc') { $('#crtMsg').textContent = 'One click opens things.'; loadRepos(); setTimeout(() => openLayer('#deskOv', '#ico-gh'), 200); return; }
@@ -595,13 +602,16 @@ body {
   }
   async function fetchWeather() {
     try {
-      const r = await fetch(R.openMeteoUrl()); if (!r.ok) throw new Error(r.status);
+      // The NAS refreshes /data/weather.json hourly; Open-Meteo directly is only a fallback.
+      let r = await fetch('data/weather.json', { cache: 'no-cache' }).catch(() => null);
+      if (!r || !r.ok) r = await fetch(R.openMeteoUrl());
+      if (!r.ok) throw new Error(r.status);
       Object.assign(state, R.parseOpenMeteo(await r.json())); state.fetched = true;
     } catch (e) { /* keep the last reading; the room still follows the clock */ }
     status();
   }
   status(); fetchWeather();
-  setInterval(fetchWeather, 15 * 60 * 1000); setInterval(status, 60 * 1000);
+  setInterval(fetchWeather, 10 * 60 * 1000); setInterval(status, 60 * 1000);
   // preview panel: open with #preview to flip through every time of day and weather
   function showPreview() { $('#preview').hidden = location.hash !== '#preview'; status(); }
   window.addEventListener('hashchange', showPreview); showPreview();

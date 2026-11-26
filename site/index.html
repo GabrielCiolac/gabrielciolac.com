@@ -1,52 +1,469 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gabriel Ciolac</title>
-  <meta name="description" content="Gabriel Ciolac">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👋</text></svg>">
-  <style>
-    :root {
-      --bg: #faf9f7;
-      --fg: #1c1b19;
-      --muted: #6b6862;
-      --accent: #c2410c;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #141311;
-        --fg: #ecebe8;
-        --muted: #9a968f;
-        --accent: #fb923c;
-      }
-    }
-    * { box-sizing: border-box; margin: 0; }
-    html, body { height: 100%; }
-    body {
-      background: var(--bg);
-      color: var(--fg);
-      font: 18px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-    }
-    main { max-width: 36rem; }
-    h1 {
-      font-size: clamp(2.25rem, 7vw, 3.5rem);
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.75rem;
-    }
-    h1 span { color: var(--accent); }
-    p { color: var(--muted); }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gabriel Ciolac</title>
+<meta name="description" content="Gabriel Ciolac's room on the internet. Click around: the computer has my GitHub and LinkedIn, and Muscles the cat is asleep on the windowsill.">
+<meta property="og:title" content="Gabriel Ciolac">
+<meta property="og:description" content="Come in and click around.">
+<meta property="og:image" content="https://gabrielciolac.com/room/og.jpg">
+<meta property="og:url" content="https://gabrielciolac.com/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23ffc24d' stroke='%231b0f24' stroke-width='3'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial' font-weight='700' font-size='16' fill='%231b0f24'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chewy&family=Andika:wght@400;700&family=Oswald:wght@400;600&display=swap">
+<style>
+/* Layout: the painted room fills a chunky toy-plastic monitor frame; a game command bar sits under it. Single committed night look taken from the painting. */
+:root {
+  --ink: #1b0f24;
+  --plum: #3a1f4f;
+  --gold: #ffc24d;
+  --paper: #fff1d6;
+  --crt: #7cf2c4;
+  --page: #120a1a;
+  --muted: #bda6c8;
+  --f-show: "Chewy", "Comic Sans MS", "Chalkboard SE", cursive;
+  --f-body: "Andika", "Trebuchet MS", system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body { background: var(--page); color: var(--paper); }
+[hidden] { display: none !important; }
+body {
+  font-family: var(--f-body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 18px 36px;
+  background-image: radial-gradient(circle at 50% 20%, #2a1638 0, var(--page) 70%);
+}
+.wrap { max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; }
+.marquee { font-weight: 400; font-family: var(--f-show); font-size: clamp(26px, 3.6vw, 40px); color: var(--gold); line-height: 1;
+  text-shadow: 0 3px 0 var(--ink), 3px 3px 0 var(--ink), -2px 2px 0 var(--ink); transform: rotate(-1.5deg);
+  align-self: flex-start; margin: 0 0 10px 8px; }
+
+.bezel { background: linear-gradient(#5a3577, #3a1f4f); border: 5px solid var(--ink); border-radius: 26px 26px 0 0;
+  padding: 12px 12px 0; box-shadow: inset 0 3px 0 rgba(255,255,255,.18); }
+.stage { position: relative; border: 5px solid var(--ink); border-radius: 14px; overflow: hidden; background: #000; }
+.pan { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+.pan::-webkit-scrollbar { display: none; }
+.pan svg { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; max-width: none; }
+@media (max-width: 760px) { .pan svg { width: auto; height: min(62vh, 440px); } }
+
+.hot { outline: none; }
+.hot .hit { fill: transparent; }
+.hot:focus-visible .hit { fill: rgba(255,194,77,.12); stroke: var(--gold); stroke-width: 5; stroke-dasharray: 14 10; }
+.wig { transform-box: fill-box; transform-origin: 50% 100%; }
+.hot:hover .wig, .hot:focus-visible .wig { animation: wig .5s ease-in-out infinite; }
+@keyframes wig { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-1.8deg)} 75%{transform:rotate(1.8deg)} }
+.boing { animation: boing .5s cubic-bezier(.3,1.7,.5,1) !important; }
+@keyframes boing { 0%{transform:scale(1,1)} 30%{transform:scale(1.08,.86)} 60%{transform:scale(.95,1.07)} 100%{transform:scale(1,1)} }
+.breathe { animation: breathe 3.4s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes breathe { 0%,100%{transform:scale(1,1)} 50%{transform:scale(1.012,1.03)} }
+#hot-globe:hover #globeStrip, #hot-globe:focus-visible #globeStrip, #hot-globe.spin #globeStrip { animation: globe .9s steps(16) infinite; }
+@keyframes globe { from{transform:translateX(0)} to{transform:translateX(-384px)} }
+.breathe2 { animation: breathe2 3.8s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes breathe2 { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(1.006)} }
+.zzz text { animation: zzz 3s ease-in-out infinite; opacity: 0; }
+.zzz text:nth-child(2){animation-delay:1s} .zzz text:nth-child(3){animation-delay:2s}
+@keyframes zzz { 0%{opacity:0; transform:translate(0,0)} 30%{opacity:1} 100%{opacity:0; transform:translate(16px,-30px)} }
+.flick { animation: flick 5s infinite; }
+@keyframes flick { 0%,100%{opacity:.55} 47%{opacity:.6} 48%{opacity:.35} 49%{opacity:.6} 80%{opacity:.5} }
+.lampPulse { animation: lampPulse 6s ease-in-out infinite; }
+@keyframes lampPulse { 0%,100%{opacity:.5} 50%{opacity:.62} }
+.twinkle circle { animation: tw 3s ease-in-out infinite; }
+.twinkle circle:nth-child(2n){animation-delay:-1.1s} .twinkle circle:nth-child(3n){animation-delay:-2s}
+@keyframes tw { 0%,100%{opacity:.2} 50%{opacity:1} }
+
+.balloon { position: absolute; transform: translate(-50%, -100%); max-width: min(320px, 72vw); pointer-events: none;
+  font-family: var(--f-show); font-size: 20px; line-height: 1.2; color: var(--ink); background: #fff;
+  border: 4px solid var(--ink); border-radius: 30px 34px 28px 32px; padding: 10px 18px; opacity: 0;
+  transition: opacity .15s, transform .3s cubic-bezier(.3,1.7,.5,1); }
+.balloon::after { content: ""; position: absolute; left: 44%; bottom: -22px; border: 12px solid transparent; border-top: 16px solid var(--ink); }
+.balloon::before { content: ""; position: absolute; left: calc(44% + 4px); bottom: -13px; border: 8px solid transparent; border-top: 11px solid #fff; z-index: 1; }
+.balloon.show { opacity: 1; transform: translate(-50%, calc(-100% - 8px)); }
+
+.scrim { position: absolute; inset: 0; background: rgba(18,10,26,.6); display: grid; place-items: center; padding: 16px; }
+.note { background: var(--paper); color: var(--ink); border: 5px solid var(--ink); border-radius: 6px 10px 8px 12px;
+  max-width: 440px; width: 100%; padding: 22px 26px 20px; display: grid; gap: 8px; transform: rotate(-1.5deg);
+  box-shadow: 10px 10px 0 rgba(0,0,0,.45); animation: pop .35s cubic-bezier(.3,1.7,.5,1); }
+@keyframes pop { from{transform:scale(.7) rotate(-6deg); opacity:0} to{transform:rotate(-1.5deg); opacity:1} }
+.note h2 { margin: 0; font-family: var(--f-show); font-weight: 400; font-size: 30px; line-height: 1.05; text-wrap: balance; }
+.note p { margin: 0; }
+.btn { font-family: var(--f-show); font-size: 19px; cursor: inherit; justify-self: start; color: var(--ink);
+  background: var(--gold); border: 4px solid var(--ink); border-radius: 14px 18px 14px 16px; padding: 4px 18px 6px; box-shadow: 0 4px 0 var(--ink); }
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+
+.bar { background: linear-gradient(#5a3577, #2c173c); border: 5px solid var(--ink); border-top: 0; border-radius: 0 0 26px 26px;
+  padding: 12px 14px 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+  box-shadow: inset 0 -4px 0 rgba(0,0,0,.25), 0 10px 0 rgba(0,0,0,.35); }
+.slots { display: flex; gap: 8px; flex-wrap: wrap; }
+.slot { width: 64px; height: 56px; display: grid; place-items: center; padding: 0; cursor: inherit;
+  background: radial-gradient(circle at 40% 30%, #7a4c9a, #3a1f4f); border: 4px solid var(--ink); border-radius: 14px;
+  box-shadow: inset 0 3px 0 rgba(255,255,255,.2), 0 3px 0 var(--ink); }
+.slot svg { width: 44px; height: 40px; }
+.slot:hover svg, .slot:focus-visible svg { animation: wig .5s ease-in-out infinite; }
+.say { flex: 1 1 240px; min-width: 0; min-height: 48px; display: flex; align-items: center; padding: 6px 16px;
+  font-family: var(--f-show); font-size: 22px; color: var(--gold); background: #1b0f24; border: 4px solid var(--ink);
+  border-radius: 12px; box-shadow: inset 0 3px 8px rgba(0,0,0,.6); overflow: hidden; }
+.say span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.slot:focus-visible, .btn:focus-visible { outline: 4px solid var(--crt); outline-offset: 2px; }
+
+.foot { margin-top: 22px; font-size: 13.5px; color: var(--muted); max-width: 72ch; }
+.foot { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; }
+.foot b { color: var(--paper); font-weight: 700; }
+.foot a { color: var(--gold); font-weight: 700; text-underline-offset: 3px; }
+.foot a:focus-visible { outline: 3px solid var(--crt); outline-offset: 2px; }
+/* tooltip that follows the pointer */
+.tip { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 5; white-space: nowrap;
+  font-family: var(--f-show); font-size: 18px; color: var(--ink); background: var(--gold);
+  border: 3px solid var(--ink); border-radius: 10px 12px 9px 11px; padding: 1px 11px 3px; box-shadow: 0 3px 0 var(--ink);
+  opacity: 0; transition: opacity .1s; }
+.tip.show { opacity: 1; }
+
+/* plaque close-up */
+.lightbox { position: absolute; inset: 0; z-index: 6; background: rgba(10,5,16,.78); display: grid; place-items: center; padding: 14px; }
+.plaque { width: min(380px, 78%); max-height: 94%; aspect-ratio: 4 / 5; background: #f4f1ea; color: #1d1d1f;
+  border: 16px solid #141414; box-shadow: 0 0 0 4px var(--ink), 14px 14px 0 rgba(0,0,0,.5);
+  display: grid; grid-template-columns: 18px 1fr 18px; align-items: center; padding: 6% 4%; transform: rotate(-1deg);
+  animation: pop .35s cubic-bezier(.3,1.7,.5,1); font-family: "Oswald", "Arial Narrow", "Helvetica Neue", sans-serif; }
+.plaque .mid { display: grid; justify-items: center; gap: 4px; text-align: center; min-width: 0; height: 100%; align-content: space-between; }
+.plaque .side { writing-mode: vertical-rl; font-size: 7px; letter-spacing: .14em; text-transform: uppercase; color: #444; justify-self: center; }
+.plaque .side.l { transform: rotate(180deg); }
+.plaque .logo { font-size: 9px; letter-spacing: .14em; display: grid; justify-items: center; gap: 1px; }
+.plaque .name { font-size: clamp(22px, 5.2vw, 38px); font-weight: 600; letter-spacing: .32em; margin-right: -.32em; line-height: 1; }
+.plaque .name sup { font-size: .3em; letter-spacing: 0; vertical-align: top; }
+.plaque img { width: 92%; height: auto; mix-blend-mode: multiply; }
+.plaque .sn { display: grid; grid-template-columns: 1fr 1fr; width: 62%; font-size: 9px; letter-spacing: .1em; border: 1.5px solid #1d1d1f; }
+.plaque .sn span { padding: 2px 0; } .plaque .sn span + span { background: #1d1d1f; color: #f4f1ea; }
+.plaque .line { font-size: 7.5px; letter-spacing: .03em; text-transform: uppercase; font-weight: 600; line-height: 1.35; }
+.lb-hint { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); font-family: var(--f-show); font-size: 17px; color: var(--paper); opacity: .8; }
+
+/* computer desktop */
+.desk-ov { position: absolute; inset: 0; z-index: 6; background: rgba(10,5,16,.72); display: grid; place-items: center; padding: 14px; }
+.crt { width: min(620px, 96%); background: linear-gradient(145deg, #f1e2b8, #b9a173); border: 5px solid var(--ink); border-radius: 34px 36px 40px 38px;
+  padding: 22px 22px 30px; box-shadow: 12px 12px 0 rgba(0,0,0,.5); animation: pop .35s cubic-bezier(.3,1.7,.5,1); }
+.screen { position: relative; border: 5px solid var(--ink); border-radius: 22px / 26px; overflow: hidden; min-height: 300px; padding: 18px;
+  background: radial-gradient(ellipse at 45% 40%, #2f8a6e, #0d2c26); color: #9affd8; font-family: ui-monospace, "Courier New", monospace; font-size: 14px; }
+.screen::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 2px, transparent 2px 4px); }
+.screen .prompt { margin: 0 0 14px; }
+.icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 14px 10px; }
+.ico { display: grid; justify-items: center; gap: 6px; padding: 8px 4px; color: #e8fff6; text-decoration: none; text-align: center; font-size: 12.5px; font-weight: 700;
+  background: none; border: 2px solid transparent; border-radius: 8px; cursor: inherit; font-family: inherit; }
+.ico:hover, .ico:focus-visible { background: rgba(154,255,216,.14); border-color: #9affd8; outline: none; }
+.ico svg { width: 52px; height: 46px; }
+.repos { margin-top: 14px; padding-top: 12px; border-top: 2px dashed rgba(154,255,216,.35); }
+.repos:empty { display: none; }
+.screen .msg { margin: 14px 0 0; min-height: 1.4em; color: #ffe08a; }
+.crt-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; gap: 10px; flex-wrap: wrap; }
+.crt-bar .badge { font-family: var(--f-show); font-size: 18px; color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+
 </head>
 <body>
-  <main>
-    <h1>Hi, I'm <span>Gabriel</span>.</h1>
-    <p>Welcome to gabrielciolac.com. Something is being built here — check back soon.</p>
-    <p style="margin-top:2rem;font-size:.8rem">Deployed from GitHub.</p>
-  </main>
+<div class="wrap">
+  <h1 class="marquee">Gabriel's Room</h1>
+  <div class="bezel">
+  <div class="stage" id="stage">
+    <div class="pan" id="pan">
+<svg id="room" viewBox="0 0 1536 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="A hand-painted cartoon bedroom at night with a crooked door, a pile of newspapers, a hall table with mail, a small framed Taiga Nomad snowmobile plaque, a window over the Toronto skyline and CN Tower, a bookshelf, a desk with a glowing old computer, a fluffy grey cat asleep on the windowsill, and Gabriel standing on a round magenta rug.">
+  <defs>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
+    <radialGradient id="gCrt"><stop offset="0" stop-color="#7cf2c4" stop-opacity=".8"/><stop offset="1" stop-color="#7cf2c4" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gLamp"><stop offset="0" stop-color="#ffcf6a" stop-opacity=".9"/><stop offset="1" stop-color="#ff9a3a" stop-opacity="0"/></radialGradient>
+    <clipPath id="clipGlobe"><circle cx="1208" cy="315" r="15.5"/></clipPath>
+    <radialGradient id="gGlobeShade" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#fff" stop-opacity=".25"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#0a0414" stop-opacity=".6"/></radialGradient>
+    <clipPath id="clipGlass"><path d="M690 100 Q830 60 985 98 L985 470 L680 470 Z"/></clipPath>
+  </defs>
+
+  <image href="room/room.webp" x="0" y="0" width="1536" height="1024"/>
+
+  <!-- ambient life on the painting -->
+  <g class="twinkle" clip-path="url(#clipGlass)" fill="#fff8d6">
+    <circle cx="742" cy="140" r="2.2"/><circle cx="790" cy="118" r="1.8"/><circle cx="872" cy="150" r="2.4"/><circle cx="960" cy="200" r="1.8"/>
+    <circle cx="890" cy="214" r="1.6"/><circle cx="760" cy="230" r="2"/><circle cx="970" cy="130" r="1.6"/>
+  </g>
+  <g style="mix-blend-mode:screen; pointer-events:none">
+    <ellipse class="lampPulse" cx="1380" cy="420" rx="230" ry="190" fill="url(#gLamp)"/>
+    <ellipse class="flick" cx="1330" cy="545" rx="150" ry="110" fill="url(#gCrt)"/>
+  </g>
+
+  <!-- painted-in hotspots: the cursor changes over them, as in the old games -->
+  <g id="hot-frames" class="hot" tabindex="0" role="button" aria-label="Framed photos: see Gabriel's photography" data-label="Look at the photos">
+    <path class="hit" pointer-events="all" d="M414 118 L548 126 L586 266 L580 384 L462 372 L466 250 L412 244 Z"/>
+  </g>
+  <g id="hot-pc" class="hot" tabindex="0" role="button" aria-label="Computer: open Gabriel's GitHub and LinkedIn" data-label="Boot up the computer">
+    <path class="hit" pointer-events="all" d="M1250 440 Q1380 420 1515 470 L1525 740 L1380 790 L1120 700 L1130 640 L1240 630 Z"/>
+  </g>
+  <g id="hot-album" class="hot" tabindex="0" role="button" aria-label="Photo album: see Gabriel's photography" data-label="Flip through the album">
+    <path class="hit" pointer-events="all" d="M1222 280 L1312 278 L1300 368 L1214 362 Z"/>
+  </g>
+  <g id="hot-window" class="hot" tabindex="0" role="button" aria-label="Window over Toronto" data-label="Look out the window">
+    <path class="hit" pointer-events="all" d="M700 110 Q830 70 980 110 L975 360 L870 360 L860 460 L690 460 Z"/>
+  </g>
+
+  <!-- spinning globe: frames made from its own painted pixels -->
+  <g id="hot-globe" class="hot" tabindex="0" role="button" aria-label="Globe on the bookshelf: spin it" data-label="Spin the globe">
+    <rect class="hit" pointer-events="all" x="1184" y="288" width="50" height="74"/>
+    <svg x="1196" y="304" width="24" height="24" viewBox="0 0 24 24" overflow="hidden"><g id="globeStrip"><image href="room/globe-spin.webp" x="0" y="0" width="384" height="24"/></g></svg>
+  </g>
+
+  <!-- still props are part of the painting: cursor + tooltip only -->
+  <g id="hot-plaque" class="hot" tabindex="0" role="button" aria-label="Taiga Nomad plaque" data-label="Look at the Taiga plaque">
+    <rect class="hit" pointer-events="all" x="388" y="290" width="72" height="82"/>
+  </g>
+  <g id="hot-news" class="hot" tabindex="0" role="button" aria-label="Newspapers: read Gabriel's blog" data-label="Read the paper">
+    <path class="hit" pointer-events="all" d="M40 690 L240 660 L350 690 L372 760 L360 800 L230 880 L60 820 Z"/>
+  </g>
+  <g id="hot-mail" class="hot" tabindex="0" role="button" aria-label="Mail on the hall table: write Gabriel a letter" data-label="Write me a letter">
+    <path class="hit" pointer-events="all" d="M392 396 L510 392 L520 480 L560 500 L548 650 L370 650 L362 500 L392 480 Z"/>
+  </g>
+
+  <!-- Muscles: her own layer over the empty sill -->
+  <g id="hot-cat" class="hot" tabindex="0" role="button" aria-label="Muscles the cat, asleep on the windowsill" data-label="Pet Muscles">
+    <path class="hit" pointer-events="all" d="M664 420 Q740 360 866 392 L866 490 L664 490 Z"/>
+    <g class="breathe" id="catSleep"><image href="room/cat-sleep.webp" x="664" y="374" width="202" height="116"/></g>
+    <g id="catAwake" style="display:none"><image href="room/cat-awake.webp" x="664" y="375" width="210" height="115"/></g>
+    <g class="zzz" id="zzz" font-family="Chewy, cursive" fill="#fff1d6" stroke="#1b0f24" stroke-width="3" paint-order="stroke">
+      <text x="852" y="388" font-size="20">z</text><text x="866" y="368" font-size="26">z</text><text x="882" y="344" font-size="32">Z</text>
+    </g>
+  </g>
+
+  <!-- Gabriel: a cel cut-out puppet (two drawn frames + moving parts) -->
+  <ellipse cx="616" cy="902" rx="92" ry="14" fill="#12061c" opacity=".5" filter="url(#soft)" style="pointer-events:none"/>
+  <g id="hot-me" class="hot" tabindex="0" role="button" aria-label="Gabriel: say hi" data-label="Say hi to Gabriel">
+    <g transform="translate(422.9 327.6) scale(.3865)">
+      <path class="hit" pointer-events="all" d="M330 50 L640 50 L660 330 L760 360 L800 900 L700 1000 L760 1494 L250 1494 L300 1000 L240 900 L280 360 L340 330 Z"/>
+      <g class="breathe2">
+        <g id="meRest"><image href="room/gabe-rest.webp" x="243" y="45" width="508" height="1449"/></g>
+        <g id="meWave" style="display:none">
+          <image href="room/gabe-wave.webp" x="243" y="45" width="568" height="1449"/>
+          <g id="meHand"><image href="room/gabe-hand.webp" x="636" y="184" width="175" height="320"/></g>
+        </g>
+        <g id="lids" style="display:none" fill="#b87746" stroke="#1b0f24" stroke-width="4" stroke-linecap="round">
+          <ellipse cx="457" cy="183" rx="18" ry="13"/><ellipse cx="515" cy="180" rx="18" ry="13"/>
+        </g>
+        <ellipse id="mouth" cx="492" cy="236" rx="17" ry="0" fill="#5a1f2e" stroke="#1b0f24" stroke-width="4" style="display:none"/>
+      </g>
+    </g>
+  </g>
+</svg>
+    </div>
+    <div class="balloon" id="balloon"></div>
+    <div class="tip" id="tip"></div>
+    <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Taiga Nomad plaque, close-up">
+      <div class="plaque" id="plaqueCard">
+        <span class="side l">Taiga Motors Inc.</span>
+        <div class="mid">
+          <div class="logo"><svg width="30" height="26" viewBox="0 0 30 26" aria-hidden="true"><path d="M15 2 L28 24 H2 Z" fill="none" stroke="#1d1d1f" stroke-width="2"/><path d="M6 20 Q15 9 24 20" fill="none" stroke="#1d1d1f" stroke-width="2"/></svg>TAIGA</div>
+          <div class="name">NOMAD<sup>TM</sup></div>
+          <img src="room/snowmobile.webp" alt="Ink sketch of the Taiga Nomad electric snowmobile">
+          <div class="sn"><span>SN #013</span><span>03 / 18 / 22</span></div>
+          <div class="line">Fier de faire partie de la réalisation de la première motoneige électrique de production.<br>Proud to be part of the realization of the first production electric snowmobile.</div>
+        </div>
+        <span class="side">Moteurs Taiga Inc.</span>
+      </div>
+      <div class="lb-hint">Click anywhere to put it back</div>
+    </div>
+    <div class="desk-ov" id="deskOv" hidden role="dialog" aria-modal="true" aria-labelledby="crtTitle">
+      <div class="crt">
+        <div class="screen">
+          <p class="prompt" id="crtTitle">C:\GABRIEL&gt; dir</p>
+          <div class="icons">
+            <a class="ico" id="ico-gh" href="https://github.com/GabrielCiolac" target="_blank" rel="noopener">
+              <svg viewBox="0 0 52 46"><path d="M4 10 H20 L24 6 H48 V40 H4 Z" fill="#ffc24d" stroke="#1b0f24" stroke-width="3" stroke-linejoin="round"/><path d="M4 16 H48" stroke="#1b0f24" stroke-width="2.5"/><path d="M18 33 c-5 1 -5 -3 -7 -3 M30 36 v-4 c0 -2 -1 -3 -2 -3 c4 0 7 -2 7 -7 c0 -2 -1 -3 -2 -4 c0 -2 0 -3 -1 -4 c-1 0 -3 1 -4 2 c-2 -1 -6 -1 -8 0 c-1 -1 -3 -2 -4 -2 c-1 1 -1 2 -1 4 c-1 1 -2 2 -2 4 c0 5 3 7 7 7 c-1 0 -2 1 -2 3 v4" fill="none" stroke="#1b0f24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              GITHUB
+            </a>
+            <a class="ico" id="ico-li" href="https://www.linkedin.com/in/gabriel-ciolac/" target="_blank" rel="noopener">
+              <svg viewBox="0 0 52 46"><rect x="8" y="4" width="36" height="36" rx="6" fill="#3b679c" stroke="#1b0f24" stroke-width="3"/><text x="26" y="31" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#fff">in</text></svg>
+              LINKEDIN
+            </a>
+            <button class="ico" id="ico-photos" type="button">
+              <svg viewBox="0 0 52 46"><path d="M6 6 L44 4 L46 40 L8 42 Z" fill="#7a4c9a" stroke="#1b0f24" stroke-width="3" stroke-linejoin="round"/><path d="M16 12 L38 11 L39 31 L17 32 Z" fill="#f5a37a" stroke="#1b0f24" stroke-width="2"/><path d="M17 32 L24 22 L29 27 L33 21 L39 31 Z" fill="#5a2a5e"/></svg>
+              PHOTOS
+            </button>
+            <button class="ico" id="ico-readme" type="button">
+              <svg viewBox="0 0 52 46"><path d="M12 4 H34 L42 12 V42 H12 Z" fill="#fff6e4" stroke="#1b0f24" stroke-width="3" stroke-linejoin="round"/><path d="M34 4 V12 H42" fill="none" stroke="#1b0f24" stroke-width="2.5"/><path d="M17 20 H36 M17 26 H36 M17 32 H30" stroke="#1b0f24" stroke-width="2.5"/></svg>
+              README.TXT
+            </button>
+          </div>
+          <div class="icons repos" id="repos" aria-label="Recent GitHub repositories"></div>
+          <p class="msg" id="crtMsg">One click opens things.</p>
+        </div>
+        <div class="crt-bar">
+          <span class="badge">Gabriel's PC</span>
+          <button class="btn" id="crtClose" type="button">Shut down</button>
+        </div>
+      </div>
+    </div>
+    <div class="scrim" id="scrim" hidden>
+      <div class="note" role="dialog" aria-modal="true" aria-labelledby="noteTitle">
+        <h2 id="noteTitle">Title</h2>
+        <p id="noteBody">Body</p>
+        <button class="btn" id="noteClose" type="button">Back to the room</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="bar">
+    <div class="slots" role="group" aria-label="Things in the room">
+      <button class="slot" data-target="hot-news" aria-label="Newspaper: read the blog" data-label="Read the paper">
+        <svg viewBox="0 0 44 40"><path d="M6 8 L36 6 L38 34 L8 36 Z" fill="#fff6e4" stroke="#1b0f24" stroke-width="3" stroke-linejoin="round"/><path d="M11 12 H32" stroke="#1b0f24" stroke-width="4"/><path d="M11 18 H20 V28 H11 Z" fill="#ffc24d" stroke="#1b0f24" stroke-width="2"/><path d="M23 19 H32 M23 24 H32 M23 29 H30" stroke="#1b0f24" stroke-width="2"/></svg>
+      </button>
+      <button class="slot" data-target="hot-mail" aria-label="Letter: write to Gabriel" data-label="Write me a letter">
+        <svg viewBox="0 0 44 40"><path d="M4 10 L40 8 L40 32 L5 34 Z" fill="#fff" stroke="#1b0f24" stroke-width="3" stroke-linejoin="round"/><path d="M5 11 L22 23 L39 9" fill="none" stroke="#1b0f24" stroke-width="2.5" stroke-linejoin="round"/><path d="M22 26 c-3 -4 -9 -1 -5 4 l5 4 l5 -4 c4 -5 -2 -8 -5 -4z" fill="#e0548a" stroke="#1b0f24" stroke-width="2"/></svg>
+      </button>
+      <button class="slot" data-target="hot-pc" aria-label="Computer: GitHub and LinkedIn" data-label="Boot up the computer">
+        <svg viewBox="0 0 44 40"><path d="M6 4 Q22 2 38 4 Q41 16 38 28 Q22 30 6 28 Q3 16 6 4 Z" fill="#f1e2b8" stroke="#1b0f24" stroke-width="3"/><path d="M10 8 Q22 7 34 8 Q36 16 34 24 Q22 25 10 24 Q8 16 10 8 Z" fill="#1f6a5c" stroke="#1b0f24" stroke-width="2"/><path d="M13 13 H22 M13 18 H28" stroke="#9affd8" stroke-width="2.5"/><path d="M8 36 L12 31 H32 L36 36 Z" fill="#f1e2b8" stroke="#1b0f24" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="slot" data-target="hot-album" aria-label="Photo album: photography" data-label="Flip through the album">
+        <svg viewBox="0 0 44 40"><path d="M6 6 L36 4 L38 34 L8 36 Z" fill="#7a4c9a" stroke="#1b0f24" stroke-width="3" stroke-linejoin="round"/><path d="M6 6 L12 6 L14 36 L8 36 Z" fill="#4e2c66" stroke="#1b0f24" stroke-width="2"/><path d="M17 12 L33 11 L34 27 L18 28 Z" fill="#f5a37a" stroke="#1b0f24" stroke-width="2"/><path d="M18 28 L23 20 L27 24 L30 19 L34 27 Z" fill="#5a2a5e"/></svg>
+      </button>
+    </div>
+    <div class="say" id="say" aria-live="polite"><span>Look around. Click on anything that looks interesting.</span></div>
+  </div>
+
+  <nav class="foot" aria-label="Elsewhere">
+    <span><b>Gabriel Ciolac</b> · Toronto</span>
+    <a href="https://github.com/GabrielCiolac" rel="me">GitHub</a>
+    <a href="https://www.linkedin.com/in/gabriel-ciolac/" rel="me">LinkedIn</a>
+  </nav>
+</div>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const svg = $('#room'), stage = $('#stage'), say = $('#say span'), balloon = $('#balloon');
+
+  /* chunky inked arrow, pointing hand on hotspots */
+  const cur = (s, x, y, fb) => `url("data:image/svg+xml,${encodeURIComponent(s)}") ${x} ${y}, ${fb}`;
+  const arrow = `<svg xmlns='http://www.w3.org/2000/svg' width='34' height='38' viewBox='0 0 34 38'><path d='M4 3 L28 22 L17 23 L23 34 L17 36 L12 25 L4 32 Z' fill='#ffc24d' stroke='#1b0f24' stroke-width='3' stroke-linejoin='round'/></svg>`;
+  const hand = `<svg xmlns='http://www.w3.org/2000/svg' width='38' height='40' viewBox='0 0 38 40'><path d='M13 4 C13 1 18 1 18 4 L18 17 L20 17 C20 14 25 14 25 17 L25 19 C25 16 30 16 30 19 L30 21 C30 18 35 18 35 22 L34 31 C33 36 29 38 24 38 L18 38 C14 38 11 36 9 33 L3 24 C1 21 5 18 8 21 L13 26 Z' fill='#fff' stroke='#1b0f24' stroke-width='3' stroke-linejoin='round'/><path d='M18 17 L18 26 M25 19 L25 26 M30 21 L30 27' stroke='#1b0f24' stroke-width='2' stroke-linecap='round'/></svg>`;
+  const css = document.createElement('style');
+  css.textContent = `.wrap{cursor:${cur(arrow, 4, 3, 'default')}} .hot,.slot,.btn{cursor:${cur(hand, 15, 3, 'pointer')}}`;
+  document.head.appendChild(css);
+
+  const MAIL_TO = ''; // set to an email address to make the mail table open a letter
+  const IDLE = 'Look around. Click on anything that looks interesting.';
+  const setSay = (t) => { say.textContent = t; };
+  const NOTES = {
+    'hot-news':   ['The Courier', 'The first issue is still at the printer. Check back soon.'],
+    'hot-mail':   ['Write me a letter', MAIL_TO ? '' : 'The mailbox isn’t set up yet. For now, find me on LinkedIn through the computer.'],
+    'hot-pc':     ['Booting up…', 'Opens a chunky old desktop with GitHub repos as folders and a LinkedIn icon.'],
+    'hot-album':  ['The photo album', 'Still sorting through the photos. The album is coming soon.'],
+    'hot-plaque': ['Taiga Nomad, SN #013', 'March 18, 2022. Proud to be part of the realization of the first production electric snowmobile.'],
+  };
+  let bt;
+  function speak(x, y, text) {
+    const r = svg.getBoundingClientRect(), s = stage.getBoundingClientRect(), k = r.width / 1536;
+    balloon.textContent = text;
+    balloon.style.left = Math.min(Math.max(r.left - s.left + x * k, 150), s.width - 150) + 'px';
+    balloon.style.top = Math.max(r.top - s.top + y * k, 70) + 'px';
+    balloon.classList.add('show'); clearTimeout(bt); bt = setTimeout(() => balloon.classList.remove('show'), 2800);
+  }
+  function boing(el) { const w = el.querySelector('.wig'); if (!w) return; w.classList.remove('boing'); void w.getBBox(); w.classList.add('boing'); setTimeout(() => w.classList.remove('boing'), 520); }
+  let lastFocus, catT, meT, li = 0;
+  const LINES = ['Hey! Welcome in.', 'Have a look at the computer. It still boots.', 'That\u2019s Muscles. She runs the place.', 'The letters by the door go straight to me.', 'Point at things. Most of them do something.'];
+  const tip = $('#tip');
+  function moveTip(e, label) {
+    const s = stage.getBoundingClientRect(); tip.textContent = label;
+    const x = Math.min(e.clientX - s.left + 18, s.width - tip.offsetWidth - 8), y = Math.max(e.clientY - s.top - 40, 6);
+    tip.style.transform = `translate(${x}px, ${y}px)`; tip.classList.add('show');
+  }
+  const hideTip = () => tip.classList.remove('show');
+  function openLayer(id, focusSel) { lastFocus = document.activeElement; hideTip(); $(id).hidden = false; (focusSel ? $(focusSel) : $(id)).focus(); }
+  function closeLayers() { ['#scrim', '#lightbox', '#deskOv'].forEach(s => $(s).hidden = true); lastFocus && lastFocus.focus && lastFocus.focus(); }
+  /* --- Gabriel puppet --- */
+  let waving = false, talkT, waveT;
+  function wave() {
+    waving = true; $('#meRest').style.display = 'none'; $('#meWave').style.display = '';
+    const hand = $('#meHand'), t0 = performance.now();
+    (function step(t) {
+      if (!waving) { hand.removeAttribute('transform'); return; }
+      const a = Math.sin((t - t0) / 1000 * 2 * Math.PI * 2.2) * 13;
+      hand.setAttribute('transform', `rotate(${a.toFixed(1)} 762 470)`); requestAnimationFrame(step);
+    })(t0);
+    clearTimeout(waveT); waveT = setTimeout(() => { waving = false; $('#meRest').style.display = ''; $('#meWave').style.display = 'none'; }, 1900);
+  }
+  function talk(ms) {
+    const m = $('#mouth'), shapes = [9, 4, 12, 6, 2, 10, 5]; let i = 0; m.style.display = '';
+    clearInterval(talkT); talkT = setInterval(() => { m.setAttribute('ry', shapes[i++ % shapes.length]); }, 110);
+    setTimeout(() => { clearInterval(talkT); m.style.display = 'none'; }, ms);
+  }
+  (function blinkLoop() {
+    setTimeout(() => { const l = $('#lids'); l.style.display = ''; setTimeout(() => { l.style.display = 'none'; blinkLoop(); }, 120); }, 2200 + Math.random() * 3200);
+  })();
+
+  function act(el) {
+    boing(el);
+    if (el.id === 'hot-me') {
+      const line = LINES[li++ % LINES.length];
+      speak(616, 330, line);
+      if (li % 2 === 1) wave(); else talk(Math.min(2600, 600 + line.length * 45));
+      return;
+    }
+    if (el.id === 'hot-globe') {
+      el.classList.add('spin'); speak(1208, 290, 'Toronto is about\u2026 here.');
+      setTimeout(() => el.classList.remove('spin'), 2200); return;
+    }
+    if (el.id === 'hot-cat') {
+      $('#catSleep').style.display = 'none'; $('#catAwake').style.display = ''; $('#zzz').style.visibility = 'hidden';
+      speak(770, 362, 'Mrrrp.'); setSay('Muscles gives you a slow blink.');
+      clearTimeout(catT); catT = setTimeout(() => { $('#catSleep').style.display = ''; $('#catAwake').style.display = 'none'; $('#zzz').style.visibility = ''; }, 3200);
+      return;
+    }
+    if (el.id === 'hot-window') { speak(840, 120, 'Toronto at night. The CN Tower is blinking.'); return; }
+    if (el.id === 'hot-plaque') { $('#lightbox').tabIndex = -1; setTimeout(() => openLayer('#lightbox'), 200); return; }
+    if (el.id === 'hot-pc') { $('#crtMsg').textContent = 'One click opens things.'; loadRepos(); setTimeout(() => openLayer('#deskOv', '#ico-gh'), 200); return; }
+    if (el.id === 'hot-mail' && MAIL_TO) { location.href = 'mailto:' + MAIL_TO + '?subject=' + encodeURIComponent('A letter from your website'); return; }
+    const [t, b] = NOTES[el.id === 'hot-frames' ? 'hot-album' : el.id];
+    setTimeout(() => { $('#noteTitle').textContent = t; $('#noteBody').textContent = b; openLayer('#scrim', '#noteClose'); }, 240);
+  }
+  $('#lightbox').addEventListener('click', closeLayers);
+  $('#crtClose').addEventListener('click', closeLayers);
+  $('#deskOv').addEventListener('click', (e) => { if (e.target.id === 'deskOv') closeLayers(); });
+  const crtSay = (t) => { $('#crtMsg').textContent = t; };
+  $('#ico-gh').addEventListener('click', () => crtSay('Opening github.com/GabrielCiolac in a new tab…'));
+  let reposLoaded = false;
+  async function loadRepos() {
+    if (reposLoaded) return; reposLoaded = true;
+    try {
+      const r = await fetch('https://api.github.com/users/GabrielCiolac/repos?sort=pushed&per_page=8');
+      if (!r.ok) throw new Error(r.status);
+      const box = $('#repos');
+      (await r.json()).filter(x => !x.fork).slice(0, 8).forEach((x) => {
+        const a = document.createElement('a'); a.className = 'ico'; a.href = x.html_url; a.target = '_blank'; a.rel = 'noopener';
+        a.title = x.description || x.name;
+        a.innerHTML = '<svg viewBox="0 0 52 46" aria-hidden="true"><path d="M4 10 H20 L24 6 H48 V40 H4 Z" fill="#ffe08a" stroke="#1b0f24" stroke-width="3" stroke-linejoin="round"/><path d="M4 16 H48" stroke="#1b0f24" stroke-width="2.5"/></svg>';
+        a.append(x.name.toUpperCase()); box.append(a);
+      });
+    } catch (e) { reposLoaded = false; }
+  }
+  $('#ico-li').addEventListener('click', () => crtSay('Opening Gabriel’s LinkedIn in a new tab…'));
+  $('#ico-photos').addEventListener('click', () => crtSay('The photo album is coming soon.'));
+  $('#ico-readme').addEventListener('click', () => crtSay('Hi, I’m Gabriel. I build things in Toronto. The yellow folders are my latest GitHub projects.'));
+  document.querySelectorAll('.hot').forEach((el) => {
+    el.addEventListener('pointerenter', (e) => { setSay(el.dataset.label); moveTip(e, el.dataset.label); });
+    el.addEventListener('pointermove', (e) => moveTip(e, el.dataset.label));
+    el.addEventListener('pointerleave', () => { setSay(IDLE); hideTip(); });
+    el.addEventListener('focus', () => setSay(el.dataset.label));
+    el.addEventListener('blur', () => setSay(IDLE));
+    el.addEventListener('click', () => act(el));
+    el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); act(el); } });
+  });
+  document.querySelectorAll('.slot').forEach((b) => {
+    b.addEventListener('pointerenter', () => setSay(b.dataset.label)); b.addEventListener('pointerleave', () => setSay(IDLE));
+    b.addEventListener('click', () => act(document.getElementById(b.dataset.target)));
+  });
+  $('#noteClose').addEventListener('click', closeLayers);
+  $('#scrim').addEventListener('click', (e) => { if (e.target.id === 'scrim') closeLayers(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLayers(); });
+
+  const pan = $('#pan'); requestAnimationFrame(() => { pan.scrollLeft = (pan.scrollWidth - pan.clientWidth) / 2; });
+})();
+</script>
+
 </body>
 </html>

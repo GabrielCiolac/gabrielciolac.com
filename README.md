@@ -8,6 +8,10 @@ Static site served from a home TrueNAS box.
 `gabrielciolac-site` TrueNAS app (host port 30080) → nginx-proxy-manager
 terminates TLS for `gabrielciolac.com` / `www`.
 
+The homepage is a point-and-click room: `site/index.html` (hotspots, puppet animation, overlays) plus painted layers in `site/room/`. Art sources and the generation scripts live outside the repo in `~/co/gabrielciolac-art/`.
+
+To make the mail table open an email, set `MAIL_TO` near the top of the script in `site/index.html`.
+
 Edit `site/` to change the page. Preview locally:
 
 ```sh

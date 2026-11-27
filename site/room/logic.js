@@ -187,18 +187,34 @@
     return { y: v('year'), m: v('month'), d: v('day') };
   }
 
-  /* ---------- The travel map behind the globe ----------
-     Equirectangular, 1000 x 400, latitudes 84N to 60S (matches room/world-land.svgpath). */
-  const MAP = { w: 1000, h: 400, north: 84, south: -60 };
-  function mapXY(lat, lon) {
-    const x = ((lon + 180) / 360) * MAP.w;
-    const y = ((MAP.north - Math.max(MAP.south, Math.min(MAP.north, lat))) / (MAP.north - MAP.south)) * MAP.h;
-    return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 };
+  /* ---------- The travel globe ----------
+     The land texture is equirectangular, 1024 x 512, 90N to 90S (room/world-land.svgpath).
+     globePoint: where a place sits on a unit sphere facing the viewer, turned to centre longitude lon0
+     and tilted so the viewer looks down from latitude tilt. z > 0 means it faces the viewer. */
+  const RAD = Math.PI / 180;
+  function globePoint(lat, lon, lon0, tilt) {
+    const p = lat * RAD, l = (lon - lon0) * RAD, t = tilt * RAD;
+    return {
+      x: Math.cos(p) * Math.sin(l),
+      y: Math.cos(t) * Math.sin(p) - Math.sin(t) * Math.cos(p) * Math.cos(l),
+      z: Math.sin(t) * Math.sin(p) + Math.cos(t) * Math.cos(p) * Math.cos(l),
+    };
+  }
+  /* The inverse for one pixel of the disc (x right, y up, both -1..1): latitude, and longitude relative to lon0. */
+  function globeLatLon(x, y, tilt) {
+    const r2 = x * x + y * y; if (r2 > 1) return null;
+    const z = Math.sqrt(1 - r2), t = tilt * RAD;
+    return { lat: Math.asin(z * Math.sin(t) + y * Math.cos(t)) / RAD, dlon: Math.atan2(x, z * Math.cos(t) - y * Math.sin(t)) / RAD };
+  }
+  /* Longitude to spin to so a place faces the viewer (shortest way round from `from`). */
+  function spinTarget(from, lon) {
+    let d = ((lon - from) % 360 + 540) % 360 - 180;
+    return from + d;
   }
 
   return { PHASES, THERMO, minutesOf, phaseFor, weatherFor, thermoTopY, weatherLine, openMeteoUrl, parseOpenMeteo, torontoMinutes,
     PESTER, pester, pesterLine, cooldownFor, kick, cooldownLeft, clock,
     PLANT, plantMoisture, plantStage, waterPlant, plantLocked,
     BIRTHDAY, HOLIDAY_IDS, easter, thanksgiving, holidayFor, torontoDate,
-    MAP, mapXY };
+    globePoint, globeLatLon, spinTarget };
 });

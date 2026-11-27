@@ -189,14 +189,43 @@
   }
   function stopRain() { if (rainNode) { try { rainNode.s.stop(); } catch (e) { /* already stopped */ } rainNode = null; } }
 
+  /* --- the fireplace on the computer screen when it snows: a low roar plus crackles and pops --- */
+  let fire = null;
+  function setFire(on) {
+    if (!on || !enabled || !audio()) { stopFire(); return; }
+    if (fire) return;
+    const s = noise(), lp = ctx.createBiquadFilter(), g = ctx.createGain(), wob = ctx.createOscillator(), wg = ctx.createGain();
+    s.loop = true; lp.type = 'lowpass'; lp.frequency.value = 320; g.gain.value = 0.0001;
+    wob.frequency.value = 0.35; wg.gain.value = 0.025; wob.connect(wg); wg.connect(g.gain);     // the roar breathes slowly
+    s.connect(lp); lp.connect(g); g.connect(master); s.start(); wob.start();
+    g.gain.setTargetAtTime(0.07, ctx.currentTime, 1.2);
+    const crackle = () => {
+      if (!fire) return;
+      const t = ctx.currentTime + 0.02, r = Math.random();
+      if (r < 0.12) {                                     // a pop: one sharp snap and a couple of tiny sparks
+        burst(t, { freq: 2400, q: 1.2, peak: 0.28, d: 0.03 }); burst(t + 0.03, { freq: 5200, q: 2, peak: 0.08, d: 0.015 });
+      } else {                                            // the usual soft crackle
+        for (let i = 0, n = 2 + Math.floor(Math.random() * 4); i < n; i++) burst(t + i * (0.01 + Math.random() * 0.03), { freq: 1500 + Math.random() * 3500, q: 2, peak: 0.04 + Math.random() * 0.08, d: 0.008 });
+      }
+      fire.timer = setTimeout(crackle, 60 + Math.random() * 260);
+    };
+    fire = { s, g, wob, timer: null }; crackle();
+  }
+  function stopFire() {
+    if (!fire) return;
+    clearTimeout(fire.timer);
+    try { fire.g.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.3); const f = fire; setTimeout(() => { try { f.s.stop(); f.wob.stop(); } catch (e) { /* gone */ } }, 1200); } catch (e) { /* gone */ }
+    fire = null;
+  }
+
   function setEnabled(on) {
     enabled = !!on;
     try { root.localStorage && root.localStorage.setItem(KEY, enabled ? 'on' : 'off'); } catch (e) { /* this visit only */ }
     if (enabled && audio() && ctx.state === 'suspended') ctx.resume();
-    if (!enabled) stopRain();
+    if (!enabled) { stopRain(); stopFire(); }
     return enabled;
   }
   enabled = stored();
 
-  return { play, setEnabled, setRain, isEnabled: () => enabled, names: Object.keys(SOUNDS) };
+  return { play, setEnabled, setRain, setFire, isEnabled: () => enabled, names: Object.keys(SOUNDS) };
 });

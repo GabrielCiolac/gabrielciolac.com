@@ -145,6 +145,20 @@ body {
 #hot-lights.off #lightsBulbs ellipse { filter: saturate(.25) brightness(.45); }
 #slotLights.off .sb { filter: saturate(.2) brightness(.55); }
 #hot-lights:focus-visible #lightsHit path { stroke: rgba(255,194,77,.25); }
+/* snow day fireplace on the CRT */
+#crtFire .fl { transform-box: fill-box; transform-origin: 50% 100%; }
+#crtFire .f1 { animation: flick1 .9s ease-in-out infinite alternate; }
+#crtFire .f2 { animation: flick2 .7s ease-in-out infinite alternate; }
+#crtFire .f3 { animation: flick1 .55s ease-in-out infinite alternate-reverse; }
+#crtFire .f4 { animation: flick2 .45s ease-in-out infinite alternate; }
+@keyframes flick1 { 0% { transform: scale(1, 1) skewX(0); } 40% { transform: scale(1.04, .9) skewX(-4deg); } 100% { transform: scale(.96, 1.1) skewX(3deg); } }
+@keyframes flick2 { 0% { transform: scale(1, .94) skewX(2deg); } 50% { transform: scale(.95, 1.08) skewX(-3deg); } 100% { transform: scale(1.05, 1) skewX(1deg); } }
+#crtFire .fGlow, #crtFire .embers { animation: glowpulse 1.6s ease-in-out infinite; }
+#crtFire .spark { animation: spark 2.2s linear infinite; }
+#crtFire .s2 { animation-delay: -.6s; } #crtFire .s3 { animation-delay: -1.2s; } #crtFire .s4 { animation-delay: -1.7s; }
+@keyframes spark { 0% { transform: translate(0, 0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translate(6px, -60px); opacity: 0; } }
+[data-fire="on"] .flick { fill: url(#gFire); opacity: .55 !important; }
+@media (prefers-reduced-motion: reduce) { #crtFire .fl, #crtFire .spark { animation: none; } }
 /* preview panel (open with #preview) */
 .preview { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 14px; padding: 10px 14px;
   background: #1b0f24; border: 3px solid var(--ink); border-radius: 12px; font-size: 13px; color: var(--muted); }
@@ -457,6 +471,8 @@ body {
     <radialGradient id="gCrt"><stop offset="0" stop-color="#7cf2c4" stop-opacity=".8"/><stop offset="1" stop-color="#7cf2c4" stop-opacity="0"/></radialGradient>
     <radialGradient id="gLamp"><stop offset="0" stop-color="#ffcf6a" stop-opacity=".9"/><stop offset="1" stop-color="#ff9a3a" stop-opacity="0"/></radialGradient>
     <mask id="gabeHide" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1536"><rect x="0" y="0" width="1024" height="1536" fill="#fff"/><image id="gabeHideImg" x="0" y="0" width="1" height="1"/></mask>
+    <radialGradient id="gFire"><stop offset="0" stop-color="#ff8a2a" stop-opacity=".55"/><stop offset="1" stop-color="#ff8a2a" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gCrtVignette" cx=".5" cy=".5" r=".7"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".6"/></radialGradient>
     <mask id="mGlass" maskUnits="userSpaceOnUse" x="620" y="40" width="420" height="480"><image id="glassMaskImg" href="room/glass-mask.png" x="660" y="80" width="340" height="400"/></mask>
     <clipPath id="clipWin"><path d="M757 112 Q830 92 895 97 Q960 100 985 110 L987 460 L680 452 Q676 400 690 340 Q705 270 735 225 Z"/></clipPath>
     <filter id="cloudBlur" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="14"/></filter>
@@ -509,6 +525,44 @@ body {
   <g id="hot-frames" class="hot" tabindex="0" role="button" aria-label="Framed photos: see Gabriel's photography" data-label="Look at the photos">
     <path class="hit" pointer-events="all" d="M414 118 L548 126 L586 266 L580 384 L462 372 L466 250 L412 244 Z"/>
   </g>
+  <!-- snow day: a crackling fireplace on the old CRT (drawn in a flat 126x110 box, mapped onto the tilted glass) -->
+  <clipPath id="clipCrt"><path d="M1288 470 L1415 505 L1401 624 L1271 585 Z"/></clipPath>
+  <g id="crtFire" clip-path="url(#clipCrt)" style="pointer-events:none; display:none">
+    <g transform="matrix(1 0.2778 -0.1273 1 1288 471)">
+      <rect x="-12" y="-4" width="150" height="120" fill="#0d0503"/>
+      <!-- brick surround -->
+      <g fill="#7a2e1f" stroke="#2a0d07" stroke-width="1.2">
+        <rect x="-4" y="0" width="22" height="9"/><rect x="18" y="0" width="22" height="9"/><rect x="40" y="0" width="22" height="9"/><rect x="62" y="0" width="22" height="9"/><rect x="84" y="0" width="22" height="9"/><rect x="106" y="0" width="24" height="9"/>
+        <rect x="-4" y="9" width="14" height="9"/><rect x="116" y="9" width="14" height="9"/><rect x="-4" y="18" width="10" height="9"/><rect x="120" y="18" width="10" height="9"/>
+        <rect x="-4" y="27" width="14" height="9"/><rect x="116" y="27" width="14" height="9"/><rect x="-4" y="36" width="10" height="9"/><rect x="120" y="36" width="10" height="9"/>
+        <rect x="-4" y="45" width="14" height="9"/><rect x="116" y="45" width="14" height="9"/><rect x="-4" y="54" width="10" height="9"/><rect x="120" y="54" width="10" height="9"/>
+        <rect x="-4" y="63" width="14" height="9"/><rect x="116" y="63" width="14" height="9"/><rect x="-4" y="72" width="10" height="9"/><rect x="120" y="72" width="10" height="9"/>
+        <rect x="-4" y="81" width="14" height="9"/><rect x="116" y="81" width="14" height="9"/><rect x="-4" y="90" width="10" height="9"/><rect x="120" y="90" width="10" height="9"/>
+        <rect x="-4" y="99" width="134" height="12" fill="#5a2216"/>
+      </g>
+      <!-- warm glow on the back wall of the hearth -->
+      <ellipse class="fGlow" cx="63" cy="82" rx="52" ry="34" fill="#ff7a1a" opacity=".35" filter="url(#soft)"/>
+      <!-- flames, back to front -->
+      <g class="flames">
+        <path class="fl f1" d="M30 96 Q26 70 40 58 Q38 74 48 66 Q50 50 62 38 Q62 58 74 52 Q86 64 82 78 Q94 70 92 56 Q104 74 98 96 Z" fill="#c2261a" stroke="#2a0d07" stroke-width="1.6" stroke-linejoin="round"/>
+        <path class="fl f2" d="M38 96 Q36 78 46 70 Q46 80 54 76 Q56 62 64 54 Q66 68 74 64 Q84 74 80 84 Q88 80 88 72 Q96 84 90 96 Z" fill="#ff7a1a" stroke="#2a0d07" stroke-width="1.4" stroke-linejoin="round"/>
+        <path class="fl f3" d="M48 96 Q46 84 54 80 Q56 86 60 82 Q62 72 66 68 Q70 78 74 76 Q80 84 78 96 Z" fill="#ffd24d"/>
+        <path class="fl f4" d="M56 96 Q56 88 60 86 Q62 90 66 84 Q70 90 70 96 Z" fill="#fff3b0"/>
+      </g>
+      <!-- logs -->
+      <g stroke="#2a0d07" stroke-width="1.6">
+        <path d="M22 100 L96 88 L100 96 L26 108 Z" fill="#6b3a1f"/><ellipse cx="98" cy="92" rx="4" ry="5" fill="#b8763f"/>
+        <path d="M30 88 L104 102 L100 110 L26 96 Z" fill="#5a2f17"/><ellipse cx="28" cy="92" rx="4" ry="5" fill="#a8683a"/>
+      </g>
+      <ellipse class="embers" cx="63" cy="100" rx="34" ry="5" fill="#ff5a1a" opacity=".8" filter="url(#soft)"/>
+      <!-- sparks drifting up -->
+      <g fill="#ffd24d"><circle class="spark s1" cx="52" cy="70" r="1.3"/><circle class="spark s2" cx="68" cy="64" r="1.1"/><circle class="spark s3" cx="76" cy="72" r="1.4"/><circle class="spark s4" cx="60" cy="76" r="1"/></g>
+      <!-- the CRT: scanlines and a little curvature shading -->
+      <g opacity=".22" stroke="#000" stroke-width="1"><path d="M-12 3 H140 M-12 7 H140 M-12 11 H140 M-12 15 H140 M-12 19 H140 M-12 23 H140 M-12 27 H140 M-12 31 H140 M-12 35 H140 M-12 39 H140 M-12 43 H140 M-12 47 H140 M-12 51 H140 M-12 55 H140 M-12 59 H140 M-12 63 H140 M-12 67 H140 M-12 71 H140 M-12 75 H140 M-12 79 H140 M-12 83 H140 M-12 87 H140 M-12 91 H140 M-12 95 H140 M-12 99 H140 M-12 103 H140 M-12 107 H140"/></g>
+      <rect x="-12" y="-4" width="150" height="120" fill="url(#gCrtVignette)"/>
+    </g>
+  </g>
+
   <g id="hot-pc" class="hot" tabindex="0" role="button" aria-label="Computer: open Gabriel's GitHub and LinkedIn" data-label="Boot up the computer">
     <path class="hit" pointer-events="all" d="M1250 440 Q1380 420 1515 470 L1525 740 L1380 790 L1120 700 L1130 640 L1240 630 Z"/>
   </g>
@@ -1762,6 +1816,11 @@ body {
   function applyWeather() {
     const code = state.wxSel === 'auto' ? state.code : Number(state.wxSel), w = R.weatherFor(code);
     window.RoomSound && window.RoomSound.setRain(w.kind === 'rain' || w.kind === 'storm' ? w.intensity : 0);
+    // snow day: a fire on the old CRT, and its crackle if sound is on
+    const snowing = w.kind === 'snow';
+    $('#crtFire').style.display = snowing ? '' : 'none'; document.documentElement.dataset.fire = snowing ? 'on' : 'off';
+    $('#hot-pc').dataset.label = snowing ? 'Warm up by the screen (or boot it up)' : 'Boot up the computer';
+    window.RoomSound && window.RoomSound.setFire(snowing);
     const tint = { clear: 0, clouds: .18 * w.intensity + .05, fog: .1, rain: .32, snow: .2, storm: .45 }[w.kind];
     $('#wxTint').setAttribute('opacity', tint);
     $('#wxClouds').setAttribute('opacity', w.kind === 'clear' ? 0 : w.kind === 'fog' ? .3 : Math.min(1, .45 + w.intensity * .5));

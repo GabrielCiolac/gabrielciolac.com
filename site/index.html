@@ -190,6 +190,41 @@ body {
 .pincard b { display: block; font: 400 19px/1.1 var(--f-show); } .pincard span { font-size: 12px; opacity: .7; } .pincard p { margin: 4px 0 0; }
 .pincard:empty, .pincard p:empty { display: none; }
 .map-foot { margin: 8px 2px 0; font: 14px var(--f-body); opacity: .8; }
+/* the guestbook: an open book */
+.gbov { position: absolute; inset: 0; z-index: 6; background: rgba(10,5,16,.8); display: grid; place-items: center; padding: 10px; overflow: auto; }
+.gbook { position: relative; display: grid; grid-template-columns: 1fr 1fr; width: min(1000px, 100%); max-height: 100%;
+  background: #6b2a1f; border: 5px solid var(--ink); border-radius: 12px; padding: 10px; box-shadow: 12px 12px 0 rgba(0,0,0,.5); animation: pop .35s cubic-bezier(.3,1.7,.5,1); }
+.gb-page { background: #fbf1d9; color: #3a2416; padding: 12px 16px; min-height: 0; overflow: auto; font: 14px/1.35 var(--f-body); }
+.gb-left { border-radius: 8px 2px 2px 8px; box-shadow: inset -14px 0 18px -12px rgba(0,0,0,.35); }
+.gb-right { border-radius: 2px 8px 8px 2px; box-shadow: inset 14px 0 18px -12px rgba(0,0,0,.35); }
+.gb-page h2 { margin: 0 0 8px; font: 400 26px/1 var(--f-show); color: #6b2a1f; }
+.gb-x { position: absolute; top: -18px; right: -18px; z-index: 2; }
+.gb-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gb-entry { border-bottom: 1px dashed #c9b48a; padding-bottom: 6px; }
+.gb-entry img { display: block; width: 100%; aspect-ratio: 72 / 44; object-fit: contain; }
+.gb-entry b { font: 400 17px/1.1 var(--f-show); } .gb-entry time { font-size: 11px; opacity: .6; margin-left: 4px; }
+.gb-entry p { margin: 2px 0 0; font-size: 13px; overflow-wrap: anywhere; }
+.gb-entry.mine { background: #fff7c2; border-radius: 6px; padding: 4px; } .gb-entry.mine em { font-size: 11px; color: #a0522d; }
+.gb-empty { grid-column: 1 / -1; padding: 30px 6px; text-align: center; font: 400 20px var(--f-show); opacity: .7; }
+.gb-nav { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 8px; }
+.gb-nav button, .gb-tools button { font: 15px/1 var(--f-body); min-width: 32px; height: 30px; color: var(--ink); background: var(--paper); border: 2px solid var(--ink); border-radius: 8px; cursor: inherit; }
+.gb-nav button:disabled { opacity: .35; }
+.gb-tools { display: grid; gap: 5px; margin-bottom: 6px; }
+.gb-row { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.gb-tools button[aria-pressed="true"] { background: var(--gold); box-shadow: inset 0 2px 0 rgba(0,0,0,.2); }
+.gb-sep { width: 8px; }
+.gb-swatch { width: 24px !important; min-width: 24px !important; height: 24px !important; border-radius: 50% !important; }
+.gb-swatch[aria-pressed="true"] { outline: 3px solid var(--ink); outline-offset: 1px; }
+#gbCanvas { display: block; width: 100%; aspect-ratio: 72 / 44; touch-action: none; cursor: crosshair; border: 2px dashed #c9b48a; border-radius: 6px;
+  background: repeating-linear-gradient(#fbf1d9 0 27px, #ead9b5 27px 28px); }
+.gb-field { display: grid; gap: 2px; margin-top: 6px; font: 600 13px var(--f-body); } .gb-field span { font-weight: 400; opacity: .7; }
+.gb-field input, .gb-field textarea { font: 15px var(--f-body); color: var(--ink); background: #fffaf0; border: 2px solid #3a2416; border-radius: 6px; padding: 4px 6px; resize: vertical; }
+.gb-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.gb-submit { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.gb-submit button { font: 400 20px var(--f-show); color: var(--ink); background: var(--gold); border: 3px solid var(--ink); border-radius: 12px 10px 13px 9px; padding: 2px 18px 4px; box-shadow: 0 4px 0 var(--ink); cursor: inherit; }
+.gb-submit button:disabled { opacity: .5; }
+#gbStatus { font-size: 13px; }
+@media (max-width: 760px) { .gbook { grid-template-columns: 1fr; } .gb-left, .gb-right { border-radius: 8px; box-shadow: none; } .gb-left { order: 2; margin-top: 8px; } .gb-list { grid-template-columns: 1fr; } }
 /* preview panel (open with #preview) */
 .preview { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 14px; padding: 10px 14px;
   background: #1b0f24; border: 3px solid var(--ink); border-radius: 12px; font-size: 13px; color: var(--muted); }
@@ -664,6 +699,12 @@ body {
     <g id="lightsBulbs"></g>
   </g>
 
+  <!-- the guestbook on its lectern by the door -->
+  <g id="hot-guestbook" class="hot" tabindex="0" role="button" aria-label="Guestbook on a lectern by the door: sign it" data-label="Sign the guestbook">
+    <path class="hit" pointer-events="all" d="M292 474 L384 474 L384 560 L360 562 L368 650 L300 650 L310 562 L290 560 Z"/>
+    <image class="nightlit" href="room/guestbook.webp" x="289" y="472.4" width="96.4" height="177.8"/>
+  </g>
+
   <!-- Muscles wanders: one spot is shown at a time (sill = her own layers over the empty sill) -->
   <g id="hot-cat" class="hot" tabindex="0" role="button" aria-label="Muscles the cat, asleep on the windowsill" data-label="Pet Muscles">
     <g class="spot" data-spot="sill">
@@ -754,6 +795,42 @@ body {
         <div class="globe-stand" aria-hidden="true"></div>
         <div class="place-chips" id="placeChips" aria-label="Places"></div>
         <p class="map-foot" id="mapFoot"></p>
+      </div>
+    </div>
+    <div class="gbov" id="gbOv" hidden role="dialog" aria-modal="true" aria-labelledby="gbTitle">
+      <div class="gbook">
+        <button class="map-x gb-x" id="gbClose" type="button" aria-label="Close the guestbook">&times;</button>
+        <section class="gb-page gb-left" aria-labelledby="gbTitle">
+          <h2 id="gbTitle">Signatures</h2>
+          <div class="gb-list" id="gbList" aria-live="polite"></div>
+          <div class="gb-nav"><button type="button" id="gbPrev" aria-label="Previous page">&#9664;</button><span id="gbPageNo"></span><button type="button" id="gbNext" aria-label="Next page">&#9654;</button></div>
+        </section>
+        <section class="gb-page gb-right" aria-labelledby="gbSignTitle">
+          <h2 id="gbSignTitle">Sign the book</h2>
+          <form id="gbForm" autocomplete="off">
+            <div class="gb-tools" role="toolbar" aria-label="Drawing tools">
+              <div class="gb-row" id="gbToolBtns">
+                <button type="button" data-tool="pencil" aria-pressed="true" title="Pencil">&#9998;</button>
+                <button type="button" data-tool="marker" aria-pressed="false" title="Marker">&#9673;</button>
+                <button type="button" data-tool="crayon" aria-pressed="false" title="Crayon">&#9617;</button>
+                <button type="button" data-tool="spray" aria-pressed="false" title="Spray paint">&#8756;</button>
+                <button type="button" data-tool="eraser" aria-pressed="false" title="Eraser">&#9003;</button>
+                <button type="button" data-tool="stamp" aria-pressed="false" title="Stamps">&#9733;</button>
+                <span class="gb-sep"></span>
+                <button type="button" id="gbUndo" title="Undo">&#8630;</button>
+                <button type="button" id="gbClear" title="Clear the page">&#10007;</button>
+              </div>
+              <div class="gb-row" id="gbStamps" hidden></div>
+              <div class="gb-row" id="gbColors"></div>
+              <div class="gb-row gb-sizes" id="gbSizes"><button type="button" data-size="1" aria-label="Thin">&middot;</button><button type="button" data-size="2" aria-pressed="true" aria-label="Medium">&bull;</button><button type="button" data-size="3" aria-label="Thick">&#9679;</button></div>
+            </div>
+            <canvas id="gbCanvas" width="720" height="440" aria-label="Drawing area: make your mark"></canvas>
+            <label class="gb-field">Your name <input id="gbName" name="name" maxlength="40" required></label>
+            <label class="gb-field">A note <span>(optional)</span> <textarea id="gbMsg" name="message" maxlength="280" rows="2"></textarea></label>
+            <label class="gb-hp" aria-hidden="true">Website <input id="gbWebsite" name="website" tabindex="-1"></label>
+            <div class="gb-submit"><button type="submit" id="gbSend">Sign it</button><span id="gbStatus" role="status"></span></div>
+          </form>
+        </section>
       </div>
     </div>
     <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Taiga Nomad plaque, close-up">
@@ -1095,7 +1172,7 @@ body {
     read: cur(kGlasses, 22, 13, 'zoom-in'), water: cur(kCan, 3, 8, 'pointer'), power: cur(kPower, 17, 17, 'pointer'),
     write: cur(kQuill, 3, 33, 'pointer'), talk: cur(kTalk, 6, 3, 'pointer'), bulb: cur(kBulb, 16, 16, 'pointer'), patUp: cur(kPatUp, 22, 22, 'pointer'), patDown: cur(kPatDown, 22, 22, 'pointer'),
   };
-  const KIND = { read: ['hot-news', 'hot-album', 'hot-frames', 'hot-plaque'], water: ['hot-plant'], power: ['hot-pc'], write: ['hot-mail'], talk: ['hot-me'], bulb: ['hot-lights'], patUp: ['hot-cat'] };
+  const KIND = { read: ['hot-news', 'hot-album', 'hot-frames', 'hot-plaque'], water: ['hot-plant'], power: ['hot-pc'], write: ['hot-mail', 'hot-guestbook'], talk: ['hot-me'], bulb: ['hot-lights'], patUp: ['hot-cat'] };
   const rules = Object.entries(KIND).map(([k, ids]) => ids.map((id) => `#${id},.slot[data-target="${id}"]`).join(',') + `{cursor:${C[k]}}`).join(' ');
   const css = document.createElement('style');
   css.textContent = `.wrap{cursor:${cur(arrow, 4, 3, 'default')}} .hot,.slot,.btn{cursor:${cur(hand, 15, 3, 'pointer')}} ${rules}`;
@@ -1181,6 +1258,7 @@ body {
       setTimeout(() => el.classList.remove('spin'), 2200); setTimeout(openMap, 700); return;
     }
     if (el.id === 'hot-plant') { waterTheRoomPlant(); return; }
+    if (el.id === 'hot-guestbook') { openGuestbook(); return; }
     if (el.id === 'hot-lights') { window.RoomSound && window.RoomSound.play('switch'); setLights(!lightsOn); setSay(lightsOn ? 'Click. The lights twinkle back on.' : 'Click. The lights go dark.'); return; }
     if (el.id === 'hot-cat') {
       const sp = CAT_SPOTS[catSpot]; catPetAt = Date.now();
@@ -2304,6 +2382,122 @@ body {
   $('#mapClose').addEventListener('click', closeMap);
   $('#mapOv').addEventListener('click', (e) => { if (e.target.id === 'mapOv') closeMap(); else if (!e.target.closest('.gpin, .place-chips, .pincard')) { $('#pinCard').hidden = true; openPin = null; } });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#mapOv').hidden) closeMap(); });
+
+  /* ---------- The guestbook: draw your mark; Gabe approves before it shows ---------- */
+  const GB_API = 'api/collections/guestbook/records', GB_PER = 4;
+  const gbC = $('#gbCanvas'), gbX = gbC.getContext('2d');
+  const GB_COLORS = ['#1b0f24', '#6b2a1f', '#d0342c', '#ff7a1a', '#ffc24d', '#3aa655', '#2f6fa0', '#7a4c9a', '#e0548a', '#ffffff'];
+  const STAMPS = {
+    paw: 'M0 6 C-7 6 -9 0 -5 -3 C-2 -5 2 -5 5 -3 C9 0 7 6 0 6 Z M-9 -6 a3 3.5 0 1 0 .1 0 Z M-4 -11 a3 3.5 0 1 0 .1 0 Z M4 -11 a3 3.5 0 1 0 .1 0 Z M9 -6 a3 3.5 0 1 0 .1 0 Z',
+    heart: 'M0 9 C-12 0 -11 -9 -5 -9 C-2 -9 0 -6 0 -4 C0 -6 2 -9 5 -9 C11 -9 12 0 0 9 Z',
+    star: 'M0 -11 L3 -3.5 L11 -3.4 L4.8 1.6 L7 9.5 L0 4.8 L-7 9.5 L-4.8 1.6 L-11 -3.4 L-3 -3.5 Z',
+    maple: 'M0 -12 L2 -6 L6 -8 L5 -3 L11 -4 L8 0 L10 2 L4 3 L5 6 L1 4 L1 11 L-1 11 L-1 4 L-5 6 L-4 3 L-10 2 L-8 0 L-11 -4 L-5 -3 L-6 -8 L-2 -6 Z',
+    snow: 'M0 -11 V11 M-9.5 -5.5 L9.5 5.5 M-9.5 5.5 L9.5 -5.5 M-3 -9 L0 -6 L3 -9 M-3 9 L0 6 L3 9',
+    smile: 'M0 -10 a10 10 0 1 0 .1 0 Z M-4 -3 a1.6 1.6 0 1 0 .1 0 Z M4 -3 a1.6 1.6 0 1 0 .1 0 Z M-5 3 Q0 8 5 3',
+  };
+  let gbTool = 'pencil', gbColor = GB_COLORS[0], gbSize = 2, gbStamp = 'paw', gbHistory = [], gbInk = 0, gbStroke = null, gbPage = 1, gbTotal = 0;
+  // tool + colour + size + stamp pickers
+  GB_COLORS.forEach((c, i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'gb-swatch'; b.style.background = c; b.setAttribute('aria-label', 'Colour ' + (i + 1));
+    b.setAttribute('aria-pressed', String(i === 0)); b.addEventListener('click', () => { gbColor = c; pressOnly('#gbColors', b); if (gbTool === 'eraser') setTool('pencil'); });
+    $('#gbColors').appendChild(b);
+  });
+  Object.keys(STAMPS).forEach((k, i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.dataset.stamp = k; b.setAttribute('aria-label', k + ' stamp'); b.setAttribute('aria-pressed', String(i === 0));
+    b.innerHTML = `<svg viewBox="-12 -12 24 24" width="18" height="18"><path d="${STAMPS[k]}" fill="${k === 'snow' ? 'none' : '#3a2416'}" stroke="#3a2416" stroke-width="${k === 'snow' || k === 'smile' ? 1.8 : 0}"/></svg>`;
+    b.addEventListener('click', () => { gbStamp = k; pressOnly('#gbStamps', b); }); $('#gbStamps').appendChild(b);
+  });
+  function pressOnly(sel, btn) { document.querySelectorAll(sel + ' button').forEach((x) => x.setAttribute('aria-pressed', String(x === btn))); }
+  function setTool(t) { gbTool = t; pressOnly('#gbToolBtns', document.querySelector(`#gbToolBtns [data-tool="${t}"]`)); $('#gbStamps').hidden = t !== 'stamp'; }
+  document.querySelectorAll('#gbToolBtns [data-tool]').forEach((b) => b.addEventListener('click', () => setTool(b.dataset.tool)));
+  document.querySelectorAll('#gbSizes [data-size]').forEach((b) => b.addEventListener('click', () => { gbSize = +b.dataset.size; pressOnly('#gbSizes', b); }));
+  // drawing
+  const snap = () => { gbHistory.push(gbX.getImageData(0, 0, gbC.width, gbC.height)); if (gbHistory.length > 30) gbHistory.shift(); };
+  const pt = (e) => { const r = gbC.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * gbC.width, y: (e.clientY - r.top) / r.height * gbC.height }; };
+  function dab(a, b) {
+    const w = [3, 7, 14][gbSize - 1]; gbX.globalCompositeOperation = gbTool === 'eraser' ? 'destination-out' : 'source-over';
+    gbX.strokeStyle = gbX.fillStyle = gbColor; gbX.lineCap = gbX.lineJoin = 'round';
+    if (gbTool === 'pencil' || gbTool === 'marker' || gbTool === 'eraser') {
+      gbX.globalAlpha = gbTool === 'marker' ? 0.85 : 1; gbX.lineWidth = gbTool === 'pencil' ? Math.max(2, w * 0.45) : gbTool === 'eraser' ? w * 2.2 : w * 1.6;
+      gbX.beginPath(); gbX.moveTo(a.x, a.y); gbX.lineTo(b.x, b.y); gbX.stroke();
+    } else if (gbTool === 'crayon') {                   // waxy: lots of small offset dots along the stroke
+      gbX.globalAlpha = 0.55; const n = Math.max(1, Math.hypot(b.x - a.x, b.y - a.y) / 1.5);
+      for (let i = 0; i < n; i++) { const t = i / n; for (let k = 0; k < w; k++) gbX.fillRect(a.x + (b.x - a.x) * t + (Math.random() - .5) * w * 1.4, a.y + (b.y - a.y) * t + (Math.random() - .5) * w * 1.4, 1.6, 1.6); }
+    } else if (gbTool === 'spray') {
+      gbX.globalAlpha = 0.9; const r = w * 2.6;
+      for (let k = 0; k < w * 6; k++) { const ang = Math.random() * 6.283, d = Math.random() * r; gbX.fillRect(b.x + Math.cos(ang) * d, b.y + Math.sin(ang) * d, 1.4, 1.4); }
+    }
+    gbX.globalAlpha = 1; gbX.globalCompositeOperation = 'source-over';
+    if (gbTool !== 'eraser') gbInk += 1;
+  }
+  function stampAt(p) {
+    const s = [1.4, 2.2, 3.4][gbSize - 1]; gbX.save(); gbX.translate(p.x, p.y); gbX.rotate((Math.random() - .5) * .5); gbX.scale(s, s);
+    const path = new Path2D(STAMPS[gbStamp]); gbX.fillStyle = gbX.strokeStyle = gbColor;
+    if (gbStamp === 'snow' || gbStamp === 'smile') { gbX.lineWidth = 1.8; gbX.lineCap = 'round'; gbX.stroke(path); } else gbX.fill(path);
+    gbX.restore(); gbInk += 5; window.RoomSound && window.RoomSound.play('stamp');
+  }
+  gbC.addEventListener('pointerdown', (e) => {
+    e.preventDefault(); gbC.setPointerCapture(e.pointerId); snap(); const p = pt(e);
+    if (gbTool === 'stamp') { stampAt(p); return; }
+    gbStroke = p; dab(p, p);
+  });
+  gbC.addEventListener('pointermove', (e) => { if (!gbStroke) return; const p = pt(e); dab(gbStroke, p); gbStroke = p; if (Math.random() < 0.08) window.RoomSound && window.RoomSound.play('scribble'); });
+  const endStroke = () => { gbStroke = null; };
+  gbC.addEventListener('pointerup', endStroke); gbC.addEventListener('pointercancel', endStroke);
+  $('#gbUndo').addEventListener('click', () => { const s = gbHistory.pop(); if (s) gbX.putImageData(s, 0, 0); });
+  $('#gbClear').addEventListener('click', () => { snap(); gbX.clearRect(0, 0, gbC.width, gbC.height); gbInk = 0; });
+  // reading approved signatures (and your own pending one, kept in your browser)
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const mine = () => { try { return JSON.parse(localStorage.getItem('gabe-guestbook-mine')); } catch (e) { return null; } };
+  async function loadSignatures(page) {
+    const list = $('#gbList'); list.textContent = 'Turning pages…';
+    let data = null;
+    try { const r = await fetch(`${GB_API}?sort=-created&perPage=${GB_PER}&page=${page}&fields=id,name,message,drawing,created`); if (r.ok) data = await r.json(); } catch (e) { /* offline */ }
+    list.textContent = '';
+    const m = mine();
+    if (page === 1 && m && !(data && data.items.some((x) => x.id === m.id))) {
+      list.insertAdjacentHTML('beforeend', `<div class="gb-entry mine"><img src="${m.img}" alt="Your drawing"><b>${esc(m.name)}</b><em> waiting for Gabe</em>${m.message ? `<p>${esc(m.message)}</p>` : ''}</div>`);
+    }
+    if (!data) { list.insertAdjacentHTML('beforeend', '<div class="gb-empty">The book is stuck shut. Try again in a bit.</div>'); $('#gbPageNo').textContent = ''; return; }
+    gbPage = data.page; gbTotal = data.totalPages;
+    if (!data.items.length && !(page === 1 && m)) list.insertAdjacentHTML('beforeend', '<div class="gb-empty">No signatures yet. Be the first to sign!</div>');
+    data.items.forEach((x) => {
+      const d = new Date(x.created.replace(' ', 'T')), when = isNaN(d) ? '' : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      list.insertAdjacentHTML('beforeend', `<div class="gb-entry"><img src="api/files/guestbook/${esc(x.id)}/${esc(x.drawing)}" alt="Drawing by ${esc(x.name)}" loading="lazy"><b>${esc(x.name)}</b><time>${esc(when)}</time>${x.message ? `<p>${esc(x.message)}</p>` : ''}</div>`);
+    });
+    $('#gbPageNo').textContent = gbTotal > 1 ? `${gbPage} / ${gbTotal}` : '';
+    $('#gbPrev').disabled = gbPage <= 1; $('#gbNext').disabled = gbPage >= gbTotal;
+  }
+  $('#gbPrev').addEventListener('click', () => { window.RoomSound && window.RoomSound.play('page'); loadSignatures(gbPage - 1); });
+  $('#gbNext').addEventListener('click', () => { window.RoomSound && window.RoomSound.play('page'); loadSignatures(gbPage + 1); });
+  // signing
+  $('#gbForm').addEventListener('submit', async (e) => {
+    e.preventDefault(); const st = $('#gbStatus'), name = $('#gbName').value.trim(), message = $('#gbMsg').value.trim();
+    if (!name) { st.textContent = 'Sign your name, please.'; $('#gbName').focus(); return; }
+    if (gbInk < 3) { st.textContent = 'Make your mark first. Draw something!'; return; }
+    if ($('#gbWebsite').value) { st.textContent = 'Thanks!'; return; }          // a bot filled the hidden field
+    $('#gbSend').disabled = true; st.textContent = 'Blotting the ink…';
+    const blob = await new Promise((res) => gbC.toBlob(res, 'image/png'));
+    const fd = new FormData(); fd.append('name', name); if (message) fd.append('message', message); fd.append('drawing', blob, 'drawing.png');
+    let r = null; try { r = await fetch(GB_API, { method: 'POST', body: fd }); } catch (err) { /* offline */ }
+    $('#gbSend').disabled = false;
+    if (r && r.ok) {
+      const rec = await r.json(); const thumb = document.createElement('canvas'); thumb.width = 360; thumb.height = 220; thumb.getContext('2d').drawImage(gbC, 0, 0, 360, 220);
+      try { localStorage.setItem('gabe-guestbook-mine', JSON.stringify({ id: rec.id, name, message, img: thumb.toDataURL('image/png') })); } catch (err) { /* fine */ }
+      st.textContent = 'Thanks! Gabe glues new pages in once he’s had a look.';
+      gbX.clearRect(0, 0, gbC.width, gbC.height); gbInk = 0; gbHistory = []; $('#gbMsg').value = '';
+      window.RoomSound && window.RoomSound.play('page'); loadSignatures(1);
+    } else if (r && r.status === 429) st.textContent = 'Whoa, that’s a lot of signing. Try again in a few minutes.';
+    else st.textContent = 'The pen ran dry. Try again in a bit.';
+  });
+  function openGuestbook() {
+    hideTip(); lastFocus = document.activeElement; $('#gbOv').hidden = false; $('#gbStatus').textContent = '';
+    window.RoomSound && window.RoomSound.play('page'); loadSignatures(1); $('#gbName').focus({ preventScroll: true });
+  }
+  const closeGuestbook = () => { $('#gbOv').hidden = true; lastFocus && lastFocus.focus && lastFocus.focus(); };
+  $('#gbClose').addEventListener('click', closeGuestbook);
+  $('#gbOv').addEventListener('click', (e) => { if (e.target.id === 'gbOv') closeGuestbook(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#gbOv').hidden) closeGuestbook(); });
 
   /* ---------- Muscles wanders the room ---------- */
   const CAT_SPOTS = {

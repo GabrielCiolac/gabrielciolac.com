@@ -151,6 +151,20 @@
       burst(t + 0.05, { freq: 3000, q: 0.8, peak: 0.25, d: 0.06 });
       burst(t + 0.08, { freq: 160, q: 0.7, peak: 0.35, d: 0.2, type: 'lowpass' });
     },
+
+    /* --- the guestbook --- */
+    // a page turning: a papery swish that sweeps up, then settles
+    page(t) {
+      const s = noise(), bp = ctx.createBiquadFilter(), g = ctx.createGain();
+      bp.type = 'bandpass'; bp.Q.value = 0.8; bp.frequency.setValueAtTime(900, t); bp.frequency.exponentialRampToValueAtTime(3200, t + 0.18); bp.frequency.exponentialRampToValueAtTime(1400, t + 0.34);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.08); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.38);
+      s.connect(bp); bp.connect(g); g.connect(master); s.start(t, Math.random()); s.stop(t + 0.42);
+      burst(t + 0.33, { freq: 500, q: 0.7, peak: 0.12, d: 0.05, type: 'lowpass' });
+    },
+    // a rubber stamp: a soft thunk with a papery tap
+    stamp(t) { burst(t, { freq: 220, q: 0.8, peak: 0.5, d: 0.07, type: 'lowpass' }); burst(t + 0.005, { freq: 2600, q: 1.5, peak: 0.08, d: 0.02 }); },
+    // the nib scratching the page
+    scribble(t) { burst(t, { freq: 4200 + Math.random() * 1800, q: 2.5, peak: 0.05, d: 0.05 }); },
     // water from the can: a handful of bubbly blips
     glug(t) {
       for (let i = 0; i < 7; i++) {

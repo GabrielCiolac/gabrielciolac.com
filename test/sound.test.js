@@ -10,6 +10,7 @@ test('sound module loads without Web Audio and stays silent', () => {
   S.setEnabled(true);
   assert.equal(S.play('boot'), false);             // no AudioContext in node: still a safe no-op
   assert.doesNotThrow(() => S.setRain(0.6));
+  assert.doesNotThrow(() => { S.setFire(true); S.setFire(false); });
   S.setEnabled(false);
 });
 

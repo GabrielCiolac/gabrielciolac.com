@@ -227,5 +227,31 @@
   }
   enabled = stored();
 
-  return { play, setEnabled, setRain, setFire, isEnabled: () => enabled, names: Object.keys(SOUNDS) };
+  /* --- the travel globe spinning: an airy whoosh that follows the speed, plus faint axle ticks --- */
+  let spin = null;
+  function setGlobeSpin(degPerSec) {
+    const v = Math.min(1, Math.abs(degPerSec || 0) / 360);
+    if (!enabled || !audio() || (v < 0.01 && !spin)) return;
+    if (!spin) {
+      const s = noise(), bp = ctx.createBiquadFilter(), g = ctx.createGain();
+      s.loop = true; bp.type = 'bandpass'; bp.Q.value = 0.9; bp.frequency.value = 400; g.gain.value = 0.0001;
+      s.connect(bp); bp.connect(g); g.connect(master); s.start();
+      spin = { s, bp, g, v: 0, timer: null };
+      const tick = () => {                                // axle ticks: faster spin, faster ticks
+        if (!spin) return;
+        if (spin.v > 0.03) burst(ctx.currentTime + 0.01, { freq: 3400, q: 4, peak: 0.03 + 0.06 * spin.v, d: 0.01 });
+        spin.timer = setTimeout(tick, spin.v > 0.03 ? 40 + 220 * (1 - spin.v) : 120);
+      };
+      tick();
+    }
+    spin.v = v;
+    spin.g.gain.setTargetAtTime(v < 0.01 ? 0.0001 : 0.015 + 0.1 * v, ctx.currentTime, 0.08);
+    spin.bp.frequency.setTargetAtTime(300 + 1400 * v, ctx.currentTime, 0.08);
+    if (v < 0.01) {                                       // settled: let the whoosh fade, then free it
+      const sp = spin; spin = null; clearTimeout(sp.timer);
+      setTimeout(() => { try { sp.s.stop(); } catch (e) { /* gone */ } }, 600);
+    }
+  }
+
+  return { play, setEnabled, setRain, setFire, setGlobeSpin, isEnabled: () => enabled, names: Object.keys(SOUNDS) };
 });

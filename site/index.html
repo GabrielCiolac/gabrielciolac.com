@@ -159,6 +159,37 @@ body {
 @keyframes spark { 0% { transform: translate(0, 0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translate(6px, -60px); opacity: 0; } }
 [data-fire="on"] .flick { fill: url(#gFire); opacity: .55 !important; }
 @media (prefers-reduced-motion: reduce) { #crtFire .fl, #crtFire .spark { animation: none; } }
+/* the globe's travel map */
+.mapov { position: absolute; inset: 0; z-index: 6; background: rgba(10,5,16,.8); display: grid; place-items: center; padding: 12px; }
+.mapcard { width: min(640px, 100%); max-height: 100%; overflow: auto; background: #f4e6c4; color: #3a2416; border: 5px solid var(--ink); border-radius: 14px 18px 12px 16px;
+  box-shadow: 12px 12px 0 rgba(0,0,0,.5); padding: 10px 14px 12px; animation: pop .35s cubic-bezier(.3,1.7,.5,1); }
+.map-head { display: flex; align-items: center; justify-content: space-between; }
+.map-head h2 { margin: 0; font: 400 clamp(22px, 3.4vw, 34px) var(--f-show); color: #3a2416; }
+.map-x { font: 400 28px/1 var(--f-show); width: 40px; height: 40px; color: var(--ink); background: var(--gold); border: 3px solid var(--ink); border-radius: 10px; box-shadow: 0 3px 0 var(--ink); cursor: inherit; }
+.globe-stage { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; margin-top: 6px; }
+.globe-wrap { position: relative; justify-self: center; width: min(52vh, 100%, 440px); aspect-ratio: 1; touch-action: none; cursor: grab; }
+.globe-wrap:active { cursor: grabbing; }
+.globe-ring { position: absolute; inset: -4%; width: 108%; height: 108%; pointer-events: none; }
+#globe { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; }
+.globe-pins { position: absolute; inset: 0; pointer-events: none; }
+.gpin { position: absolute; width: 22px; height: 30px; margin: -30px 0 0 -11px; padding: 0; border: 0; background: none; pointer-events: auto; cursor: inherit; transition: opacity .15s; }
+.gpin svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(1px 2px 0 rgba(0,0,0,.35)); }
+.gpin:hover svg, .gpin:focus-visible svg { transform: scale(1.2); transform-origin: 50% 100%; }
+.gpin:focus-visible { outline: none; } .gpin:focus-visible .head { stroke: var(--gold); stroke-width: 3; }
+.spin-btn { width: 52px; height: 52px; font: 22px/1 var(--f-body); color: var(--ink); background: var(--gold); border: 3px solid var(--ink); border-radius: 50%;
+  box-shadow: 0 4px 0 var(--ink); cursor: inherit; }
+.spin-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+.spin-btn:focus-visible { outline: 3px solid var(--crt); outline-offset: 3px; }
+.globe-stand { width: 120px; height: 14px; margin: 2px auto 0; background: linear-gradient(#c89b46, #7a5520); border: 3px solid var(--ink); border-radius: 0 0 40px 40px; }
+.place-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 10px; }
+.place-chips { max-height: 92px; overflow-y: auto; }
+.place-chips button { font: 600 12px var(--f-body); color: var(--ink); background: var(--paper); border: 2px solid var(--ink); border-radius: 999px; padding: 2px 10px; cursor: inherit; }
+.place-chips button[aria-pressed="true"] { background: var(--gold); }
+.pincard { position: absolute; z-index: 2; transform: translate(-50%, calc(-100% - 34px)); min-width: 150px; max-width: 240px; padding: 8px 12px 9px;
+  background: #fff8e6; border: 3px solid var(--ink); border-radius: 10px 12px 9px 11px; box-shadow: 0 4px 0 var(--ink); font: 14px/1.3 var(--f-body); color: var(--ink); }
+.pincard b { display: block; font: 400 19px/1.1 var(--f-show); } .pincard span { font-size: 12px; opacity: .7; } .pincard p { margin: 4px 0 0; }
+.pincard:empty, .pincard p:empty { display: none; }
+.map-foot { margin: 8px 2px 0; font: 14px var(--f-body); opacity: .8; }
 /* preview panel (open with #preview) */
 .preview { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 14px; padding: 10px 14px;
   background: #1b0f24; border: 3px solid var(--ink); border-radius: 12px; font-size: 13px; color: var(--muted); }
@@ -574,7 +605,7 @@ body {
   </g>
 
   <!-- spinning globe: frames made from its own painted pixels -->
-  <g id="hot-globe" class="hot" tabindex="0" role="button" aria-label="Globe on the bookshelf: spin it" data-label="Spin the globe">
+  <g id="hot-globe" class="hot" tabindex="0" role="button" aria-label="Globe on the bookshelf: see the places Gabriel has been" data-label="See where I have been">
     <rect class="hit" pointer-events="all" x="1184" y="288" width="50" height="74"/>
     <svg x="1196" y="304" width="24" height="24" viewBox="0 0 24 24" overflow="hidden"><g id="globeStrip"><image href="room/globe-spin.webp" x="0" y="0" width="384" height="24"/></g></svg>
   </g>
@@ -705,6 +736,24 @@ body {
       <div class="acts">
         <button type="button" id="knock">Knock</button>
         <button type="button" id="openDoor" hidden>Open the door</button>
+      </div>
+    </div>
+    <div class="mapov" id="mapOv" hidden role="dialog" aria-modal="true" aria-labelledby="mapTitle">
+      <div class="mapcard">
+        <div class="map-head"><h2 id="mapTitle">Places I&rsquo;ve Been</h2><button class="map-x" id="mapClose" type="button" aria-label="Close the map">&times;</button></div>
+        <div class="globe-stage">
+          <button class="spin-btn" id="spinLeft" type="button" aria-label="Spin the globe west">&#9664;</button>
+          <div class="globe-wrap" id="globeWrap">
+            <svg class="globe-ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48.2" fill="none" stroke="#b8862f" stroke-width="2.6"/><circle cx="50" cy="50" r="48.2" fill="none" stroke="#3a2416" stroke-width=".7" stroke-dasharray="1 2.2"/></svg>
+            <canvas id="globe" width="440" height="440" role="img" aria-label="A spinning globe with pins on the places Gabriel has been"></canvas>
+            <div class="globe-pins" id="globePins"></div>
+            <div class="pincard" id="pinCard" hidden><b id="pinName"></b><span id="pinWhen"></span><p id="pinNote"></p></div>
+          </div>
+          <button class="spin-btn" id="spinRight" type="button" aria-label="Spin the globe east">&#9654;</button>
+        </div>
+        <div class="globe-stand" aria-hidden="true"></div>
+        <div class="place-chips" id="placeChips" aria-label="Places"></div>
+        <p class="map-foot" id="mapFoot"></p>
       </div>
     </div>
     <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Taiga Nomad plaque, close-up">
@@ -1128,8 +1177,8 @@ body {
       return;
     }
     if (el.id === 'hot-globe') {
-      el.classList.add('spin'); speak(1208, 290, 'Toronto is about\u2026 here.');
-      setTimeout(() => el.classList.remove('spin'), 2200); return;
+      el.classList.add('spin'); window.RoomSound && window.RoomSound.play('click');
+      setTimeout(() => el.classList.remove('spin'), 2200); setTimeout(openMap, 700); return;
     }
     if (el.id === 'hot-plant') { waterTheRoomPlant(); return; }
     if (el.id === 'hot-lights') { window.RoomSound && window.RoomSound.play('switch'); setLights(!lightsOn); setSay(lightsOn ? 'Click. The lights twinkle back on.' : 'Click. The lights go dark.'); return; }
@@ -2085,6 +2134,177 @@ body {
     // if Muscles is somewhere that doesn't exist this holiday (or the holiday has a spot for her), move her
     if (typeof placeCat === 'function') { if (!catSpots().includes(catSpot) || (art.catSpot && catSpot !== art.catSpot && Math.random() < .5)) placeCat(pickSpot(null)); }
   }
+  /* ---------- The globe opens a map of places Gabriel has been ---------- */
+  // To add a place: { name, lat, lon, where?, when?, note? }. Toronto is home.
+  const PLACES = [
+    { name: 'Toronto', lat: 43.65, lon: -79.38, where: 'Ontario, Canada', note: 'Home. Muscles runs the place.', home: true },
+    { name: 'Ottawa', lat: 45.42, lon: -75.7, where: 'Ontario, Canada' },
+    { name: 'Montreal', lat: 45.5, lon: -73.57, where: 'Quebec, Canada' },
+    { name: 'Calgary', lat: 51.05, lon: -114.07, where: 'Alberta, Canada' },
+    { name: 'Banff', lat: 51.18, lon: -115.57, where: 'Alberta, Canada' },
+    { name: 'Jasper', lat: 52.88, lon: -118.08, where: 'Alberta, Canada' },
+    { name: 'New York City', lat: 40.71, lon: -74.01, where: 'New York, USA' },
+    { name: 'Albany', lat: 42.65, lon: -73.76, where: 'New York, USA' },
+    { name: 'Omaha', lat: 41.26, lon: -95.94, where: 'Nebraska, USA' },
+    { name: 'Lincoln', lat: 40.81, lon: -96.7, where: 'Nebraska, USA' },
+    { name: 'Bismarck', lat: 46.81, lon: -100.78, where: 'North Dakota, USA' },
+    { name: 'San Francisco', lat: 37.77, lon: -122.42, where: 'California, USA' },
+    { name: 'Los Angeles', lat: 34.05, lon: -118.24, where: 'California, USA' },
+    { name: 'Las Vegas', lat: 36.17, lon: -115.14, where: 'Nevada, USA' },
+    { name: 'Honolulu', lat: 21.31, lon: -157.86, where: 'Oʻahu, Hawaii' },
+    { name: 'Maui', lat: 20.8, lon: -156.33, where: 'Hawaii' },
+    { name: 'Cancún', lat: 21.16, lon: -86.85, where: 'Mexico' },
+    { name: 'Montego Bay', lat: 18.47, lon: -77.92, where: 'Jamaica' },
+    { name: 'Bucharest', lat: 44.43, lon: 26.1, where: 'Romania' },
+    { name: 'Timișoara', lat: 45.75, lon: 21.23, where: 'Romania' },
+    { name: 'Sibiu', lat: 45.79, lon: 24.15, where: 'Romania' },
+    { name: 'Catania', lat: 37.5, lon: 15.09, where: 'Sicily, Italy' },
+    { name: 'Paris', lat: 48.86, lon: 2.35, where: 'France' },
+    { name: 'Lyon', lat: 45.76, lon: 4.84, where: 'France' },
+    { name: 'Barcelonnette', lat: 44.39, lon: 6.65, where: 'Alpes, France' },
+    { name: 'London', lat: 51.51, lon: -0.13, where: 'England' },
+    { name: 'Manchester', lat: 53.48, lon: -2.24, where: 'England' },
+    { name: 'Cockermouth', lat: 54.66, lon: -3.36, where: 'Lake District, England' },
+    { name: 'Amsterdam', lat: 52.37, lon: 4.9, where: 'Netherlands' },
+    { name: 'Copenhagen', lat: 55.68, lon: 12.57, where: 'Denmark' },
+    { name: 'Stockholm', lat: 59.33, lon: 18.07, where: 'Sweden' },
+    { name: 'Malmö', lat: 55.6, lon: 13.0, where: 'Sweden' },
+    { name: 'Lisbon', lat: 38.72, lon: -9.14, where: 'Portugal' },
+    { name: 'Faro', lat: 37.02, lon: -7.93, where: 'Algarve, Portugal' },
+    { name: 'Seville', lat: 37.39, lon: -5.98, where: 'Spain' },
+    { name: 'Granada', lat: 37.18, lon: -3.6, where: 'Spain' },
+    { name: 'Málaga', lat: 36.72, lon: -4.42, where: 'Spain' },
+    { name: 'Marbella', lat: 36.51, lon: -4.88, where: 'Spain' },
+    { name: 'Istanbul', lat: 41.01, lon: 28.98, where: 'Türkiye' },
+    { name: 'Cappadocia', lat: 38.64, lon: 34.83, where: 'Türkiye' },
+    { name: 'Antalya', lat: 36.9, lon: 30.71, where: 'Türkiye' },
+    { name: 'Dubai', lat: 25.2, lon: 55.27, where: 'UAE' },
+    { name: 'Dhaka', lat: 23.81, lon: 90.41, where: 'Bangladesh' },
+    { name: 'Bangkok', lat: 13.76, lon: 100.5, where: 'Thailand' },
+    { name: 'Phuket', lat: 7.88, lon: 98.39, where: 'Thailand' },
+    { name: 'Singapore', lat: 1.35, lon: 103.82, where: 'Singapore' },
+  ];
+  const TILT = 18;                                     // look down a little, like a desk globe
+  let lon0 = -60, vel = 0, target = null, mapReady = false, globeRAF = 0, lastT = 0, idleAt = 0, dragging = null, openPin = null;
+  let tex = null, geo = null, img = null;
+  const gCanvas = $('#globe'), gctx = gCanvas.getContext('2d');
+  async function buildTexture() {
+    const W = 1024, H = 512, c = document.createElement('canvas'); c.width = W; c.height = H; const t = c.getContext('2d');
+    t.fillStyle = '#2f6fa0'; t.fillRect(0, 0, W, H);                                   // sea
+    t.strokeStyle = 'rgba(255,255,255,.18)'; t.lineWidth = 1.2;                         // graticule
+    for (let la = -60; la <= 60; la += 30) { t.beginPath(); t.moveTo(0, (90 - la) / 180 * H); t.lineTo(W, (90 - la) / 180 * H); t.stroke(); }
+    for (let lo = -180; lo < 180; lo += 30) { t.beginPath(); t.moveTo((lo + 180) / 360 * W, 0); t.lineTo((lo + 180) / 360 * W, H); t.stroke(); }
+    try {
+      const r = await fetch('room/world-land.svgpath'); const land = new Path2D(await r.text());
+      t.fillStyle = '#e4cf93'; t.fill(land); t.strokeStyle = '#3a2416'; t.lineWidth = 1.6; t.lineJoin = 'round'; t.stroke(land);
+    } catch (e) { /* the sea and pins still work */ }
+    tex = t.getImageData(0, 0, W, H); tex.W = W; tex.H = H;
+  }
+  function buildGeometry() {
+    // everything about each pixel except the spin, computed once: texture row, longitude offset, light
+    const N = gCanvas.width, R = N / 2 - 1, L = window.RoomLogic; geo = new Array(N * N); img = gctx.createImageData(N, N);
+    const lx = -0.45, ly = 0.55, lz = 0.7, ln = Math.hypot(lx, ly, lz);
+    for (let py = 0; py < N; py++) for (let px = 0; px < N; px++) {
+      const x = (px + 0.5 - N / 2) / R, y = -(py + 0.5 - N / 2) / R, q = L.globeLatLon(x, y, TILT);
+      if (!q) { geo[py * N + px] = null; continue; }
+      const z = Math.sqrt(Math.max(0, 1 - x * x - y * y));
+      const lit = Math.max(0, (x * lx + y * ly + z * lz) / ln), rim = Math.pow(z, 0.35);
+      geo[py * N + px] = { v: Math.min(tex.H - 1, Math.floor((90 - q.lat) / 180 * tex.H)), dlon: q.dlon, shade: (0.4 + 0.7 * lit) * rim, spec: Math.pow(lit, 30) * 45 };
+    }
+  }
+  function drawGlobe() {
+    if (!tex) return;
+    if (!geo) buildGeometry();
+    const N = gCanvas.width, d = img.data, T = tex.data, TW = tex.W;
+    for (let i = 0; i < N * N; i++) {
+      const g = geo[i], o = i * 4;
+      if (!g) { d[o + 3] = 0; continue; }
+      let lon = g.dlon + lon0; lon = ((lon + 180) % 360 + 360) % 360;
+      const u = Math.min(TW - 1, Math.floor(lon / 360 * TW)), s = (g.v * TW + u) * 4;
+      d[o] = Math.min(255, T[s] * g.shade + g.spec); d[o + 1] = Math.min(255, T[s + 1] * g.shade + g.spec); d[o + 2] = Math.min(255, T[s + 2] * g.shade + g.spec); d[o + 3] = 255;
+    }
+    gctx.putImageData(img, 0, 0);
+    placePins();
+  }
+  function placePins() {
+    const L = window.RoomLogic;
+    document.querySelectorAll('.gpin').forEach((b) => {
+      const pl = PLACES[b.dataset.i], q = L.globePoint(pl.lat, pl.lon, lon0, TILT);
+      b.style.left = (50 + q.x * 49) + '%'; b.style.top = (50 - q.y * 49) + '%';
+      const vis = q.z > 0.08; b.style.opacity = vis ? Math.min(1, (q.z - 0.08) * 6) : 0; b.tabIndex = vis ? 0 : -1; b.style.pointerEvents = vis ? 'auto' : 'none';
+      if (openPin === pl && !vis) $('#pinCard').hidden = true;
+      if (openPin === pl && vis) positionCard(b);
+    });
+  }
+  function positionCard(b) {
+    const card = $('#pinCard'); card.style.left = b.style.left; card.style.top = b.style.top;
+  }
+  function showPlace(i) {
+    const pl = PLACES[i], b = document.querySelector(`.gpin[data-i="${i}"]`); openPin = pl;
+    $('#pinName').textContent = pl.name; $('#pinWhen').textContent = [pl.where, pl.when].filter(Boolean).join(' \u00b7 '); $('#pinNote').textContent = pl.note || '';
+    $('#pinCard').hidden = false; positionCard(b);
+    document.querySelectorAll('#placeChips button').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.i === String(i))));
+  }
+  function goTo(i) { target = window.RoomLogic.spinTarget(lon0, PLACES[i].lon); vel = 0; idleAt = performance.now() + 8000; kick(); setTimeout(() => showPlace(i), 450); }
+  function step(now) {
+    const dt = Math.min(0.05, (now - lastT) / 1000 || 0); lastT = now; let speed = 0;
+    if (target !== null) {                              // ease towards a place
+      const d = target - lon0; speed = d * 4; lon0 += d * Math.min(1, dt * 4);
+      if (Math.abs(d) < 0.05) { lon0 = target; target = null; speed = 0; }
+    } else if (!dragging) {
+      if (Math.abs(vel) > 0.5) { lon0 += vel * dt; vel *= Math.pow(0.12, dt); speed = vel; }   // coasting after a spin
+      else if (now > idleAt) { lon0 += 6 * dt; vel = 0; }                                   // a slow idle turn
+      else vel = 0;
+    } else speed = dragging.v;
+    window.RoomSound && window.RoomSound.setGlobeSpin(speed);
+    drawGlobe();
+    if (!$('#mapOv').hidden) globeRAF = requestAnimationFrame(step);
+  }
+  function kick() { cancelAnimationFrame(globeRAF); lastT = performance.now(); globeRAF = requestAnimationFrame(step); }
+  const spinBy = (dir) => { target = null; vel += dir * 220; idleAt = performance.now() + 6000; $('#pinCard').hidden = true; openPin = null; kick(); };
+  $('#spinLeft').addEventListener('click', () => spinBy(-1));
+  $('#spinRight').addEventListener('click', () => spinBy(1));
+  const gw = $('#globeWrap');
+  gw.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('.gpin, .pincard')) return;
+    gw.setPointerCapture(e.pointerId); target = null; dragging = { x: e.clientX, t: performance.now(), v: 0 }; $('#pinCard').hidden = true; openPin = null;
+  });
+  gw.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const now = performance.now(), dx = e.clientX - dragging.x, deg = -dx / gw.clientWidth * 180;
+    lon0 += deg; dragging.v = deg / Math.max(0.008, (now - dragging.t) / 1000); dragging.x = e.clientX; dragging.t = now;
+  });
+  const endDrag = () => { if (!dragging) return; vel = Math.max(-500, Math.min(500, dragging.v)); dragging = null; idleAt = performance.now() + 6000; };
+  gw.addEventListener('pointerup', endDrag); gw.addEventListener('pointercancel', endDrag);
+  $('#mapOv').addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); spinBy(-1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); spinBy(1); }
+  });
+  function buildPins() {
+    const pins = $('#globePins'), chips = $('#placeChips'); pins.textContent = ''; chips.textContent = '';
+    PLACES.forEach((pl, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'gpin'; b.dataset.i = i; b.setAttribute('aria-label', [pl.name, pl.where, pl.when].filter(Boolean).join(', '));
+      b.innerHTML = pl.home
+        ? '<svg viewBox="-12 -30 24 32"><path d="M0 0 L-1.5 -10 L1.5 -10 Z" fill="#8a8a8a" stroke="#3a2416" stroke-width=".8"/><path class="head" d="M0 -28 L3 -20 L11 -19.5 L5 -14.5 L6.5 -6.5 L0 -11 L-6.5 -6.5 L-5 -14.5 L-11 -19.5 L-3 -20 Z" fill="#ffc24d" stroke="#3a2416" stroke-width="1.4" stroke-linejoin="round"/></svg>'
+        : '<svg viewBox="-12 -30 24 32"><path d="M0 0 L-1.5 -12 L1.5 -12 Z" fill="#8a8a8a" stroke="#3a2416" stroke-width=".8"/><circle class="head" cx="0" cy="-17" r="7" fill="#d0342c" stroke="#3a2416" stroke-width="1.4"/><circle cx="-2.4" cy="-19.4" r="2" fill="#ff9b93"/></svg>';
+      b.addEventListener('click', (e) => { e.stopPropagation(); showPlace(i); window.RoomSound && window.RoomSound.play('click'); });
+      pins.appendChild(b);
+      const c = document.createElement('button'); c.type = 'button'; c.dataset.i = i; c.textContent = (pl.home ? '\u2605 ' : '') + pl.name; c.setAttribute('aria-pressed', 'false');
+      c.addEventListener('click', () => goTo(i)); chips.appendChild(c);
+    });
+  }
+  async function openMap() {
+    hideTip(); lastFocus = document.activeElement; $('#mapOv').hidden = false; $('#pinCard').hidden = true; openPin = null;
+    if (!mapReady) { buildPins(); await buildTexture(); mapReady = true; }
+    const n = PLACES.filter((p) => !p.home).length;
+    $('#mapFoot').textContent = (n ? `${n} place${n === 1 ? '' : 's'} so far, plus home.` : 'Just home so far. More pins coming soon.') + ' Drag the globe or use the arrows.';
+    lon0 = PLACES[0].lon + 20; idleAt = performance.now() + 1500; kick(); $('#spinRight').focus();
+  }
+  const closeMap = () => { $('#mapOv').hidden = true; cancelAnimationFrame(globeRAF); window.RoomSound && window.RoomSound.setGlobeSpin(0); lastFocus && lastFocus.focus && lastFocus.focus(); };
+  $('#mapClose').addEventListener('click', closeMap);
+  $('#mapOv').addEventListener('click', (e) => { if (e.target.id === 'mapOv') closeMap(); else if (!e.target.closest('.gpin, .place-chips, .pincard')) { $('#pinCard').hidden = true; openPin = null; } });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#mapOv').hidden) closeMap(); });
+
   /* ---------- Muscles wanders the room ---------- */
   const CAT_SPOTS = {
     sill:   { x: 770,  y: 362, say: 'Mrrrp.',     label: 'asleep on the windowsill',          note: 'Muscles gives you a slow blink.' },

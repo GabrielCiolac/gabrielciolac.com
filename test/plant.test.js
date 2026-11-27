@@ -33,3 +33,13 @@ test('watering adds water, caps at 100, and refuses when full', () => {
   r = L.waterPlant(r.saved, 0); assert.equal(r.after, 100);
   r = L.waterPlant(r.saved, 0); assert.equal(r.refused, true); assert.equal(r.after, 100);
 });
+
+test('after a refusal the plant is locked until it dries below full', () => {
+  const H2 = 3600000;
+  const s = { m: 100, t: 0, stopped: true };
+  assert.equal(L.plantLocked(s, 0), true);
+  assert.equal(L.plantLocked({ m: 100, t: 0 }, 0), false);          // full but nobody's been told off yet
+  assert.equal(L.plantLocked(s, 3 * H2), true);                      // 100 - 4.2 = 95.8
+  assert.equal(L.plantLocked(s, 4 * H2), false);                     // 94.4: dry enough to water again
+  assert.equal(L.plantLocked(null, 0), false);
+});

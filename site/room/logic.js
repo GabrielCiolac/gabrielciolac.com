@@ -137,6 +137,10 @@
     if (m >= 20) return 'droopy';
     return 'wilted';
   }
+  /* After Gabe has said stop, the plant ignores you until it dries below "full" again. */
+  function plantLocked(saved, nowMs) {
+    return !!(saved && saved.stopped) && plantMoisture(saved, nowMs) >= PLANT.full;
+  }
   /* Water it: returns the new saved state, or refused=true (state unchanged) when it is already full. */
   function waterPlant(saved, nowMs) {
     const before = plantMoisture(saved, nowMs);
@@ -147,5 +151,5 @@
 
   return { PHASES, THERMO, minutesOf, phaseFor, weatherFor, thermoTopY, weatherLine, openMeteoUrl, parseOpenMeteo, torontoMinutes,
     PESTER, pester, pesterLine, cooldownFor, kick, cooldownLeft, clock,
-    PLANT, plantMoisture, plantStage, waterPlant };
+    PLANT, plantMoisture, plantStage, waterPlant, plantLocked };
 });

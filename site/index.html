@@ -121,6 +121,7 @@ body {
 [data-phase="night"] #plantLayer image, [data-phase="night"] #canTilt image { filter: brightness(.55) saturate(.8) contrast(1.05); }
 [data-phase="dusk"] #plantLayer image, [data-phase="dusk"] #canTilt image { filter: brightness(.82) sepia(.22) hue-rotate(-12deg) saturate(1.05); }
 [data-phase="dawn"] #plantLayer image, [data-phase="dawn"] #canTilt image { filter: brightness(.9) sepia(.14) hue-rotate(-10deg); }
+#hot-plant.off { pointer-events: none; }
 #plantLayer { transform-box: fill-box; transform-origin: 50% 100%; }
 #plantLayer.perk { animation: perk .6s cubic-bezier(.3,1.7,.5,1); }
 @keyframes perk { 0%{transform:scale(1,1)} 35%{transform:scale(.94,1.1)} 70%{transform:scale(1.04,.97)} 100%{transform:scale(1,1)} }
@@ -522,8 +523,39 @@ body {
   const cur = (s, x, y, fb) => `url("data:image/svg+xml,${encodeURIComponent(s)}") ${x} ${y}, ${fb}`;
   const arrow = `<svg xmlns='http://www.w3.org/2000/svg' width='34' height='38' viewBox='0 0 34 38'><path d='M4 3 L28 22 L17 23 L23 34 L17 36 L12 25 L4 32 Z' fill='#ffc24d' stroke='#1b0f24' stroke-width='3' stroke-linejoin='round'/></svg>`;
   const hand = `<svg xmlns='http://www.w3.org/2000/svg' width='38' height='40' viewBox='0 0 38 40'><path d='M13 4 C13 1 18 1 18 4 L18 17 L20 17 C20 14 25 14 25 17 L25 19 C25 16 30 16 30 19 L30 21 C30 18 35 18 35 22 L34 31 C33 36 29 38 24 38 L18 38 C14 38 11 36 9 33 L3 24 C1 21 5 18 8 21 L13 26 Z' fill='#fff' stroke='#1b0f24' stroke-width='3' stroke-linejoin='round'/><path d='M18 17 L18 26 M25 19 L25 26 M30 21 L30 27' stroke='#1b0f24' stroke-width='2' stroke-linecap='round'/></svg>`;
+  // one cursor per kind of interaction, drawn in the same chunky ink as the room
+  const sv = (w, h, body) => `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'>${body}</svg>`;
+  const INK = `stroke='#1b0f24' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'`;
+  const kGlasses = sv(44, 26, `<path d='M21 10 Q22 7 23 10' fill='none' ${INK}/><path d='M3 9 L1 4 M41 9 L43 4' fill='none' ${INK}/>`
+    + `<circle cx='12' cy='14' r='9' fill='#dff1ff' ${INK}/><circle cx='32' cy='14' r='9' fill='#dff1ff' ${INK}/>`
+    + `<path d='M7 11 Q9 8 12 8 M27 11 Q29 8 32 8' fill='none' stroke='#fff' stroke-width='2.5' stroke-linecap='round'/>`);
+  const kCan = sv(44, 36, `<path d='M16 27 L5 11' fill='none' stroke='#1b0f24' stroke-width='7' stroke-linecap='round'/><path d='M16 27 L5 11' fill='none' stroke='#9fb8c4' stroke-width='3' stroke-linecap='round'/>`
+    + `<path d='M1 9 L7 5 L9 12 Z' fill='#c7d6dc' ${INK}/>`
+    + `<path d='M14 16 Q14 12 18 12 L32 12 Q36 12 36 16 L35 31 Q35 34 32 34 L18 34 Q15 34 15 31 Z' fill='#9fb8c4' ${INK}/>`
+    + `<path d='M19 12 Q25 2 31 12' fill='none' ${INK}/><path d='M36 17 Q43 18 41 25 Q40 29 35 29' fill='none' ${INK}/>`
+    + `<path d='M19 17 L19.5 29' stroke='#dbe8ed' stroke-width='2.5' stroke-linecap='round'/>`
+    + `<path d='M3 16 Q2 18 3 19 Q4.5 18 3 16 Z M7 19 Q6 21 7 22 Q8.5 21 7 19 Z' fill='#7fc4f5' stroke='#1b0f24' stroke-width='1.2'/>`);
+  const kPower = sv(34, 34, `<circle cx='17' cy='17' r='14' fill='#ffc24d' ${INK}/><path d='M11.5 11.5 A8 8 0 1 0 22.5 11.5' fill='none' ${INK}/><path d='M17 7 L17 17' fill='none' ${INK}/>`);
+  const kQuill = sv(36, 36, `<path d='M33 2 Q18 6 10 20 L7 27 L14 24 Q28 16 33 2 Z' fill='#fff1d6' ${INK}/><path d='M31 5 L12 22' fill='none' stroke='#1b0f24' stroke-width='2' stroke-linecap='round'/>`
+    + `<path d='M7 27 L3 33' fill='none' ${INK}/><circle cx='3' cy='33' r='1.6' fill='#1b0f24'/>`);
+  const kTalk = sv(40, 34, `<path d='M6 3 L36 3 Q39 3 39 6 L39 21 Q39 24 36 24 L17 24 L8 31 L10 24 L6 24 Q3 24 3 21 L3 6 Q3 3 6 3 Z' fill='#fff' ${INK}/>`
+    + `<path d='M12 12 L12 17 M12 14 L17 14 M17 12 L17 17 M23 12 L23 17 M29 11 L29 14.5' fill='none' stroke='#1b0f24' stroke-width='2.5' stroke-linecap='round'/><circle cx='29' cy='17.5' r='1.4' fill='#1b0f24'/>`);
+  // patting hand: kPalm down, raised then lowered (swapped on a timer while over Muscles)
+  // patting hand seen from above, palm down, fingers to the left; two frames swapped on a timer over Muscles
+  const kPalm = `<path d='M24 9 Q20 2 15 5 Q12 7 15 11' fill='#fff' ${INK}/>`
+    + `<path d='M22 12 L8 11 M22 17 L6 17 M22 22 L7 23 M23 27 L10 29' fill='none' stroke='#1b0f24' stroke-width='8' stroke-linecap='round'/>`
+    + `<path d='M22 12 L8 11 M22 17 L6 17 M22 22 L7 23 M23 27 L10 29' fill='none' stroke='#fff' stroke-width='3.5' stroke-linecap='round'/>`
+    + `<path d='M20 9 Q30 6 37 9 L38 29 Q30 33 20 30 Z' fill='#fff' ${INK}/><path d='M37 9 L41 9 L41 29 L38 29' fill='#5b7bd5' ${INK}/>`;
+  const kPatUp = sv(44, 42, `<g transform='translate(0 -2) rotate(-12 30 20)'>${kPalm}</g>`);
+  const kPatDown = sv(44, 42, `<g transform='translate(0 6)'>${kPalm}</g><path d='M6 3 Q8 0 10 3 M15 2 Q17 -1 19 2 M24 3 Q26 0 28 3' fill='none' stroke='#1b0f24' stroke-width='2' stroke-linecap='round'/>`);
+  const C = {
+    read: cur(kGlasses, 22, 13, 'zoom-in'), water: cur(kCan, 3, 8, 'pointer'), power: cur(kPower, 17, 17, 'pointer'),
+    write: cur(kQuill, 3, 33, 'pointer'), talk: cur(kTalk, 6, 3, 'pointer'), patUp: cur(kPatUp, 22, 22, 'pointer'), patDown: cur(kPatDown, 22, 22, 'pointer'),
+  };
+  const KIND = { read: ['hot-news', 'hot-album', 'hot-frames', 'hot-plaque'], water: ['hot-plant'], power: ['hot-pc'], write: ['hot-mail'], talk: ['hot-me'], patUp: ['hot-cat'] };
+  const rules = Object.entries(KIND).map(([k, ids]) => ids.map((id) => `#${id},.slot[data-target="${id}"]`).join(',') + `{cursor:${C[k]}}`).join(' ');
   const css = document.createElement('style');
-  css.textContent = `.wrap{cursor:${cur(arrow, 4, 3, 'default')}} .hot,.slot,.btn{cursor:${cur(hand, 15, 3, 'pointer')}}`;
+  css.textContent = `.wrap{cursor:${cur(arrow, 4, 3, 'default')}} .hot,.slot,.btn{cursor:${cur(hand, 15, 3, 'pointer')}} ${rules}`;
   document.head.appendChild(css);
 
   const MAIL_TO = ''; // set to an email address to make the mail table open a letter
@@ -754,15 +786,24 @@ body {
     $('#sillPatch').style.display = st === 'ok' ? 'none' : '';
     $('#glassMaskImg').setAttribute('href', st === 'ok' ? 'room/glass-mask.png' : 'room/glass-mask-empty.png');
     document.querySelectorAll('#plantLayer image').forEach((im) => { im.style.display = im.dataset.stage === st ? '' : 'none'; });
+    const locked = window.RoomLogic.plantLocked(plantSaved, Date.now());
+    const pl = $('#hot-plant');
+    pl.classList.toggle('off', locked); pl.tabIndex = locked ? -1 : 0;
+    locked ? pl.setAttribute('aria-disabled', 'true') : pl.removeAttribute('aria-disabled');
     const [label, note] = PLANT_NOTE[st], el = $('#hot-plant');
     el.dataset.label = label; el.dataset.note = note;
     el.setAttribute('aria-label', 'The plant on the windowsill (' + (st === 'ok' ? 'doing fine' : st) + '): water it');
     return st;
   }
   function waterTheRoomPlant() {
-    if (pouring) return;
+    if (pouring || $('#hot-plant').classList.contains('off')) return;
     const r = window.RoomLogic.waterPlant(plantSaved, Date.now());
-    if (r.refused) { speak(905, 330, REFUSE[refusals++ % REFUSE.length]); setSay('The soil is soaked.'); return; }
+    if (r.refused) {
+      // Gabe says stop once; the plant then ignores you until it has dried out a bit
+      speak(905, 330, REFUSE[refusals++ % REFUSE.length]); setSay('The soil is soaked.');
+      plantSaved = Object.assign({}, r.saved, { stopped: true }); savePlant(plantSaved); hideTip(); showPlant();
+      return;
+    }
     pouring = true; refusals = 0;
     const can = $('#can'), tilt = $('#canTilt'), drops = $('#drops'), NS2 = 'http://www.w3.org/2000/svg';
     drops.textContent = '';
@@ -799,6 +840,12 @@ body {
     door:   { x: 356,  y: 480, say: '\u2026',     label: 'staring at the mail slot',          note: 'Muscles is waiting for the mail. It\u2019s always the mail.' },
   };
   const catEl = $('#hot-cat');
+  let patT;
+  catEl.addEventListener('pointerenter', () => {
+    let down = false; clearInterval(patT);
+    patT = setInterval(() => { down = !down; catEl.style.cursor = down ? C.patDown : C.patUp; }, 230);
+  });
+  catEl.addEventListener('pointerleave', () => { clearInterval(patT); catEl.style.cursor = ''; });
   let catSpot = 'sill', catPetAt = 0;
   function placeCat(spot) {
     catSpot = spot;

@@ -12,8 +12,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23ffc24d' stroke='%231b0f24' stroke-width='3'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial' font-weight='700' font-size='16' fill='%231b0f24'%3EG%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chewy&family=Andika:wght@400;700&family=Oswald:wght@400;600&family=UnifrakturMaguntia&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap">
-<link rel="alternate" type="application/rss+xml" title="The Courier" href="/feed.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chewy&family=Andika:wght@400;700&family=Oswald:wght@400;600&family=Playfair+Display:wght@900&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="alternate" type="application/rss+xml" title="Thinking Outside My Room" href="/feed.xml">
 <style>
 /* Layout: the painted room fills a chunky toy-plastic monitor frame; a game command bar sits under it. Single committed night look taken from the painting. */
 :root {
@@ -226,14 +226,14 @@ body {
 .gb-submit button:disabled { opacity: .5; }
 #gbStatus { font-size: 13px; }
 @media (max-width: 760px) { .gbook { grid-template-columns: 1fr; } .gb-left, .gb-right { border-radius: 8px; box-shadow: none; } .gb-left { order: 2; margin-top: 8px; } .gb-list { grid-template-columns: 1fr; } }
-/* The Courier: an old broadsheet */
+/* Thinking Outside My Room: Gabriel's blog as an old broadsheet */
 .courier-ov { position: absolute; inset: 0; z-index: 6; background: rgba(10,5,16,.82); display: grid; place-items: center; padding: 12px; }
 .paper { position: relative; width: min(980px, 100%); max-height: 100%; overflow: auto; color: #1d1a16; transform: rotate(-.6deg);
   background: radial-gradient(ellipse at 30% 20%, #f7f1e1, #ece2c6 70%, #e2d5b2); border: 1px solid #b9ab86;
   box-shadow: 14px 14px 0 rgba(0,0,0,.45), inset 0 0 60px rgba(120,95,40,.25); padding: 14px 22px 20px; font: 16px/1.5 "Old Standard TT", Georgia, serif; animation: pop .35s cubic-bezier(.3,1.7,.5,1); }
 .paper-x { position: sticky; float: right; top: 0; margin: -4px -10px 0 0; z-index: 2; }
 .mast { text-align: center; border-bottom: 3px double #1d1a16; padding-bottom: 6px; }
-.mast h2 { margin: 2px 0 0; font: 400 clamp(40px, 8vw, 78px)/1 "UnifrakturMaguntia", "Old English Text MT", Georgia, serif; letter-spacing: .01em; }
+.mast h2 { margin: 2px 0 0; font: 900 clamp(28px, 5.6vw, 62px)/1.02 "Playfair Display", "Old Standard TT", Georgia, serif; letter-spacing: -.005em; }
 .mast-ears { display: flex; justify-content: space-between; font: italic 13px "Old Standard TT", Georgia, serif; }
 .mast-rule { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 6px; padding: 3px 0; border-top: 1px solid #1d1a16;
   font: 12px "Old Standard TT", Georgia, serif; text-transform: uppercase; letter-spacing: .08em; }
@@ -686,7 +686,7 @@ body {
   <g id="hot-plaque" class="hot" tabindex="0" role="button" aria-label="Taiga Nomad plaque" data-label="Look at the Taiga plaque">
     <rect class="hit" pointer-events="all" x="388" y="290" width="72" height="82"/>
   </g>
-  <g id="hot-news" class="hot" tabindex="0" role="button" aria-label="Newspapers: read The Courier, Gabriel's blog" data-label="Read The Courier">
+  <g id="hot-news" class="hot" tabindex="0" role="button" aria-label="Newspapers: read Thinking Outside My Room, Gabriel's blog" data-label="Read the paper">
     <path class="hit" pointer-events="all" d="M40 690 L240 660 L350 690 L372 760 L360 800 L230 880 L60 820 Z"/>
   </g>
   <g id="hot-mail" class="hot" tabindex="0" role="button" aria-label="Mail on the hall table: write Gabriel a letter" data-label="Write me a letter">
@@ -867,8 +867,8 @@ body {
         <button class="map-x paper-x" id="courierClose" type="button" aria-label="Put the paper down">&times;</button>
         <header class="mast">
           <div class="mast-ears"><span id="paperIssue"></span><span>Toronto</span></div>
-          <h2 id="courierMast">The Courier</h2>
-          <div class="mast-rule"><span id="paperDate"></span><span>Price: one pat for Muscles</span><a href="/feed.xml" class="rss" target="_blank" rel="noopener" title="Subscribe with RSS"><svg viewBox="0 0 16 16" aria-hidden="true"><rect width="16" height="16" rx="3" fill="#f26522"/><circle cx="4.5" cy="11.5" r="1.6" fill="#fff"/><path d="M3 7.2a5.8 5.8 0 0 1 5.8 5.8M3 3.6a9.4 9.4 0 0 1 9.4 9.4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>RSS</a></div>
+          <h2 id="courierMast">Thinking Outside My Room</h2>
+          <div class="mast-rule"><span id="paperDate"></span><span>Price: your time</span><a href="/feed.xml" class="rss" target="_blank" rel="noopener" title="Subscribe with RSS"><svg viewBox="0 0 16 16" aria-hidden="true"><rect width="16" height="16" rx="3" fill="#f26522"/><circle cx="4.5" cy="11.5" r="1.6" fill="#fff"/><path d="M3 7.2a5.8 5.8 0 0 1 5.8 5.8M3 3.6a9.4 9.4 0 0 1 9.4 9.4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>RSS</a></div>
         </header>
         <div class="paper-main">
           <div class="story" id="story" aria-live="polite"></div>
@@ -1232,7 +1232,7 @@ body {
   const IDLE = 'Look around. Click on anything that looks interesting.';
   const setSay = (t) => { say.textContent = t; };
   const NOTES = {
-    'hot-news':   ['The Courier', 'The first issue is still at the printer. Check back soon.'],
+    'hot-news':   ['Thinking Outside My Room', 'The first issue is still at the printer. Check back soon.'],
     'hot-mail':   ['Write me a letter', MAIL_TO ? '' : 'The mailbox isn’t set up yet. For now, find me on LinkedIn through the computer.'],
     'hot-pc':     ['Booting up…', 'Opens a chunky old desktop: GitHub, LinkedIn, Minesweeper and Solitaire.'],
     'hot-album':  ['The photo album', 'Still sorting through the photos. The album is coming soon.'],
@@ -2559,7 +2559,7 @@ body {
   $('#gbOv').addEventListener('click', (e) => { if (e.target.id === 'gbOv') closeGuestbook(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#gbOv').hidden) closeGuestbook(); });
 
-  /* ---------- The Courier: Gabriel's blog, written in PocketBase, printed as a broadsheet ---------- */
+  /* ---------- Thinking Outside My Room: Gabriel's blog, written in PocketBase, printed as a broadsheet ---------- */
   const POSTS = 'api/collections/posts/records';
   let issues = null;
   const safeSlug = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 80);
@@ -2611,22 +2611,23 @@ body {
       b.addEventListener('click', () => { window.RoomSound && window.RoomSound.play('page'); showIssue(x.slug); $('#paper').scrollTop = 0; });
       li.append(b); $('#backIssues').append(li);
     });
-    history.replaceState(null, '', '#courier/' + post.slug);
+    history.replaceState(null, '', '#paper/' + post.slug);
   }
   function openCourier(slug) {
     hideTip(); lastFocus = document.activeElement; $('#courierOv').hidden = false;
     window.RoomSound && window.RoomSound.play('page'); showIssue(slug); $('#courierClose').focus({ preventScroll: true });
   }
   function closeCourier() {
-    $('#courierOv').hidden = true; if (location.hash.startsWith('#courier')) history.replaceState(null, '', location.pathname + location.search);
+    $('#courierOv').hidden = true; if (/^#(paper|courier)/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search);
     lastFocus && lastFocus.focus && lastFocus.focus();
   }
   $('#courierClose').addEventListener('click', closeCourier);
   $('#courierOv').addEventListener('click', (e) => { if (e.target.id === 'courierOv') closeCourier(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#courierOv').hidden) closeCourier(); });
-  // links like gabrielciolac.com/#courier/some-post open that issue
-  if (location.hash.startsWith('#courier')) setTimeout(() => openCourier(safeSlug(location.hash.split('/')[1])), 400);
-  window.addEventListener('hashchange', () => { if (location.hash.startsWith('#courier') && $('#courierOv').hidden) openCourier(safeSlug(location.hash.split('/')[1])); });
+  // links like gabrielciolac.com/#paper/some-post open that issue (#courier/ from before the rename still works)
+  const paperHash = () => /^#(paper|courier)(\/|$)/.test(location.hash);
+  if (paperHash()) setTimeout(() => openCourier(safeSlug(location.hash.split('/')[1])), 400);
+  window.addEventListener('hashchange', () => { if (paperHash() && $('#courierOv').hidden) openCourier(safeSlug(location.hash.split('/')[1])); });
 
   /* ---------- Muscles wanders the room ---------- */
   const CAT_SPOTS = {

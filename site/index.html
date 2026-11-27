@@ -159,6 +159,26 @@ body {
 @keyframes spark { 0% { transform: translate(0, 0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translate(6px, -60px); opacity: 0; } }
 [data-fire="on"] .flick { fill: url(#gFire); opacity: .55 !important; }
 @media (prefers-reduced-motion: reduce) { #crtFire .fl, #crtFire .spark { animation: none; } }
+/* the globe's travel map */
+.mapov { position: absolute; inset: 0; z-index: 6; background: rgba(10,5,16,.8); display: grid; place-items: center; padding: 12px; }
+.mapcard { width: min(980px, 100%); background: #f4e6c4; color: #3a2416; border: 5px solid var(--ink); border-radius: 14px 18px 12px 16px;
+  box-shadow: 12px 12px 0 rgba(0,0,0,.5); padding: 10px 14px 12px; animation: pop .35s cubic-bezier(.3,1.7,.5,1); }
+.map-head { display: flex; align-items: center; justify-content: space-between; }
+.map-head h2 { margin: 0; font: 400 clamp(22px, 3.4vw, 34px) var(--f-show); color: #3a2416; }
+.map-x { font: 400 28px/1 var(--f-show); width: 40px; height: 40px; color: var(--ink); background: var(--gold); border: 3px solid var(--ink); border-radius: 10px; box-shadow: 0 3px 0 var(--ink); cursor: inherit; }
+.map-wrap { position: relative; margin-top: 8px; border: 3px solid #3a2416; border-radius: 6px; overflow: hidden; }
+#worldMap { display: block; width: 100%; height: auto; }
+.pin { cursor: inherit; }
+.pin .tack { transition: transform .15s; transform-box: fill-box; transform-origin: 50% 100%; }
+.pin:hover .tack, .pin:focus-visible .tack { transform: scale(1.25); }
+.pin:focus-visible { outline: none; } .pin:focus-visible .head { stroke: var(--gold); stroke-width: 3; }
+.pin .drop { animation: pindrop .5s cubic-bezier(.3,1.6,.5,1) backwards; }
+@keyframes pindrop { from { transform: translateY(-40px); opacity: 0; } }
+.pincard { position: absolute; z-index: 2; transform: translate(-50%, calc(-100% - 22px)); min-width: 150px; max-width: 240px; padding: 8px 12px 9px;
+  background: #fff8e6; border: 3px solid var(--ink); border-radius: 10px 12px 9px 11px; box-shadow: 0 4px 0 var(--ink); font: 14px/1.3 var(--f-body); color: var(--ink); }
+.pincard b { display: block; font: 400 19px/1.1 var(--f-show); } .pincard span { font-size: 12px; opacity: .7; } .pincard p { margin: 4px 0 0; }
+.pincard:empty, .pincard p:empty { display: none; }
+.map-foot { margin: 8px 2px 0; font: 14px var(--f-body); opacity: .8; }
 /* preview panel (open with #preview) */
 .preview { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 14px; padding: 10px 14px;
   background: #1b0f24; border: 3px solid var(--ink); border-radius: 12px; font-size: 13px; color: var(--muted); }
@@ -574,7 +594,7 @@ body {
   </g>
 
   <!-- spinning globe: frames made from its own painted pixels -->
-  <g id="hot-globe" class="hot" tabindex="0" role="button" aria-label="Globe on the bookshelf: spin it" data-label="Spin the globe">
+  <g id="hot-globe" class="hot" tabindex="0" role="button" aria-label="Globe on the bookshelf: see the places Gabriel has been" data-label="See where I have been">
     <rect class="hit" pointer-events="all" x="1184" y="288" width="50" height="74"/>
     <svg x="1196" y="304" width="24" height="24" viewBox="0 0 24 24" overflow="hidden"><g id="globeStrip"><image href="room/globe-spin.webp" x="0" y="0" width="384" height="24"/></g></svg>
   </g>
@@ -705,6 +725,32 @@ body {
       <div class="acts">
         <button type="button" id="knock">Knock</button>
         <button type="button" id="openDoor" hidden>Open the door</button>
+      </div>
+    </div>
+    <div class="mapov" id="mapOv" hidden role="dialog" aria-modal="true" aria-labelledby="mapTitle">
+      <div class="mapcard">
+        <div class="map-head"><h2 id="mapTitle">Places I&rsquo;ve Been</h2><button class="map-x" id="mapClose" type="button" aria-label="Close the map">&times;</button></div>
+        <div class="map-wrap">
+          <svg id="worldMap" viewBox="0 0 1000 400" role="img" aria-label="World map with pins on the places Gabriel has visited">
+            <defs>
+              <filter id="inkWobble" x="-2%" y="-2%" width="104%" height="104%"><feTurbulence type="fractalNoise" baseFrequency=".02" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="2.2"/></filter>
+              <pattern id="mapSea" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#cfe3e6"/><path d="M0 9 Q3 7 6 9 T12 9" fill="none" stroke="#b5d1d6" stroke-width="1"/></pattern>
+            </defs>
+            <rect width="1000" height="400" fill="url(#mapSea)"/>
+            <g stroke="#9fbfc5" stroke-width=".8" stroke-dasharray="3 4" fill="none">
+              <path d="M0 116.7 H1000 M0 233.3 H1000 M0 350 H1000 M0 58.3 H1000 M0 175 H1000 M0 291.7 H1000"/>
+              <path d="M166.7 0 V400 M333.3 0 V400 M500 0 V400 M666.7 0 V400 M833.3 0 V400"/>
+            </g>
+            <path id="mapLand" d="" fill="#ead2a0" stroke="#3a2416" stroke-width="1.4" stroke-linejoin="round" filter="url(#inkWobble)"/>
+            <g transform="translate(70 330)" stroke="#3a2416" stroke-width="1.4">
+              <circle r="26" fill="#f4e6c4"/><path d="M0 -30 L6 0 L0 30 L-6 0 Z" fill="#b3261e"/><path d="M-30 0 L0 6 L30 0 L0 -6 Z" fill="#f4e6c4"/>
+              <text y="-34" text-anchor="middle" font-family="Chewy, cursive" font-size="14" fill="#3a2416" stroke="none">N</text>
+            </g>
+            <g id="mapPins"></g>
+          </svg>
+          <div class="pincard" id="pinCard" hidden><b id="pinName"></b><span id="pinWhen"></span><p id="pinNote"></p></div>
+        </div>
+        <p class="map-foot" id="mapFoot"></p>
       </div>
     </div>
     <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Taiga Nomad plaque, close-up">
@@ -1128,8 +1174,8 @@ body {
       return;
     }
     if (el.id === 'hot-globe') {
-      el.classList.add('spin'); speak(1208, 290, 'Toronto is about\u2026 here.');
-      setTimeout(() => el.classList.remove('spin'), 2200); return;
+      el.classList.add('spin'); window.RoomSound && window.RoomSound.play('click');
+      setTimeout(() => el.classList.remove('spin'), 2200); setTimeout(openMap, 700); return;
     }
     if (el.id === 'hot-plant') { waterTheRoomPlant(); return; }
     if (el.id === 'hot-lights') { window.RoomSound && window.RoomSound.play('switch'); setLights(!lightsOn); setSay(lightsOn ? 'Click. The lights twinkle back on.' : 'Click. The lights go dark.'); return; }
@@ -2085,6 +2131,50 @@ body {
     // if Muscles is somewhere that doesn't exist this holiday (or the holiday has a spot for her), move her
     if (typeof placeCat === 'function') { if (!catSpots().includes(catSpot) || (art.catSpot && catSpot !== art.catSpot && Math.random() < .5)) placeCat(pickSpot(null)); }
   }
+  /* ---------- The globe opens a map of places Gabriel has been ---------- */
+  // To add a place: { name, lat, lon, when?, note? }. Toronto is home.
+  const PLACES = [
+    { name: 'Toronto', lat: 43.65, lon: -79.38, note: 'Home. Muscles runs the place.', home: true },
+  ];
+  let mapLoaded = false;
+  async function openMap() {
+    hideTip(); lastFocus = document.activeElement; $('#mapOv').hidden = false; $('#pinCard').hidden = true;
+    if (!mapLoaded) {
+      try { const r = await fetch('room/world-land.svgpath'); if (r.ok) { $('#mapLand').setAttribute('d', await r.text()); mapLoaded = true; } } catch (e) { /* the pins still work */ }
+      drawPins();
+    }
+    const n = PLACES.filter((p) => !p.home).length;
+    $('#mapFoot').textContent = n ? `${n} place${n === 1 ? '' : 's'} so far, plus home. Click a pin.` : 'Just home so far. More pins coming soon.';
+    $('#mapClose').focus();
+  }
+  function drawPins() {
+    const NS5 = 'http://www.w3.org/2000/svg', g = $('#mapPins'); g.textContent = '';
+    const mk = (tag, attrs, parent) => { const e = document.createElementNS(NS5, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+    PLACES.forEach((pl, i) => {
+      const { x, y } = window.RoomLogic.mapXY(pl.lat, pl.lon);
+      const pin = mk('g', { class: 'pin', transform: `translate(${x} ${y})`, tabindex: 0, role: 'button', 'aria-label': pl.name + (pl.when ? ', ' + pl.when : '') }, g);
+      const drop = mk('g', { class: 'drop' }, pin); drop.style.animationDelay = (0.15 + i * 0.08) + 's';
+      mk('ellipse', { cx: 0, cy: 0, rx: 4, ry: 1.6, fill: 'rgba(0,0,0,.35)' }, drop);
+      const tack = mk('g', { class: 'tack' }, drop);
+      mk('path', { d: 'M0 0 L-1.6 -11 L1.6 -11 Z', fill: '#8a8a8a', stroke: '#3a2416', 'stroke-width': .8 }, tack);
+      if (pl.home) mk('path', { class: 'head', d: 'M0 -26 L3 -19 L10.5 -18.5 L5 -13.5 L6.5 -6 L0 -10 L-6.5 -6 L-5 -13.5 L-10.5 -18.5 L-3 -19 Z', fill: '#ffc24d', stroke: '#3a2416', 'stroke-width': 1.4, 'stroke-linejoin': 'round' }, tack);
+      else { mk('circle', { class: 'head', cx: 0, cy: -15, r: 6, fill: '#d0342c', stroke: '#3a2416', 'stroke-width': 1.4 }, tack); mk('circle', { cx: -2, cy: -17, r: 1.8, fill: '#ff9b93' }, tack); }
+      const show = () => {
+        const wrap = $('.map-wrap').getBoundingClientRect(), b = pin.getBoundingClientRect();
+        $('#pinName').textContent = pl.name; $('#pinWhen').textContent = pl.when || ''; $('#pinNote').textContent = pl.note || '';
+        const card = $('#pinCard'); card.hidden = false;
+        card.style.left = Math.min(Math.max(b.left + b.width / 2 - wrap.left, 90), wrap.width - 90) + 'px'; card.style.top = (b.top - wrap.top + 4) + 'px';
+        window.RoomSound && window.RoomSound.play('click');
+      };
+      pin.addEventListener('click', (e) => { e.stopPropagation(); show(); });
+      pin.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(); } });
+    });
+  }
+  const closeMap = () => { $('#mapOv').hidden = true; lastFocus && lastFocus.focus && lastFocus.focus(); };
+  $('#mapClose').addEventListener('click', closeMap);
+  $('#mapOv').addEventListener('click', (e) => { if (e.target.id === 'mapOv') closeMap(); else if (!e.target.closest('.pin')) $('#pinCard').hidden = true; });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#mapOv').hidden) closeMap(); });
+
   /* ---------- Muscles wanders the room ---------- */
   const CAT_SPOTS = {
     sill:   { x: 770,  y: 362, say: 'Mrrrp.',     label: 'asleep on the windowsill',          note: 'Muscles gives you a slow blink.' },

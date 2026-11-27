@@ -187,8 +187,18 @@
     return { y: v('year'), m: v('month'), d: v('day') };
   }
 
+  /* ---------- The travel map behind the globe ----------
+     Equirectangular, 1000 x 400, latitudes 84N to 60S (matches room/world-land.svgpath). */
+  const MAP = { w: 1000, h: 400, north: 84, south: -60 };
+  function mapXY(lat, lon) {
+    const x = ((lon + 180) / 360) * MAP.w;
+    const y = ((MAP.north - Math.max(MAP.south, Math.min(MAP.north, lat))) / (MAP.north - MAP.south)) * MAP.h;
+    return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 };
+  }
+
   return { PHASES, THERMO, minutesOf, phaseFor, weatherFor, thermoTopY, weatherLine, openMeteoUrl, parseOpenMeteo, torontoMinutes,
     PESTER, pester, pesterLine, cooldownFor, kick, cooldownLeft, clock,
     PLANT, plantMoisture, plantStage, waterPlant, plantLocked,
-    BIRTHDAY, HOLIDAY_IDS, easter, thanksgiving, holidayFor, torontoDate };
+    BIRTHDAY, HOLIDAY_IDS, easter, thanksgiving, holidayFor, torontoDate,
+    MAP, mapXY };
 });

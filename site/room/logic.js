@@ -149,7 +149,46 @@
     return { refused: false, before, after, saved: { m: after, t: nowMs } };
   }
 
+  /* ---------- Holidays (Toronto calendar date) ----------
+     Christmas and Halloween run for the 15 days before the day as well; the rest are single days.
+     A single-day holiday beats a multi-day one if they ever overlap. */
+  const BIRTHDAY = { m: 11, d: 17 };
+  /* Western Easter Sunday (anonymous Gregorian algorithm). Returns {m, d}. */
+  function easter(y) {
+    const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4;
+    const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+    const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+    const month = Math.floor((h + l - 7 * m + 114) / 31), day = ((h + l - 7 * m + 114) % 31) + 1;
+    return { m: month, d: day };
+  }
+  /* Canadian Thanksgiving: the second Monday of October. */
+  function thanksgiving(y) {
+    const first = new Date(Date.UTC(y, 9, 1)).getUTCDay(); // 0 = Sunday
+    return { m: 10, d: 1 + ((8 - first) % 7) + 7 };
+  }
+  const HOLIDAY_IDS = ['christmas', 'halloween', 'newyear', 'easter', 'stjean', 'canada', 'thanksgiving', 'birthday'];
+  /* Holiday id for a calendar date (month 1-12), or null. */
+  function holidayFor(y, m, d) {
+    const is = (o) => o.m === m && o.d === d;
+    if (is(BIRTHDAY)) return 'birthday';
+    if (m === 1 && d === 1) return 'newyear';
+    if (is(easter(y))) return 'easter';
+    if (m === 6 && d === 24) return 'stjean';
+    if (m === 7 && d === 1) return 'canada';
+    if (is(thanksgiving(y))) return 'thanksgiving';
+    if (m === 10 && d >= 16) return 'halloween';
+    if (m === 12 && d >= 10 && d <= 25) return 'christmas';
+    return null;
+  }
+  /* Toronto calendar date for a Date, independent of the viewer's timezone. */
+  function torontoDate(date) {
+    const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(date);
+    const v = (t) => Number(parts.find((p) => p.type === t).value);
+    return { y: v('year'), m: v('month'), d: v('day') };
+  }
+
   return { PHASES, THERMO, minutesOf, phaseFor, weatherFor, thermoTopY, weatherLine, openMeteoUrl, parseOpenMeteo, torontoMinutes,
     PESTER, pester, pesterLine, cooldownFor, kick, cooldownLeft, clock,
-    PLANT, plantMoisture, plantStage, waterPlant, plantLocked };
+    PLANT, plantMoisture, plantStage, waterPlant, plantLocked,
+    BIRTHDAY, HOLIDAY_IDS, easter, thanksgiving, holidayFor, torontoDate };
 });

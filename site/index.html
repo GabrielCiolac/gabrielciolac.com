@@ -12,7 +12,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23ffc24d' stroke='%231b0f24' stroke-width='3'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial' font-weight='700' font-size='16' fill='%231b0f24'%3EG%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chewy&family=Andika:wght@400;700&family=Oswald:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chewy&family=Andika:wght@400;700&family=Oswald:wght@400;600&family=UnifrakturMaguntia&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="alternate" type="application/rss+xml" title="The Courier" href="/feed.xml">
 <style>
 /* Layout: the painted room fills a chunky toy-plastic monitor frame; a game command bar sits under it. Single committed night look taken from the painting. */
 :root {
@@ -225,6 +226,34 @@ body {
 .gb-submit button:disabled { opacity: .5; }
 #gbStatus { font-size: 13px; }
 @media (max-width: 760px) { .gbook { grid-template-columns: 1fr; } .gb-left, .gb-right { border-radius: 8px; box-shadow: none; } .gb-left { order: 2; margin-top: 8px; } .gb-list { grid-template-columns: 1fr; } }
+/* The Courier: an old broadsheet */
+.courier-ov { position: absolute; inset: 0; z-index: 6; background: rgba(10,5,16,.82); display: grid; place-items: center; padding: 12px; }
+.paper { position: relative; width: min(980px, 100%); max-height: 100%; overflow: auto; color: #1d1a16; transform: rotate(-.6deg);
+  background: radial-gradient(ellipse at 30% 20%, #f7f1e1, #ece2c6 70%, #e2d5b2); border: 1px solid #b9ab86;
+  box-shadow: 14px 14px 0 rgba(0,0,0,.45), inset 0 0 60px rgba(120,95,40,.25); padding: 14px 22px 20px; font: 16px/1.5 "Old Standard TT", Georgia, serif; animation: pop .35s cubic-bezier(.3,1.7,.5,1); }
+.paper-x { position: sticky; float: right; top: 0; margin: -4px -10px 0 0; z-index: 2; }
+.mast { text-align: center; border-bottom: 3px double #1d1a16; padding-bottom: 6px; }
+.mast h2 { margin: 2px 0 0; font: 400 clamp(40px, 8vw, 78px)/1 "UnifrakturMaguntia", "Old English Text MT", Georgia, serif; letter-spacing: .01em; }
+.mast-ears { display: flex; justify-content: space-between; font: italic 13px "Old Standard TT", Georgia, serif; }
+.mast-rule { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 6px; padding: 3px 0; border-top: 1px solid #1d1a16;
+  font: 12px "Old Standard TT", Georgia, serif; text-transform: uppercase; letter-spacing: .08em; }
+.rss { display: inline-flex; align-items: center; gap: 4px; color: #1d1a16; font-weight: 700; text-decoration: none; }
+.rss svg { width: 16px; height: 16px; }
+.paper-main { display: grid; grid-template-columns: minmax(0, 1fr) 200px; gap: 20px; margin-top: 12px; }
+.story h3 { margin: 0 0 4px; font: 700 clamp(26px, 4vw, 40px)/1.08 "Old Standard TT", Georgia, serif; }
+.story .byline { font: italic 14px "Old Standard TT", Georgia, serif; border-bottom: 1px solid #1d1a16; padding-bottom: 6px; margin-bottom: 10px; }
+.story figure { margin: 0 0 12px; } .story figure img { width: 100%; max-height: 320px; object-fit: cover; filter: grayscale(1) contrast(1.25) sepia(.25); border: 1px solid #1d1a16; }
+.story .cols { columns: 2 220px; column-gap: 22px; column-rule: 1px solid #b9ab86; text-align: justify; hyphens: auto; }
+.story .cols > :first-child::first-letter { float: left; font: 700 3.4em/.8 "Old Standard TT", Georgia, serif; margin: .06em .08em 0 0; }
+.story .cols p { margin: 0 0 .7em; } .story .cols img { max-width: 100%; filter: grayscale(1) contrast(1.2); }
+.story .cols a { color: #1d1a16; } .story blockquote { margin: .5em 0; padding-left: .8em; border-left: 3px solid #1d1a16; font-style: italic; }
+.story .printing { padding: 40px 10px; text-align: center; font: italic 20px "Old Standard TT", Georgia, serif; }
+.back { border-left: 1px solid #1d1a16; padding-left: 14px; }
+.back h3 { margin: 0 0 6px; font: 700 13px "Old Standard TT", Georgia, serif; text-transform: uppercase; letter-spacing: .1em; border-bottom: 1px solid #1d1a16; }
+.back ol { list-style: none; margin: 0; padding: 0; }
+.back li button { display: block; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px dotted #9b8e6a; padding: 5px 0; font: 15px/1.25 "Old Standard TT", Georgia, serif; color: #1d1a16; cursor: inherit; }
+.back li button[aria-current="true"] { font-weight: 700; } .back li small { display: block; font-size: 11px; opacity: .65; }
+@media (max-width: 760px) { .paper-main { grid-template-columns: 1fr; } .back { border-left: 0; border-top: 1px solid #1d1a16; padding: 8px 0 0; } .paper { transform: none; padding: 10px 12px 16px; } }
 /* preview panel (open with #preview) */
 .preview { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 14px; padding: 10px 14px;
   background: #1b0f24; border: 3px solid var(--ink); border-radius: 12px; font-size: 13px; color: var(--muted); }
@@ -657,7 +686,7 @@ body {
   <g id="hot-plaque" class="hot" tabindex="0" role="button" aria-label="Taiga Nomad plaque" data-label="Look at the Taiga plaque">
     <rect class="hit" pointer-events="all" x="388" y="290" width="72" height="82"/>
   </g>
-  <g id="hot-news" class="hot" tabindex="0" role="button" aria-label="Newspapers: read Gabriel's blog" data-label="Read the paper">
+  <g id="hot-news" class="hot" tabindex="0" role="button" aria-label="Newspapers: read The Courier, Gabriel's blog" data-label="Read The Courier">
     <path class="hit" pointer-events="all" d="M40 690 L240 660 L350 690 L372 760 L360 800 L230 880 L60 820 Z"/>
   </g>
   <g id="hot-mail" class="hot" tabindex="0" role="button" aria-label="Mail on the hall table: write Gabriel a letter" data-label="Write me a letter">
@@ -832,6 +861,20 @@ body {
           </form>
         </section>
       </div>
+    </div>
+    <div class="courier-ov" id="courierOv" hidden role="dialog" aria-modal="true" aria-labelledby="courierMast">
+      <article class="paper" id="paper">
+        <button class="map-x paper-x" id="courierClose" type="button" aria-label="Put the paper down">&times;</button>
+        <header class="mast">
+          <div class="mast-ears"><span id="paperIssue"></span><span>Toronto</span></div>
+          <h2 id="courierMast">The Courier</h2>
+          <div class="mast-rule"><span id="paperDate"></span><span>Price: one pat for Muscles</span><a href="/feed.xml" class="rss" target="_blank" rel="noopener" title="Subscribe with RSS"><svg viewBox="0 0 16 16" aria-hidden="true"><rect width="16" height="16" rx="3" fill="#f26522"/><circle cx="4.5" cy="11.5" r="1.6" fill="#fff"/><path d="M3 7.2a5.8 5.8 0 0 1 5.8 5.8M3 3.6a9.4 9.4 0 0 1 9.4 9.4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>RSS</a></div>
+        </header>
+        <div class="paper-main">
+          <div class="story" id="story" aria-live="polite"></div>
+          <aside class="back" aria-label="Back issues"><h3>Back issues</h3><ol id="backIssues"></ol></aside>
+        </div>
+      </article>
     </div>
     <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Taiga Nomad plaque, close-up">
       <div class="plaque" id="plaqueCard">
@@ -1265,6 +1308,16 @@ body {
       setTimeout(() => el.classList.remove('spin'), 2200); setTimeout(openMap, 700); return;
     }
     if (el.id === 'hot-plant') { waterTheRoomPlant(); return; }
+    if (el.id === 'hot-news') {
+      if (catSpot === 'papers') {                         // Muscles was loafing on the papers: she is not pleased
+        window.RoomSound && window.RoomSound.play('meow');
+        speak(CAT_SPOTS.papers.x, CAT_SPOTS.papers.y, 'MRRROW.'); setSay('Muscles hops off the newspapers, deeply offended.');
+        catEl.classList.add('away'); catPetAt = 0;
+        setTimeout(() => { placeCat(pickSpot('papers')); catEl.classList.remove('away'); }, 700);
+        setTimeout(() => openCourier(), 950); return;
+      }
+      openCourier(); return;
+    }
     if (el.id === 'hot-guestbook') { openGuestbook(); return; }
     if (el.id === 'hot-lights') { window.RoomSound && window.RoomSound.play('switch'); setLights(!lightsOn); setSay(lightsOn ? 'Click. The lights twinkle back on.' : 'Click. The lights go dark.'); return; }
     if (el.id === 'hot-cat') {
@@ -2505,6 +2558,75 @@ body {
   $('#gbClose').addEventListener('click', closeGuestbook);
   $('#gbOv').addEventListener('click', (e) => { if (e.target.id === 'gbOv') closeGuestbook(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#gbOv').hidden) closeGuestbook(); });
+
+  /* ---------- The Courier: Gabriel's blog, written in PocketBase, printed as a broadsheet ---------- */
+  const POSTS = 'api/collections/posts/records';
+  let issues = null;
+  const safeSlug = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 80);
+  const longDate = (d) => { const x = new Date(String(d).replace(' ', 'T')); return isNaN(x) ? '' : x.toLocaleDateString('en-CA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); };
+  // posts are written by Gabriel, but keep only plain article markup anyway
+  function cleanHTML(html) {
+    const ok = new Set(['P', 'BR', 'H2', 'H3', 'H4', 'STRONG', 'B', 'EM', 'I', 'U', 'S', 'A', 'UL', 'OL', 'LI', 'BLOCKQUOTE', 'CODE', 'PRE', 'IMG', 'FIGURE', 'FIGCAPTION', 'HR']);
+    const doc = new DOMParser().parseFromString('<div>' + html + '</div>', 'text/html'), root = doc.body.firstChild;
+    (function walk(n) {
+      [...n.children].forEach((c) => {
+        if (/^(SCRIPT|STYLE|IFRAME|OBJECT|EMBED|NOSCRIPT|TEMPLATE|SVG|MATH|FORM|INPUT|BUTTON|TEXTAREA|SELECT)$/.test(c.tagName)) { c.remove(); return walk(n); }
+        if (!ok.has(c.tagName)) { c.replaceWith(...c.childNodes); return walk(n); }
+        [...c.attributes].forEach((a) => {
+          const keep = (c.tagName === 'A' && a.name === 'href') || (c.tagName === 'IMG' && (a.name === 'src' || a.name === 'alt'));
+          if (!keep || /^\s*javascript:/i.test(a.value)) c.removeAttribute(a.name);
+        });
+        if (c.tagName === 'A') { c.setAttribute('target', '_blank'); c.setAttribute('rel', 'noopener'); }
+        walk(c);
+      });
+    })(root);
+    return root.innerHTML;
+  }
+  async function loadIssues() {
+    if (issues) return issues;
+    try { const r = await fetch(`${POSTS}?sort=-published_at&perPage=60&fields=id,title,slug,published_at`); if (r.ok) issues = (await r.json()).items; } catch (e) { /* offline */ }
+    return issues || [];
+  }
+  async function showIssue(slug) {
+    const story = $('#story'), list = await loadIssues();
+    if (!list.length) {
+      story.innerHTML = '<p class="printing">The first issue is still at the printer.<br>Subscribe with RSS and it’ll land on your doorstep.</p>';
+      $('#paperIssue').textContent = 'No. 0'; $('#paperDate').textContent = longDate(new Date().toISOString()); $('#backIssues').textContent = ''; return;
+    }
+    const i = Math.max(0, list.findIndex((x) => x.slug === slug)), meta = list[i];
+    story.innerHTML = '<p class="printing">Hot off the press…</p>';
+    let post = null;
+    try { const r = await fetch(`${POSTS}?perPage=1&filter=${encodeURIComponent(`slug="${safeSlug(meta.slug)}"`)}&fields=id,title,slug,body,cover,published_at`); if (r.ok) post = (await r.json()).items[0]; } catch (e) { /* offline */ }
+    if (!post) { story.innerHTML = '<p class="printing">The presses jammed. Try again in a bit.</p>'; return; }
+    $('#paperIssue').textContent = 'No. ' + (list.length - i); $('#paperDate').textContent = longDate(post.published_at);
+    const cover = post.cover ? `<figure><img src="api/files/posts/${encodeURIComponent(post.id)}/${encodeURIComponent(post.cover)}?thumb=800x0" alt=""></figure>` : '';
+    const h = document.createElement('h3'); h.textContent = post.title;
+    story.innerHTML = ''; story.append(h);
+    story.insertAdjacentHTML('beforeend', `<div class="byline">By Gabriel Ciolac · ${longDate(post.published_at)}</div>${cover}<div class="cols">${cleanHTML(post.body)}</div>`);
+    $('#backIssues').innerHTML = '';
+    list.forEach((x, k) => {
+      const li = document.createElement('li'), b = document.createElement('button'); b.type = 'button';
+      b.textContent = x.title; b.setAttribute('aria-current', String(k === i));
+      const sm = document.createElement('small'); sm.textContent = 'No. ' + (list.length - k) + ' · ' + longDate(x.published_at); b.append(sm);
+      b.addEventListener('click', () => { window.RoomSound && window.RoomSound.play('page'); showIssue(x.slug); $('#paper').scrollTop = 0; });
+      li.append(b); $('#backIssues').append(li);
+    });
+    history.replaceState(null, '', '#courier/' + post.slug);
+  }
+  function openCourier(slug) {
+    hideTip(); lastFocus = document.activeElement; $('#courierOv').hidden = false;
+    window.RoomSound && window.RoomSound.play('page'); showIssue(slug); $('#courierClose').focus({ preventScroll: true });
+  }
+  function closeCourier() {
+    $('#courierOv').hidden = true; if (location.hash.startsWith('#courier')) history.replaceState(null, '', location.pathname + location.search);
+    lastFocus && lastFocus.focus && lastFocus.focus();
+  }
+  $('#courierClose').addEventListener('click', closeCourier);
+  $('#courierOv').addEventListener('click', (e) => { if (e.target.id === 'courierOv') closeCourier(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#courierOv').hidden) closeCourier(); });
+  // links like gabrielciolac.com/#courier/some-post open that issue
+  if (location.hash.startsWith('#courier')) setTimeout(() => openCourier(safeSlug(location.hash.split('/')[1])), 400);
+  window.addEventListener('hashchange', () => { if (location.hash.startsWith('#courier') && $('#courierOv').hidden) openCourier(safeSlug(location.hash.split('/')[1])); });
 
   /* ---------- Muscles wanders the room ---------- */
   const CAT_SPOTS = {

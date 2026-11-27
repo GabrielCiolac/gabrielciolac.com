@@ -9,4 +9,7 @@ RUN cd /usr/share/nginx/html && \
     grep -q "room/logic.js?v=$v" index.html && \
     v=$(sha256sum room/win98.js | cut -c1-10) && \
     sed -i "s|src=\"room/win98.js\"|src=\"room/win98.js?v=$v\"|" index.html && \
-    grep -q "room/win98.js?v=$v" index.html
+    grep -q "room/win98.js?v=$v" index.html && \
+    v=$(sha256sum room/sound.js | cut -c1-10) && \
+    sed -i "s|src=\"room/sound.js\"|src=\"room/sound.js?v=$v\"|" index.html && \
+    grep -q "room/sound.js?v=$v" index.html

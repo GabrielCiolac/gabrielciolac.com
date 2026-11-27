@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Gabriel Ciolac</title>
-<meta name="description" content="Gabriel Ciolac's room on the internet. Click around: the computer has my GitHub and LinkedIn, and Muscles the cat is asleep on the windowsill.">
+<meta name="description" content="Gabriel Ciolac's room on the internet. Click around: the computer has my GitHub and LinkedIn, and Muscles the cat is somewhere around.">
 <meta property="og:title" content="Gabriel Ciolac">
 <meta property="og:description" content="Come in and click around.">
 <meta property="og:image" content="https://gabrielciolac.com/room/og.jpg">
@@ -76,6 +76,8 @@ body {
 #thermoLiquid.bob { transition-duration: .35s; }
 /* lighting that follows the painted time of day */
 #hot-me > g, #hot-cat image { transition: filter 1.6s ease; }
+#hot-cat { transition: opacity .7s ease; }
+#hot-cat.away { opacity: 0; pointer-events: none; }
 [data-phase="night"] .lampPulse, [data-phase="dusk"] .lampPulse { opacity: .5; }
 [data-phase="dawn"] .lampPulse { opacity: .25; animation: none; }
 [data-phase="day"] .lampPulse { opacity: 0; animation: none; }
@@ -226,7 +228,7 @@ body {
   <div class="bezel">
   <div class="stage" id="stage">
     <div class="pan" id="pan">
-<svg id="room" viewBox="0 0 1536 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="A hand-painted cartoon bedroom at night with a crooked door, a pile of newspapers, a hall table with mail, a small framed Taiga Nomad snowmobile plaque, a window over the Toronto skyline and CN Tower, a bookshelf, a desk with a glowing old computer, a fluffy grey cat asleep on the windowsill, and Gabriel standing on a round magenta rug.">
+<svg id="room" viewBox="0 0 1536 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="A hand-painted cartoon bedroom at night with a crooked door, a pile of newspapers, a hall table with mail, a small framed Taiga Nomad snowmobile plaque, a window over the Toronto skyline and CN Tower, a bookshelf, a desk with a glowing old computer, a fluffy grey cat somewhere in the room, and Gabriel standing on a round magenta rug.">
   <defs>
     <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
     <radialGradient id="gCrt"><stop offset="0" stop-color="#7cf2c4" stop-opacity=".8"/><stop offset="1" stop-color="#7cf2c4" stop-opacity="0"/></radialGradient>
@@ -310,14 +312,37 @@ body {
     <path class="hit" pointer-events="all" d="M392 396 L510 392 L520 480 L560 500 L548 650 L370 650 L362 500 L392 480 Z"/>
   </g>
 
-  <!-- Muscles: her own layer over the empty sill -->
+  <!-- Muscles wanders: one spot is shown at a time (sill = her own layers over the empty sill) -->
   <g id="hot-cat" class="hot" tabindex="0" role="button" aria-label="Muscles the cat, asleep on the windowsill" data-label="Pet Muscles">
-    <path class="hit" pointer-events="all" d="M664 420 Q740 360 866 392 L866 490 L664 490 Z"/>
-    <g class="breathe" id="catSleep"><image href="room/cat-sleep.webp" x="664" y="374" width="202" height="116"/></g>
-    <g id="catAwake" style="display:none"><image href="room/cat-awake.webp" x="664" y="375" width="210" height="115"/></g>
-    <g class="zzz" id="zzz" font-family="Chewy, cursive" fill="#fff1d6" stroke="#1b0f24" stroke-width="3" paint-order="stroke">
-      <text x="852" y="388" font-size="20">z</text><text x="866" y="368" font-size="26">z</text><text x="882" y="344" font-size="32">Z</text>
+    <g class="spot" data-spot="sill">
+      <path class="hit" pointer-events="all" d="M664 420 Q740 360 866 392 L866 490 L664 490 Z"/>
+      <g class="breathe" id="catSleep"><image href="room/cat-sleep.webp" x="664" y="374" width="202" height="116"/></g>
+      <g id="catAwake" style="display:none"><image href="room/cat-awake.webp" x="664" y="375" width="210" height="115"/></g>
+      <g class="zzz" id="zzz" font-family="Chewy, cursive" fill="#fff1d6" stroke="#1b0f24" stroke-width="3" paint-order="stroke">
+        <text x="852" y="388" font-size="20">z</text><text x="866" y="368" font-size="26">z</text><text x="882" y="344" font-size="32">Z</text>
+      </g>
     </g>
+    <g class="spot" data-spot="rug" style="display:none">
+      <ellipse class="hit" pointer-events="all" cx="928" cy="756" rx="73" ry="95"/>
+      <ellipse cx="930" cy="862" rx="96" ry="12" fill="#12061c" opacity=".45" filter="url(#soft)"/>
+      <g class="breathe"><image href="room/cat-rug.webp" x="841.2" y="642.5" width="174" height="227"/></g>
+    </g>
+    <g class="spot" data-spot="papers" style="display:none">
+      <ellipse class="hit" pointer-events="all" cx="202" cy="664" rx="116" ry="83"/>
+      <ellipse cx="205" cy="700" rx="120" ry="10" fill="#12061c" opacity=".45" filter="url(#soft)"/>
+      <g class="breathe"><image href="room/cat-papers.webp" x="63.5" y="564.5" width="276" height="198"/></g>
+    </g>
+    <g class="spot" data-spot="keys" style="display:none">
+      <ellipse class="hit" pointer-events="all" cx="1250" cy="672" rx="113" ry="87"/>
+      <ellipse cx="1250" cy="770" rx="110" ry="10" fill="#12061c" opacity=".45" filter="url(#soft)"/>
+      <g class="breathe"><image href="room/cat-keys.webp" x="1115.5" y="569.0" width="268" height="207"/></g>
+    </g>
+    <g class="spot" data-spot="door" style="display:none">
+      <ellipse class="hit" pointer-events="all" cx="357" cy="584" rx="72" ry="84"/>
+      <ellipse cx="360" cy="682" rx="80" ry="10" fill="#12061c" opacity=".45" filter="url(#soft)"/>
+      <g class="breathe"><image href="room/cat-door.webp" x="271.2" y="483.8" width="171" height="201"/></g>
+    </g>
+  </g>
   </g>
 
   <!-- Gabriel: a 90s cel cut-out puppet (two drawn frames + a wrist that waves) -->
@@ -534,9 +559,12 @@ body {
       setTimeout(() => el.classList.remove('spin'), 2200); return;
     }
     if (el.id === 'hot-cat') {
-      $('#catSleep').style.display = 'none'; $('#catAwake').style.display = ''; $('#zzz').style.visibility = 'hidden';
-      speak(770, 362, 'Mrrrp.'); setSay('Muscles gives you a slow blink.');
-      clearTimeout(catT); catT = setTimeout(() => { $('#catSleep').style.display = ''; $('#catAwake').style.display = 'none'; $('#zzz').style.visibility = ''; }, 3200);
+      const sp = CAT_SPOTS[catSpot]; catPetAt = Date.now();
+      if (catSpot === 'sill') {
+        $('#catSleep').style.display = 'none'; $('#catAwake').style.display = ''; $('#zzz').style.visibility = 'hidden';
+        clearTimeout(catT); catT = setTimeout(() => { $('#catSleep').style.display = ''; $('#catAwake').style.display = 'none'; $('#zzz').style.visibility = ''; }, 3200);
+      }
+      speak(sp.x, sp.y, sp.say); setSay(sp.note);
       return;
     }
     if (el.id === 'hot-thermo') {
@@ -666,6 +694,36 @@ body {
   }));
   group('data-ph', 'phaseSel'); group('data-wx', 'wxSel'); group('data-t', 'tSel');
 
+  /* ---------- Muscles wanders the room ---------- */
+  const CAT_SPOTS = {
+    sill:   { x: 770,  y: 362, say: 'Mrrrp.',     label: 'asleep on the windowsill',          note: 'Muscles gives you a slow blink.' },
+    rug:    { x: 925,  y: 640, say: 'Mrraaaow.',  label: 'stretching on the rug',             note: 'Muscles finishes her stretch with an enormous yawn.' },
+    papers: { x: 200,  y: 560, say: 'Mrp.',       label: 'loafing on the newspapers',         note: 'Muscles is guarding the newspapers. Nobody gets to read them.' },
+    keys:   { x: 1250, y: 566, say: 'Mew!',       label: 'lying on the computer keyboard',    note: 'Muscles has typed \u201cffffffffjjjjjjj\u201d into the terminal.' },
+    door:   { x: 356,  y: 480, say: '\u2026',     label: 'staring at the mail slot',          note: 'Muscles is waiting for the mail. It\u2019s always the mail.' },
+  };
+  const catEl = $('#hot-cat');
+  let catSpot = 'sill', catPetAt = 0;
+  function placeCat(spot) {
+    catSpot = spot;
+    catEl.querySelectorAll('.spot').forEach((g) => { g.style.display = g.dataset.spot === spot ? '' : 'none'; });
+    catEl.setAttribute('aria-label', 'Muscles the cat, ' + CAT_SPOTS[spot].label);
+  }
+  function pickSpot(not) {
+    const pool = Object.keys(CAT_SPOTS).filter((k) => k !== not);
+    pool.push('sill'); // she likes the sill best
+    const next = pool[Math.floor(Math.random() * pool.length)];
+    return next === not ? pool[0] : next;
+  }
+  function wander() {
+    const busy = catEl.matches(':hover') || document.activeElement === catEl || Date.now() - catPetAt < 8000 || document.hidden;
+    if (!busy) {
+      catEl.classList.add('away');
+      setTimeout(() => { placeCat(pickSpot(catSpot)); catEl.classList.remove('away'); }, 800);
+    }
+    setTimeout(wander, 45000 + Math.random() * 45000);
+  }
+  placeCat(pickSpot(null)); setTimeout(wander, 45000 + Math.random() * 45000);
   /* ---------- Pester Gabriel too much and he kicks you out ---------- */
   const KEY = 'gabe-kicked-out', outside = $('#outside');
   let annoy = 0, annoyAt = null, outT, muffleT, typed = '';

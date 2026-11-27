@@ -499,6 +499,9 @@ body {
     <div class="grp" role="group" aria-label="Temperature"><span>Temp</span>
       <button type="button" data-t="auto" aria-pressed="true">Live</button><button type="button" data-t="-20" aria-pressed="false">&minus;20&deg;</button><button type="button" data-t="0" aria-pressed="false">0&deg;</button><button type="button" data-t="22" aria-pressed="false">22&deg;</button><button type="button" data-t="35" aria-pressed="false">35&deg;</button>
     </div>
+    <div class="grp" role="group" aria-label="Plant"><span>Plant</span>
+      <button type="button" data-plant="5">Wilted</button><button type="button" data-plant="30">Droopy</button><button type="button" data-plant="60">Fine</button><button type="button" data-plant="90">Bloom</button><button type="button" data-plant="100">Full</button>
+    </div>
     <span id="wxStatus">Loading Toronto weather&hellip;</span>
   </div>
 
@@ -782,6 +785,11 @@ body {
   }
   $('#hot-plant').addEventListener('pointerenter', () => setSay($('#hot-plant').dataset.note));
   showPlant(); setInterval(showPlant, 5 * 60 * 1000);
+  // preview panel: jump the plant to any state (sets the saved moisture)
+  document.querySelectorAll('[data-plant]').forEach((b) => b.addEventListener('click', () => {
+    plantSaved = { m: Number(b.dataset.plant), t: Date.now() }; savePlant(plantSaved); refusals = 0; showPlant();
+    setSay('Plant set to ' + b.textContent.toLowerCase() + '.');
+  }));
   /* ---------- Muscles wanders the room ---------- */
   const CAT_SPOTS = {
     sill:   { x: 770,  y: 362, say: 'Mrrrp.',     label: 'asleep on the windowsill',          note: 'Muscles gives you a slow blink.' },

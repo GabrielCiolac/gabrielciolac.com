@@ -228,7 +228,7 @@ body {
 .plaque .line { font-size: 7.5px; letter-spacing: .03em; text-transform: uppercase; font-weight: 600; line-height: 1.35; }
 .lb-hint { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); font-family: var(--f-show); font-size: 17px; color: var(--paper); opacity: .8; }
 
-/* ---------- the computer: a Windows 98-ish desktop ---------- */
+/* ---------- the computer: a late-90s desktop ("GabeOS 98") ---------- */
 .desk-ov { position: absolute; inset: 0; z-index: 6; background: rgba(10,5,16,.82); display: grid; place-items: center; padding: 10px; }
 .crt { width: min(900px, 100%); height: min(620px, 100%); background: linear-gradient(150deg, #f1e2b8, #b9a173);
   border: 5px solid var(--ink); border-radius: 26px 28px 32px 30px; padding: 10px 12px 14px;
@@ -237,7 +237,7 @@ body {
 .w98 { position: absolute; inset: 0; background: #008080; color: #000; font: 11px/1.25 Tahoma, "MS Sans Serif", Geneva, Verdana, sans-serif;
   overflow: hidden; user-select: none; -webkit-user-select: none; }
 .w98 button { font-family: inherit; }
-.w98-desktop { position: absolute; inset: 0 0 30px; overflow: hidden; }
+.w98-desktop { position: absolute; inset: 0; overflow: hidden; }
 
 /* desktop shortcuts */
 .w98-icons { position: absolute; inset: 6px; display: grid; grid-auto-flow: column; grid-template-rows: repeat(8, min-content);
@@ -257,7 +257,7 @@ body {
 .win { position: absolute; z-index: 10; display: flex; flex-direction: column; background: #c0c0c0; padding: 3px;
   border: 2px solid; border-color: #dfdfdf #000 #000 #dfdfdf;
   box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080, 3px 3px 0 rgba(0,0,0,.35);
-  min-width: 130px; max-width: calc(100% - 8px); max-height: calc(100% - 8px); }
+  min-width: 130px; max-width: calc(100% - 8px); max-height: calc(100% - 38px); }
 #win-computer { width: min(380px, calc(100% - 10px)); }
 #win-about { width: min(450px, calc(100% - 10px)); }
 #win-photos, #win-recycle, #win-shutdown { width: min(330px, calc(100% - 10px)); }
@@ -625,7 +625,7 @@ body {
       </div>
       <div class="lb-hint">Click anywhere to put it back</div>
     </div>
-    <div class="desk-ov" id="deskOv" hidden role="dialog" aria-modal="true" aria-label="Gabriel's Windows 98 computer">
+    <div class="desk-ov" id="deskOv" hidden role="dialog" aria-modal="true" aria-label="Gabriel's computer, running GabeOS 98">
       <div class="crt">
         <div class="screen">
           <div class="w98" id="w98">
@@ -749,8 +749,8 @@ body {
               </section>
 
               <!-- Shut Down -->
-              <section class="win" id="win-shutdown" data-win="shutdown" hidden aria-label="Shut Down Windows">
-                <div class="win-title"><span class="t">Shut Down Windows</span><button class="win-btn" type="button" data-close aria-label="Close">×</button></div>
+              <section class="win" id="win-shutdown" data-win="shutdown" hidden aria-label="Shut down">
+                <div class="win-title"><span class="t">Shut Down GabeOS</span><button class="win-btn" type="button" data-close aria-label="Close">×</button></div>
                 <div class="win-body">
                   <p class="shut-copy">It's now safe to turn off your computer.</p>
                   <div class="shut-row"><button class="w98-btn" id="shutRoom" type="button">Back to the room</button><button class="w98-btn" type="button" data-close>Cancel</button></div>
@@ -758,7 +758,7 @@ body {
               </section>
 
               <div class="start" id="startMenu" hidden role="menu" aria-label="Start menu">
-                <div class="start-banner" aria-hidden="true">Windows<b>98</b></div>
+                <div class="start-banner" aria-hidden="true">GabeOS<b>98</b></div>
                 <div class="start-list">
                   <button class="start-item" type="button" role="menuitem" data-open="mines"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="3" width="26" height="26" fill="#c0c0c0" stroke="#000"/><circle cx="16" cy="17" r="6" fill="#000"/><path d="M16 8v18M7 17h18M10 11l12 12M22 11L10 23" stroke="#000" stroke-width="2"/></svg>Minesweeper</button>
                   <button class="start-item" type="button" role="menuitem" data-open="solitaire"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="5" width="17" height="23" rx="2" fill="#fff" stroke="#000"/><text x="19.5" y="20" text-anchor="middle" font-family="Georgia, serif" font-size="12" fill="#b3132b">♦</text></svg>Solitaire</button>
@@ -804,7 +804,7 @@ body {
 
               <div class="taskbar">
                 <button class="startbtn" id="startBtn" type="button" aria-expanded="false" aria-controls="startMenu">
-                  <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="5" height="5" fill="#ff4d4d"/><rect x="9" y="2" width="5" height="5" fill="#4d9cff"/><rect x="2" y="9" width="5" height="5" fill="#4dff88"/><rect x="9" y="9" width="5" height="5" fill="#ffd24d"/></svg>
+                  <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ffc24d" stroke="#1b0f24" stroke-width="1.5"/><path d="M11 5.6 Q9.9 4.3 8 4.3 Q4.6 4.3 4.6 8 Q4.6 11.7 8 11.7 Q11 11.7 11.2 8.6 L8.3 8.6" fill="none" stroke="#1b0f24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   Start
                 </button>
                 <div class="taskbtns" id="taskBtns"></div>
@@ -1024,7 +1024,7 @@ body {
   }
   $('#lightbox').addEventListener('click', closeLayers);
 
-  /* ================= Windows 98 desktop ================= */
+  /* ================= GabeOS 98 desktop ================= */
   const W98 = window.Win98;
   const deskOverlay = $('#deskOv'), deskRoot = $('#w98'), deskDesktop = $('#w98Desktop');
   const winNodes = Array.from(document.querySelectorAll('.win'));
@@ -1039,12 +1039,13 @@ body {
   const deskNarrow = () => deskRoot.getBoundingClientRect().width < 560;
   const winNode = (id) => winNodes.find((w) => w.dataset.win === id);
   function bringFront(el) { zTop += 1; el.style.zIndex = String(zTop); }
+  const TASKBAR_H = 30; // the taskbar sits inside the desktop area; windows keep clear of it
   function clampWin(el) {
     const box = deskDesktop.getBoundingClientRect();
     if (deskNarrow()) { el.style.left = '4px'; el.style.top = '4px'; el.style.width = 'calc(100% - 8px)'; el.dataset.mobile = '1'; return; }
     if (el.dataset.mobile) { el.style.width = ''; delete el.dataset.mobile; }
     const maxX = Math.max(0, box.width - el.offsetWidth - 4);
-    const maxY = Math.max(0, box.height - el.offsetHeight - 4);
+    const maxY = Math.max(0, box.height - TASKBAR_H - el.offsetHeight - 4);
     el.style.left = Math.min(Math.max(0, parseFloat(el.style.left) || 0), maxX) + 'px';
     el.style.top = Math.min(Math.max(0, parseFloat(el.style.top) || 0), maxY) + 'px';
   }
@@ -1054,7 +1055,7 @@ body {
     if (box.width < 560) { el.style.left = '4px'; el.style.top = '4px'; el.style.width = 'calc(100% - 8px)'; el.dataset.mobile = '1'; return; }
     const n = winNodes.filter((w) => !w.hidden).length - 1;
     const x = Math.max(6, Math.round((box.width - el.offsetWidth) / 2) + n * 18);
-    const y = Math.max(6, Math.round((box.height - el.offsetHeight) / 2) + n * 16);
+    const y = Math.max(6, Math.round((box.height - TASKBAR_H - el.offsetHeight) / 2) + n * 16);
     el.style.left = x + 'px'; el.style.top = y + 'px';
     requestAnimationFrame(() => clampWin(el));
   }
@@ -1134,7 +1135,7 @@ body {
       const move = (ev) => {
         if (deskNarrow()) return;
         w.style.left = Math.max(-6, Math.min(box.width - 36, ev.clientX - box.left - dx)) + 'px';
-        w.style.top = Math.max(0, Math.min(box.height - 22, ev.clientY - box.top - dy)) + 'px';
+        w.style.top = Math.max(0, Math.min(box.height - TASKBAR_H - 22, ev.clientY - box.top - dy)) + 'px';
       };
       const end = () => {
         bar.removeEventListener('pointermove', move);

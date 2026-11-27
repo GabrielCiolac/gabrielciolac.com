@@ -138,6 +138,13 @@ body {
 [data-phase="dusk"] #hot-cat image.cathat { filter: brightness(.85) sepia(.2); }
 [data-phase="dawn"] #hot-cat image.cathat { filter: brightness(.92) sepia(.12); }
 [data-phase="day"] #hot-cat image.cathat { filter: none; }
+/* Christmas lights */
+#lightsGlow circle { animation: glowpulse 2.4s ease-in-out infinite; }
+@keyframes glowpulse { 0%,100% { opacity: .85; } 50% { opacity: .35; } }
+#hot-lights.off #lightsGlow { display: none; }
+#hot-lights.off #lightsBulbs ellipse { filter: saturate(.25) brightness(.45); }
+#slotLights.off .sb { filter: saturate(.2) brightness(.55); }
+#hot-lights:focus-visible #lightsHit path { stroke: rgba(255,194,77,.25); }
 /* preview panel (open with #preview) */
 .preview { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 14px; padding: 10px 14px;
   background: #1b0f24; border: 3px solid var(--ink); border-radius: 12px; font-size: 13px; color: var(--muted); }
@@ -256,7 +263,7 @@ body {
     <radialGradient id="gCrt"><stop offset="0" stop-color="#7cf2c4" stop-opacity=".8"/><stop offset="1" stop-color="#7cf2c4" stop-opacity="0"/></radialGradient>
     <radialGradient id="gLamp"><stop offset="0" stop-color="#ffcf6a" stop-opacity=".9"/><stop offset="1" stop-color="#ff9a3a" stop-opacity="0"/></radialGradient>
     <mask id="gabeHide" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1536"><rect x="0" y="0" width="1024" height="1536" fill="#fff"/><image id="gabeHideImg" x="0" y="0" width="1" height="1"/></mask>
-    <mask id="mGlass" maskUnits="userSpaceOnUse" x="660" y="80" width="340" height="400"><image id="glassMaskImg" href="room/glass-mask.png" x="660" y="80" width="340" height="400"/></mask>
+    <mask id="mGlass" maskUnits="userSpaceOnUse" x="620" y="40" width="420" height="480"><image id="glassMaskImg" href="room/glass-mask.png" x="660" y="80" width="340" height="400"/></mask>
     <clipPath id="clipWin"><path d="M757 112 Q830 92 895 97 Q960 100 985 110 L987 460 L680 452 Q676 400 690 340 Q705 270 735 225 Z"/></clipPath>
     <filter id="cloudBlur" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="14"/></filter>
     <clipPath id="clipGlobe"><circle cx="1208" cy="315" r="15.5"/></clipPath>
@@ -281,17 +288,17 @@ body {
 
   <!-- live Toronto weather, inside the window glass only -->
   <g id="wx" mask="url(#mGlass)" style="pointer-events:none">
-    <rect id="wxTint" x="660" y="80" width="340" height="400" fill="#7c86a0" opacity="0"/>
+    <rect id="wxTint" x="664" y="86" width="332" height="388" fill="#7c86a0" opacity="0"/>
     <g id="wxClouds" opacity="0" filter="url(#cloudBlur)">
       <g class="drift"><ellipse cx="780" cy="130" rx="150" ry="34" fill="#b9c0d0"/></g>
       <g class="drift d2"><ellipse cx="900" cy="190" rx="170" ry="30" fill="#a9b1c4"/></g>
       <g class="drift d3"><ellipse cx="740" cy="250" rx="130" ry="26" fill="#c3c9d6"/></g>
       <g class="drift d2"><ellipse cx="960" cy="110" rx="120" ry="26" fill="#cfd4df"/></g>
     </g>
-    <rect id="wxFog" x="660" y="80" width="340" height="400" fill="#dfe3ea" opacity="0"/>
+    <rect id="wxFog" x="664" y="86" width="332" height="388" fill="#dfe3ea" opacity="0"/>
     <g id="wxRain" stroke="#cfe0f5" stroke-width="1.6" stroke-linecap="round" opacity=".75" style="display:none"></g>
     <g id="wxSnow" fill="#ffffff" style="display:none"></g>
-    <rect id="wxFlash" x="660" y="80" width="340" height="400" fill="#f4f6ff" opacity="0"/>
+    <rect id="wxFlash" x="664" y="86" width="332" height="388" fill="#f4f6ff" opacity="0"/>
   </g>
 
   <!-- ambient life on the painting -->
@@ -358,8 +365,17 @@ body {
   </g>
 
   <!-- holiday decorations: one group per holiday, shown by applyHoliday() -->
-  <g id="decor" style="pointer-events:none">
+  <clipPath id="clipBehindDesk"><path d="M0 0 H1536 V560 L1160 596 L1038 628 V1024 H0 Z"/></clipPath>
+  <g id="decor" clip-path="url(#clipBehindDesk)" style="pointer-events:none">
     <g data-holiday="christmas" style="display:none"><image class="nightlit" href="room/xmas-tree.webp" x="915.6" y="338.6" width="194.1" height="376.6"/></g>
+  </g>
+
+  <!-- Christmas lights: swags on the curtain rod and over the door; click to switch on/off -->
+  <g id="hot-lights" class="hot" tabindex="0" role="button" aria-label="Christmas lights: switch them off" data-label="Switch the lights off" style="display:none">
+    <g id="lightsHit" fill="none" stroke="transparent" stroke-width="22" pointer-events="stroke"></g>
+    <g id="lightsWire" fill="none" stroke="#1d2a1a" stroke-width="2.2" stroke-linecap="round"></g>
+    <g id="lightsGlow" filter="url(#soft)" style="mix-blend-mode:screen"></g>
+    <g id="lightsBulbs"></g>
   </g>
 
   <!-- Muscles wanders: one spot is shown at a time (sill = her own layers over the empty sill) -->
@@ -502,6 +518,9 @@ body {
       <button class="slot" data-target="hot-pc" aria-label="Computer: GitHub and LinkedIn" data-label="Boot up the computer">
         <svg viewBox="0 0 44 40"><path d="M6 4 Q22 2 38 4 Q41 16 38 28 Q22 30 6 28 Q3 16 6 4 Z" fill="#f1e2b8" stroke="#1b0f24" stroke-width="3"/><path d="M10 8 Q22 7 34 8 Q36 16 34 24 Q22 25 10 24 Q8 16 10 8 Z" fill="#1f6a5c" stroke="#1b0f24" stroke-width="2"/><path d="M13 13 H22 M13 18 H28" stroke="#9affd8" stroke-width="2.5"/><path d="M8 36 L12 31 H32 L36 36 Z" fill="#f1e2b8" stroke="#1b0f24" stroke-width="2.5" stroke-linejoin="round"/></svg>
       </button>
+      <button class="slot" id="slotLights" data-target="hot-lights" aria-label="Christmas lights: switch on or off" data-label="Switch the lights off" hidden>
+        <svg viewBox="0 0 44 40"><path d="M4 8 Q22 20 40 8" fill="none" stroke="#1b0f24" stroke-width="2.5"/><g class="sb" stroke="#1b0f24" stroke-width="2"><ellipse cx="10" cy="20" rx="4" ry="6" fill="#ff4d4d"/><ellipse cx="22" cy="24" rx="4" ry="6" fill="#ffd24d"/><ellipse cx="34" cy="20" rx="4" ry="6" fill="#4dc3ff"/></g><path d="M10 13 V15 M22 16 V18 M34 13 V15" stroke="#1b0f24" stroke-width="3"/></svg>
+      </button>
       <button class="slot" data-target="hot-album" aria-label="Photo album: photography" data-label="Flip through the album">
         <svg viewBox="0 0 44 40"><path d="M6 6 L36 4 L38 34 L8 36 Z" fill="#7a4c9a" stroke="#1b0f24" stroke-width="3" stroke-linejoin="round"/><path d="M6 6 L12 6 L14 36 L8 36 Z" fill="#4e2c66" stroke="#1b0f24" stroke-width="2"/><path d="M17 12 L33 11 L34 27 L18 28 Z" fill="#f5a37a" stroke="#1b0f24" stroke-width="2"/><path d="M18 28 L23 20 L27 24 L30 19 L34 27 Z" fill="#5a2a5e"/></svg>
       </button>
@@ -571,11 +590,13 @@ body {
     + `<path d='M20 9 Q30 6 37 9 L38 29 Q30 33 20 30 Z' fill='#fff' ${INK}/><path d='M37 9 L41 9 L41 29 L38 29' fill='#5b7bd5' ${INK}/>`;
   const kPatUp = sv(44, 42, `<g transform='translate(0 -2) rotate(-12 30 20)'>${kPalm}</g>`);
   const kPatDown = sv(44, 42, `<g transform='translate(0 6)'>${kPalm}</g><path d='M6 3 Q8 0 10 3 M15 2 Q17 -1 19 2 M24 3 Q26 0 28 3' fill='none' stroke='#1b0f24' stroke-width='2' stroke-linecap='round'/>`);
+  const kBulb = sv(32, 40, `<path d='M16 3 Q28 3 28 15 Q28 22 21 27 L21 31 L11 31 L11 27 Q4 22 4 15 Q4 3 16 3 Z' fill='#ffe066' ${INK}/>`
+    + `<path d='M11 34 H21 M12 37 H20' fill='none' ${INK}/><path d='M10 12 Q11 8 15 7' fill='none' stroke='#fff' stroke-width='2.5' stroke-linecap='round'/>`);
   const C = {
     read: cur(kGlasses, 22, 13, 'zoom-in'), water: cur(kCan, 3, 8, 'pointer'), power: cur(kPower, 17, 17, 'pointer'),
-    write: cur(kQuill, 3, 33, 'pointer'), talk: cur(kTalk, 6, 3, 'pointer'), patUp: cur(kPatUp, 22, 22, 'pointer'), patDown: cur(kPatDown, 22, 22, 'pointer'),
+    write: cur(kQuill, 3, 33, 'pointer'), talk: cur(kTalk, 6, 3, 'pointer'), bulb: cur(kBulb, 16, 16, 'pointer'), patUp: cur(kPatUp, 22, 22, 'pointer'), patDown: cur(kPatDown, 22, 22, 'pointer'),
   };
-  const KIND = { read: ['hot-news', 'hot-album', 'hot-frames', 'hot-plaque'], water: ['hot-plant'], power: ['hot-pc'], write: ['hot-mail'], talk: ['hot-me'], patUp: ['hot-cat'] };
+  const KIND = { read: ['hot-news', 'hot-album', 'hot-frames', 'hot-plaque'], water: ['hot-plant'], power: ['hot-pc'], write: ['hot-mail'], talk: ['hot-me'], bulb: ['hot-lights'], patUp: ['hot-cat'] };
   const rules = Object.entries(KIND).map(([k, ids]) => ids.map((id) => `#${id},.slot[data-target="${id}"]`).join(',') + `{cursor:${C[k]}}`).join(' ');
   const css = document.createElement('style');
   css.textContent = `.wrap{cursor:${cur(arrow, 4, 3, 'default')}} .hot,.slot,.btn{cursor:${cur(hand, 15, 3, 'pointer')}} ${rules}`;
@@ -652,6 +673,7 @@ body {
       setTimeout(() => el.classList.remove('spin'), 2200); return;
     }
     if (el.id === 'hot-plant') { waterTheRoomPlant(); return; }
+    if (el.id === 'hot-lights') { setLights(!lightsOn); setSay(lightsOn ? 'Click. The lights twinkle back on.' : 'Click. The lights go dark.'); return; }
     if (el.id === 'hot-cat') {
       const sp = CAT_SPOTS[catSpot]; catPetAt = Date.now();
       if (catSpot === 'sill') {
@@ -855,12 +877,47 @@ body {
     plantSaved = { m: Number(b.dataset.plant), t: Date.now() }; savePlant(plantSaved); refusals = 0; showPlant();
     setSay('Plant set to ' + b.textContent.toLowerCase() + '.');
   }));
+  /* ---------- Christmas lights ---------- */
+  // swags hang between anchor points on the curtain rod and the top of the door frame
+  const SWAGS = [
+    [[684, 46], [760, 34], 18], [[760, 34], [840, 24], 18], [[840, 24], [920, 25], 18], [[920, 25], [1000, 36], 18], [[1000, 36], [1076, 52], 18],
+    [[112, 66], [245, 58], 20], [[245, 58], [378, 72], 20],
+  ];
+  const BULB_COLORS = ['#ff4d4d', '#ffd24d', '#4dff88', '#4dc3ff', '#ff7ad9'];
+  let lightsOn = (() => { try { return localStorage.getItem('gabe-lights') !== 'off'; } catch (e) { return true; } })();
+  (function buildLights() {
+    const NS4 = 'http://www.w3.org/2000/svg', mk = (tag, attrs, parent) => { const e = document.createElementNS(NS4, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+    let n = 0;
+    SWAGS.forEach(([[x0, y0], [x1, y1], sag]) => {
+      const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2 + sag * 2, d = `M${x0} ${y0} Q${cx} ${cy} ${x1} ${y1}`;
+      mk('path', { d }, $('#lightsWire')); mk('path', { d }, $('#lightsHit'));
+      const count = Math.max(3, Math.round(Math.hypot(x1 - x0, y1 - y0) / 18));
+      for (let i = 1; i < count; i++) {
+        const t = i / count, x = (1 - t) * (1 - t) * x0 + 2 * (1 - t) * t * cx + t * t * x1, y = (1 - t) * (1 - t) * y0 + 2 * (1 - t) * t * cy + t * t * y1;
+        const col = BULB_COLORS[n++ % BULB_COLORS.length], tilt = (Math.random() * 30 - 15).toFixed(0);
+        const g = mk('g', { transform: `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${tilt})` }, $('#lightsBulbs'));
+        mk('rect', { x: -1.8, y: -1, width: 3.6, height: 3, fill: '#2a2a2a', stroke: '#1b0f24', 'stroke-width': 1 }, g);
+        mk('ellipse', { cx: 0, cy: 6, rx: 3.2, ry: 4.6, fill: col, stroke: '#1b0f24', 'stroke-width': 1.4 }, g);
+        const glow = mk('circle', { cx: x.toFixed(1), cy: (y + 6).toFixed(1), r: 9, fill: col }, $('#lightsGlow'));
+        glow.style.animationDelay = (-Math.random() * 2.4).toFixed(2) + 's';
+      }
+    });
+  })();
+  function setLights(on) {
+    lightsOn = on; try { localStorage.setItem('gabe-lights', on ? 'on' : 'off'); } catch (e) { /* this visit only */ }
+    const label = on ? 'Switch the lights off' : 'Switch the lights on';
+    $('#hot-lights').classList.toggle('off', !on); $('#slotLights').classList.toggle('off', !on);
+    $('#hot-lights').dataset.label = label; $('#slotLights').dataset.label = label;
+    $('#hot-lights').setAttribute('aria-label', 'Christmas lights: ' + label.toLowerCase().replace('switch the lights ', 'switch them '));
+  }
+  setLights(lightsOn);
+
   /* ---------- Holidays ---------- */
   // Art that exists per holiday. Gabe's hat is in his sprite frame (1024x1536); hide = the bit of hair the hat squashes.
   // Muscles' hat: sprite size, brim centre and brim width in sprite px; it is placed on her head in every pose.
   const HOLIDAY_ART = {
     christmas: {
-      decor: true, catSpot: 'tree', dropSpots: ['rug'],
+      decor: true, lights: true, catSpot: 'tree', dropSpots: ['rug'],
       gabeHat: { href: 'room/gabe-hat-christmas.webp', x: 249, y: 109, w: 443, h: 315, hide: { href: 'room/gabe-hide-christmas.png', x: 248, y: 39, w: 463, h: 604 } },
       catHat: { href: 'room/cathat-christmas.webp', w: 181, h: 134, cx: 59.6, cy: 103.1, bw: 113.8 },
       greet: 'Merry Christmas! Muscles already found the presents.',
@@ -882,6 +939,7 @@ body {
     holiday = next; const art = HOLIDAY_ART[holiday] || {};
     if (holiday) document.documentElement.dataset.holiday = holiday; else document.documentElement.dataset.holiday = '';
     document.querySelectorAll('#decor > g').forEach((g) => { g.style.display = art.decor && g.dataset.holiday === holiday ? '' : 'none'; });
+    $('#hot-lights').style.display = art.lights ? '' : 'none'; $('#slotLights').hidden = !art.lights;
     // Gabe's hat, and hide the hair it squashes
     const gh = art.gabeHat;
     $('#gabeHat').style.display = gh ? '' : 'none';

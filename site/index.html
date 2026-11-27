@@ -116,6 +116,18 @@ body {
 .outside .acts button:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
 .outside .acts button:focus-visible { outline: 3px solid var(--crt); outline-offset: 3px; }
 .outside .acts button[hidden] { display: none; }
+/* the plant: its art is lit for daytime, so dim it for the other phases */
+#plantLayer image, #canTilt image { transition: filter 1.6s ease; }
+[data-phase="night"] #plantLayer image, [data-phase="night"] #canTilt image { filter: brightness(.55) saturate(.8) contrast(1.05); }
+[data-phase="dusk"] #plantLayer image, [data-phase="dusk"] #canTilt image { filter: brightness(.82) sepia(.22) hue-rotate(-12deg) saturate(1.05); }
+[data-phase="dawn"] #plantLayer image, [data-phase="dawn"] #canTilt image { filter: brightness(.9) sepia(.14) hue-rotate(-10deg); }
+#plantLayer { transform-box: fill-box; transform-origin: 50% 100%; }
+#plantLayer.perk { animation: perk .6s cubic-bezier(.3,1.7,.5,1); }
+@keyframes perk { 0%{transform:scale(1,1)} 35%{transform:scale(.94,1.1)} 70%{transform:scale(1.04,.97)} 100%{transform:scale(1,1)} }
+#canTilt { transform-box: fill-box; transform-origin: 85% 50%; transition: transform .35s ease; }
+#canTilt.pour { transform: rotate(-32deg); }
+.drop { animation: drop .5s ease-in infinite; }
+@keyframes drop { from { transform: translate(0,0); opacity: 1; } to { transform: translate(-14px, 50px); opacity: 0; } }
 /* preview panel (open with #preview) */
 .preview { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 14px; padding: 10px 14px;
   background: #1b0f24; border: 3px solid var(--ink); border-radius: 12px; font-size: 13px; color: var(--muted); }
@@ -233,7 +245,7 @@ body {
     <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
     <radialGradient id="gCrt"><stop offset="0" stop-color="#7cf2c4" stop-opacity=".8"/><stop offset="1" stop-color="#7cf2c4" stop-opacity="0"/></radialGradient>
     <radialGradient id="gLamp"><stop offset="0" stop-color="#ffcf6a" stop-opacity=".9"/><stop offset="1" stop-color="#ff9a3a" stop-opacity="0"/></radialGradient>
-    <mask id="mGlass" maskUnits="userSpaceOnUse" x="660" y="80" width="340" height="400"><image href="room/glass-mask.png" x="660" y="80" width="340" height="400"/></mask>
+    <mask id="mGlass" maskUnits="userSpaceOnUse" x="660" y="80" width="340" height="400"><image id="glassMaskImg" href="room/glass-mask.png" x="660" y="80" width="340" height="400"/></mask>
     <clipPath id="clipWin"><path d="M757 112 Q830 92 895 97 Q960 100 985 110 L987 460 L680 452 Q676 400 690 340 Q705 270 735 225 Z"/></clipPath>
     <filter id="cloudBlur" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="14"/></filter>
     <clipPath id="clipGlobe"><circle cx="1208" cy="315" r="15.5"/></clipPath>
@@ -246,6 +258,14 @@ body {
     <image id="room-dawn" class="room" data-phase="dawn" data-src="room/room-dawn.webp" x="0" y="0" width="1536" height="1024" opacity="0"/>
     <image id="room-day" class="room" data-phase="day" data-src="room/room-day.webp" x="0" y="0" width="1536" height="1024" opacity="0"/>
     <image id="room-dusk" class="room" data-phase="dusk" data-src="room/room-dusk.webp" x="0" y="0" width="1536" height="1024" opacity="0"/>
+  </g>
+
+  <!-- empty sill under the plant, one per time of day; shown when the plant isn't in its painted state -->
+  <g id="sillPatch" style="display:none">
+    <image class="room" data-phase="night" href="room/sill-night.webp" x="825" y="314.8" width="166.2" height="200.8"/>
+    <image class="room" data-phase="dawn" data-src="room/sill-dawn.webp" x="825" y="314.8" width="166.2" height="200.8" opacity="0"/>
+    <image class="room" data-phase="day" data-src="room/sill-day.webp" x="825" y="314.8" width="166.2" height="200.8" opacity="0"/>
+    <image class="room" data-phase="dusk" data-src="room/sill-dusk.webp" x="825" y="314.8" width="166.2" height="200.8" opacity="0"/>
   </g>
 
   <!-- live Toronto weather, inside the window glass only -->
@@ -310,6 +330,20 @@ body {
   </g>
   <g id="hot-mail" class="hot" tabindex="0" role="button" aria-label="Mail on the hall table: write Gabriel a letter" data-label="Write me a letter">
     <path class="hit" pointer-events="all" d="M392 396 L510 392 L520 480 L560 500 L548 650 L370 650 L362 500 L392 480 Z"/>
+  </g>
+
+  <!-- the windowsill plant: painted state = "ok"; other states are layers over the empty sill -->
+  <g id="hot-plant" class="hot" tabindex="0" role="button" aria-label="The plant on the windowsill: water it" data-label="Water the plant">
+    <path class="hit" pointer-events="all" d="M842 332 L978 332 L982 500 L838 500 Z"/>
+    <g id="plantLayer" class="wig2">
+      <image data-stage="wilted" href="room/plant-wilted.webp" x="853" y="402.5" width="107.8" height="101.2" style="display:none"/>
+      <image data-stage="droopy" href="room/plant-droopy.webp" x="852" y="402.5" width="103.8" height="91.8" style="display:none"/>
+      <image data-stage="bloom" href="room/plant-bloom.webp" x="825" y="330.8" width="158" height="161" style="display:none"/>
+    </g>
+    <g id="can" style="display:none; pointer-events:none">
+      <g id="drops" fill="#9fd3ff" stroke="#1b0f24" stroke-width="1.2"></g>
+      <g id="canTilt"><image href="room/watering-can.webp" x="930" y="330" width="76" height="44"/></g>
+    </g>
   </g>
 
   <!-- Muscles wanders: one spot is shown at a time (sill = her own layers over the empty sill) -->
@@ -558,6 +592,7 @@ body {
       el.classList.add('spin'); speak(1208, 290, 'Toronto is about\u2026 here.');
       setTimeout(() => el.classList.remove('spin'), 2200); return;
     }
+    if (el.id === 'hot-plant') { waterTheRoomPlant(); return; }
     if (el.id === 'hot-cat') {
       const sp = CAT_SPOTS[catSpot]; catPetAt = Date.now();
       if (catSpot === 'sill') {
@@ -694,6 +729,59 @@ body {
   }));
   group('data-ph', 'phaseSel'); group('data-wx', 'wxSel'); group('data-t', 'tSel');
 
+  /* ---------- Water the plant (per visitor, saved in localStorage) ---------- */
+  const PKEY = 'gabe-plant';
+  const loadPlant = () => { try { return JSON.parse(localStorage.getItem(PKEY)); } catch (e) { return null; } };
+  const savePlant = (v) => { try { localStorage.setItem(PKEY, JSON.stringify(v)); } catch (e) { /* this visit only */ } };
+  let plantSaved = loadPlant(), pouring = false, refusals = 0;
+  const PLANT_NOTE = {
+    wilted: ['Water the poor plant', 'The plant is wilted and very dramatic about it.'],
+    droopy: ['Water the plant', 'The plant looks thirsty.'],
+    ok:     ['Water the plant', 'The plant looks fine. A little water wouldn\u2019t hurt.'],
+    bloom:  ['Admire the plant', 'The plant is thriving. It even flowered.'],
+  };
+  const AFTER = {
+    droopy: 'The plant perks up a little.',
+    ok:     'The plant stands up straight again.',
+    bloom:  'The plant is so happy it flowered!',
+  };
+  const REFUSE = ['It\u2019s drowning. Gabe says stop.', 'That plant has had enough water for a week.', 'You\u2019re making a swamp.', 'Glub.', 'Gabe confiscates the watering can.'];
+  function showPlant() {
+    const st = window.RoomLogic.plantStage(window.RoomLogic.plantMoisture(plantSaved, Date.now()));
+    $('#sillPatch').style.display = st === 'ok' ? 'none' : '';
+    $('#glassMaskImg').setAttribute('href', st === 'ok' ? 'room/glass-mask.png' : 'room/glass-mask-empty.png');
+    document.querySelectorAll('#plantLayer image').forEach((im) => { im.style.display = im.dataset.stage === st ? '' : 'none'; });
+    const [label, note] = PLANT_NOTE[st], el = $('#hot-plant');
+    el.dataset.label = label; el.dataset.note = note;
+    el.setAttribute('aria-label', 'The plant on the windowsill (' + (st === 'ok' ? 'doing fine' : st) + '): water it');
+    return st;
+  }
+  function waterTheRoomPlant() {
+    if (pouring) return;
+    const r = window.RoomLogic.waterPlant(plantSaved, Date.now());
+    if (r.refused) { speak(905, 330, REFUSE[refusals++ % REFUSE.length]); setSay('The soil is soaked.'); return; }
+    pouring = true; refusals = 0;
+    const can = $('#can'), tilt = $('#canTilt'), drops = $('#drops'), NS2 = 'http://www.w3.org/2000/svg';
+    drops.textContent = '';
+    for (let i = 0; i < 6; i++) {
+      const d = document.createElementNS(NS2, 'ellipse');
+      d.setAttribute('cx', 930 + (i % 3) * 3); d.setAttribute('cy', 380); d.setAttribute('rx', 2); d.setAttribute('ry', 3);
+      d.setAttribute('class', 'drop'); d.style.animationDelay = (i * 0.08) + 's'; drops.appendChild(d);
+    }
+    drops.style.display = 'none'; can.style.display = ''; setSay('Glug glug glug\u2026');
+    requestAnimationFrame(() => tilt.classList.add('pour'));
+    setTimeout(() => { drops.style.display = ''; }, 300);
+    setTimeout(() => {
+      plantSaved = r.saved; savePlant(plantSaved);
+      const st = showPlant(), pl = $('#plantLayer');
+      pl.classList.remove('perk'); void pl.getBBox(); pl.classList.add('perk');
+      tilt.classList.remove('pour'); drops.style.display = 'none';
+      setSay(AFTER[st] || 'The plant drinks it up.');
+    }, 1500);
+    setTimeout(() => { can.style.display = 'none'; pouring = false; }, 1900);
+  }
+  $('#hot-plant').addEventListener('pointerenter', () => setSay($('#hot-plant').dataset.note));
+  showPlant(); setInterval(showPlant, 5 * 60 * 1000);
   /* ---------- Muscles wanders the room ---------- */
   const CAT_SPOTS = {
     sill:   { x: 770,  y: 362, say: 'Mrrrp.',     label: 'asleep on the windowsill',          note: 'Muscles gives you a slow blink.' },

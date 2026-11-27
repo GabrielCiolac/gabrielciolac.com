@@ -122,6 +122,30 @@
     return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
   }
 
+  /* ---------- The windowsill plant (one per visitor, saved in their browser) ----------
+     Moisture 0-100 dries out over about three days; each watering adds PLANT.perWater. */
+  const PLANT = { dryPerHour: 100 / 72, start: 30, perWater: 30, full: 95 };
+  function plantMoisture(saved, nowMs) {
+    if (!saved || typeof saved.m !== 'number' || typeof saved.t !== 'number') return PLANT.start;
+    const hours = Math.max(0, nowMs - saved.t) / 3600000;
+    return Math.max(0, Math.min(100, saved.m - hours * PLANT.dryPerHour));
+  }
+  /* wilted < 20 <= droopy < 45 <= ok < 75 <= bloom */
+  function plantStage(m) {
+    if (m >= 75) return 'bloom';
+    if (m >= 45) return 'ok';
+    if (m >= 20) return 'droopy';
+    return 'wilted';
+  }
+  /* Water it: returns the new saved state, or refused=true (state unchanged) when it is already full. */
+  function waterPlant(saved, nowMs) {
+    const before = plantMoisture(saved, nowMs);
+    if (before >= PLANT.full) return { refused: true, before, after: before, saved: { m: before, t: nowMs } };
+    const after = Math.min(100, before + PLANT.perWater);
+    return { refused: false, before, after, saved: { m: after, t: nowMs } };
+  }
+
   return { PHASES, THERMO, minutesOf, phaseFor, weatherFor, thermoTopY, weatherLine, openMeteoUrl, parseOpenMeteo, torontoMinutes,
-    PESTER, pester, pesterLine, cooldownFor, kick, cooldownLeft, clock };
+    PESTER, pester, pesterLine, cooldownFor, kick, cooldownLeft, clock,
+    PLANT, plantMoisture, plantStage, waterPlant };
 });

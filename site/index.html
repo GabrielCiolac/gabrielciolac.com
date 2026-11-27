@@ -89,6 +89,31 @@ body {
 [data-phase="day"] #hot-cat image { filter: brightness(1.35) saturate(.95); }
 [data-phase="dawn"] #hot-cat image { filter: brightness(1.15) sepia(.1); }
 [data-phase="dusk"] #hot-cat image { filter: brightness(1.08) sepia(.2) saturate(1.1); }
+/* kicked out: the hallway side of Gabriel's door */
+.outside { position: absolute; inset: 0; z-index: 7; overflow: hidden; display: grid;
+  background: linear-gradient(transparent 86%, #2a170f 86%, #3a2214 100%), repeating-linear-gradient(90deg, #221846 0 30px, #2a1e57 30px 60px); }
+.outside[data-slam] .door { animation: slam .55s cubic-bezier(.2,1.6,.4,1); }
+@keyframes slam { 0%{transform:scale(1.25)} 55%{transform:scale(.97)} 75%{transform:scale(1.015)} 100%{transform:scale(1)} }
+.outside .door { position: absolute; inset: 0; width: 100%; height: 100%; }
+.outside .door.knock { animation: knock .3s ease; }
+@keyframes knock { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+.outside::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 34% 60% at 50% 50%, transparent 60%, rgba(10,4,18,.85) 100%); }
+.outside .sign { position: absolute; left: 50%; top: 30%; z-index: 1; transform: translateX(-50%) rotate(-4deg); text-align: center;
+  font-family: var(--f-show); color: var(--ink); background: #e8c991; border: 4px solid var(--ink); border-radius: 6px 10px 8px 12px;
+  padding: 6px 16px 8px; box-shadow: 5px 6px 0 rgba(0,0,0,.45); transform-origin: 50% -30px; animation: swing 2.6s ease-in-out infinite; }
+.outside .sign::before { content: ""; position: absolute; left: 18%; right: 18%; top: -34px; height: 34px; border: 3px solid var(--ink); border-bottom: 0; border-radius: 50% 50% 0 0 / 100% 100% 0 0; }
+@keyframes swing { 0%,100%{transform:translateX(-50%) rotate(-4deg)} 50%{transform:translateX(-50%) rotate(3deg)} }
+.outside .sign b { display: block; font-weight: 400; font-size: clamp(26px, 4.4vw, 46px); line-height: 1; color: #a3122a; }
+.outside .sign span { display: block; font-size: clamp(15px, 2vw, 21px); margin-top: 2px; }
+.outside .muffle { position: absolute; left: 50%; top: 9%; z-index: 1; transform: translateX(-50%); font-family: var(--f-show); font-size: clamp(16px, 2.2vw, 22px);
+  color: var(--paper); font-style: italic; opacity: 0; transition: opacity .25s; white-space: nowrap; text-shadow: 0 2px 0 var(--ink); }
+.outside .muffle.show { opacity: .9; }
+.outside .acts { position: absolute; left: 50%; bottom: 7%; z-index: 1; transform: translateX(-50%); display: flex; gap: 12px; }
+.outside .acts button { font: 400 clamp(17px, 2.2vw, 22px) var(--f-show); color: var(--ink); background: var(--gold); border: 3px solid var(--ink);
+  border-radius: 12px 10px 13px 9px; padding: 2px 16px 4px; box-shadow: 0 4px 0 var(--ink); cursor: inherit; }
+.outside .acts button:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+.outside .acts button:focus-visible { outline: 3px solid var(--crt); outline-offset: 3px; }
+.outside .acts button[hidden] { display: none; }
 /* preview panel (open with #preview) */
 .preview { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 14px; padding: 10px 14px;
   background: #1b0f24; border: 3px solid var(--ink); border-radius: 12px; font-size: 13px; color: var(--muted); }
@@ -318,6 +343,19 @@ body {
     </div>
     <div class="balloon" id="balloon"></div>
     <div class="tip" id="tip"></div>
+    <div class="outside" id="outside" hidden role="dialog" aria-modal="true" aria-label="Gabriel kicked you out of his room">
+      <svg class="door" id="outDoor" viewBox="-2 22 400 640" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs><clipPath id="doorClip"><path d="M98 70 L240 50 L356 54 L346 120 L334 260 L318 450 L302 636 L56 636 L58 400 L82 200 Z"/></clipPath></defs>
+        <path d="M60 636 L300 636 L380 662 L-10 662 Z" fill="#000" opacity=".35"/>
+        <image id="outImg" x="0" y="0" width="1536" height="1024" clip-path="url(#doorClip)"/>
+      </svg>
+      <div class="muffle" id="muffle" aria-live="polite"></div>
+      <div class="sign" id="outSign"><b id="signBig">GO AWAY</b><span id="signSmall">back in 1:00</span></div>
+      <div class="acts">
+        <button type="button" id="knock">Knock</button>
+        <button type="button" id="openDoor" hidden>Open the door</button>
+      </div>
+    </div>
     <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Taiga Nomad plaque, close-up">
       <div class="plaque" id="plaqueCard">
         <span class="side l">Taiga Motors Inc.</span>
@@ -478,8 +516,14 @@ body {
   })();
 
   function act(el) {
+    if (!$('#outside').hidden) return;
     boing(el);
     if (el.id === 'hot-me') {
+      const now = Date.now(), R = window.RoomLogic;
+      annoy = R.pester(annoy, annoyAt, now); annoyAt = now;
+      const mad = R.pesterLine(annoy);
+      if (mad === 'kick') { kickOut(); return; }
+      if (mad) { speak(612, 425, mad); talk(Math.min(2600, 600 + mad.length * 45)); return; }
       const line = LINES[li++ % LINES.length];
       speak(612, 425, line);
       if (li % 2 === 1) wave(); else talk(Math.min(2600, 600 + line.length * 45));
@@ -622,6 +666,59 @@ body {
   }));
   group('data-ph', 'phaseSel'); group('data-wx', 'wxSel'); group('data-t', 'tSel');
 
+  /* ---------- Pester Gabriel too much and he kicks you out ---------- */
+  const KEY = 'gabe-kicked-out', outside = $('#outside');
+  let annoy = 0, annoyAt = null, outT, muffleT, typed = '';
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { return null; } };
+  const save = (v) => { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) { /* private mode: cooldown lasts this visit only */ } };
+  let kicked = load();
+  const MUFFLED = ['Nobody\u2019s home.', 'I can hear you knocking.', 'Not yet!', 'Mmmph. Go away.', 'Muscles says no.'];
+  function muffle(t) {
+    const m = $('#muffle'); m.textContent = t; m.classList.add('show');
+    clearTimeout(muffleT); muffleT = setTimeout(() => m.classList.remove('show'), 2200);
+  }
+  function tickOutside() {
+    const left = window.RoomLogic.cooldownLeft(kicked, Date.now());
+    $('#signBig').textContent = left ? 'GO AWAY' : 'OK FINE';
+    $('#signSmall').textContent = left ? 'back in ' + window.RoomLogic.clock(left) : 'come in';
+    $('#openDoor').hidden = !!left;
+    if (!left) clearInterval(outT);
+  }
+  function showOutside(slam) {
+    closeLayers(); hideTip(); balloon.classList.remove('show');
+    $('#outImg').setAttribute('href', 'room/room-day.webp');
+    outside.hidden = false; slam ? outside.setAttribute('data-slam', '') : outside.removeAttribute('data-slam');
+    tickOutside(); clearInterval(outT); outT = setInterval(tickOutside, 250);
+    $('#knock').focus();
+  }
+  function kickOut() {
+    annoy = 0; annoyAt = null;
+    kicked = window.RoomLogic.kick(kicked, Date.now()); save(kicked);
+    speak(612, 425, 'That\u2019s it. OUT!'); talk(900);
+    setTimeout(() => showOutside(true), 1000);
+  }
+  function comeBackIn(line) {
+    clearInterval(outT); outside.hidden = true; annoy = 0; annoyAt = null;
+    if (kicked) { kicked.untilMs = 0; save(kicked); }
+    $('#hot-me').focus({ preventScroll: true });
+    setTimeout(() => { speak(612, 425, line); talk(1400); }, 150);
+  }
+  /* Developer override: type "sudo" at the door. */
+  function letMeIn() {
+    kicked = null; try { localStorage.removeItem(KEY); } catch (e) { /* nothing stored */ }
+    if (!outside.hidden) comeBackIn('Oh! Sorry, didn\u2019t realise you were staff.');
+  }
+  $('#knock').addEventListener('click', () => {
+    const d = $('#outDoor'); d.classList.remove('knock'); void d.getBBox(); d.classList.add('knock');
+    muffle(window.RoomLogic.cooldownLeft(kicked, Date.now()) ? MUFFLED[Math.floor(Math.random() * MUFFLED.length)] : 'It\u2019s open\u2026');
+  });
+  $('#openDoor').addEventListener('click', () => comeBackIn('\u2026Fine. Welcome back. Hands to yourself.'));
+  document.addEventListener('keydown', (e) => {
+    if (outside.hidden || e.key.length !== 1) return;
+    typed = (typed + e.key.toLowerCase()).slice(-4);
+    if (typed === 'sudo') { typed = ''; letMeIn(); }
+  });
+  if (window.RoomLogic.cooldownLeft(kicked, Date.now())) showOutside(false);
   const pan = $('#pan'); requestAnimationFrame(() => { pan.scrollLeft = (pan.scrollWidth - pan.clientWidth) / 2; });
 })();
 </script>

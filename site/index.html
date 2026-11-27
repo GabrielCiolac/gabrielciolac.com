@@ -234,7 +234,7 @@ body {
   border: 5px solid var(--ink); border-radius: 26px 28px 32px 30px; padding: 10px 12px 14px;
   box-shadow: 12px 12px 0 rgba(0,0,0,.5); display: flex; flex-direction: column; animation: pop .35s cubic-bezier(.3,1.7,.5,1); }
 .screen { position: relative; flex: 1; min-height: 0; border: 4px solid #2b2116; border-radius: 8px; overflow: hidden; background: #008080; }
-.w98 { position: absolute; inset: 0; background: #008080; color: #000; font: 11px/1.25 Tahoma, "MS Sans Serif", Geneva, Verdana, sans-serif;
+.w98 { position: absolute; inset: 0; background: #008080 var(--wall, none) center / cover no-repeat; color: #000; font: 11px/1.25 Tahoma, "MS Sans Serif", Geneva, Verdana, sans-serif;
   overflow: hidden; user-select: none; -webkit-user-select: none; }
 .w98 button { font-family: inherit; }
 .w98-desktop { position: absolute; inset: 0; overflow: hidden; }
@@ -297,6 +297,23 @@ body {
 .shut-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; flex-wrap: wrap; }
 .shut-copy { line-height: 1.6; }
 
+.wicon span { text-shadow: 1px 1px 0 #000, 0 0 2px rgba(0,0,0,.6); }
+/* wallpaper picker + desktop right-click menu */
+.ctx { position: absolute; z-index: 95; min-width: 150px; padding: 2px; background: #c0c0c0; border: 2px solid; border-color: #dfdfdf #000 #000 #dfdfdf;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080, 2px 2px 0 rgba(0,0,0,.4); }
+.ctx-item { display: block; width: 100%; text-align: left; font: 11px Tahoma, Verdana, sans-serif; color: #000; background: none; border: 0; padding: 4px 18px; cursor: default; }
+.ctx-item:hover:not(:disabled), .ctx-item:focus-visible { background: #000080; color: #fff; outline: none; }
+.ctx-item:disabled { color: #808080; text-shadow: 1px 1px 0 #fff; }
+.ctx-sep { height: 0; margin: 3px 2px; border-top: 1px solid #808080; border-bottom: 1px solid #fff; }
+.disp { display: grid; gap: 6px; padding: 6px; width: min(300px, 100%); }
+.disp-mon { justify-self: center; width: 168px; padding: 8px 8px 0; background: #c0c0c0; border: 2px solid; border-color: #dfdfdf #000 #000 #dfdfdf; border-radius: 4px 4px 0 0; }
+.disp-screen { height: 104px; border: 2px solid; border-color: #808080 #fff #fff #808080; background: #008080 center / cover no-repeat; }
+.disp-stand { width: 60px; height: 10px; margin: 0 auto; background: #a8a8a8; border: 1px solid #000; border-top: 0; }
+.disp-list { height: 92px; overflow: auto; background: #fff; border: 2px solid; border-color: #808080 #fff #fff #808080; }
+.disp-opt { display: block; width: 100%; text-align: left; font: 11px Tahoma, Verdana, sans-serif; background: none; border: 0; padding: 2px 6px; color: #000; cursor: default; }
+.disp-opt[aria-selected="true"] { background: #000080; color: #fff; }
+.disp-btns { display: flex; justify-content: flex-end; gap: 6px; }
+.disp-btns .w98-btn { min-width: 64px; }
 /* taskbar + start menu */
 .taskbar { position: absolute; left: 0; right: 0; bottom: 0; height: 30px; z-index: 90; display: flex; align-items: center; gap: 2px; padding: 2px;
   background: #c0c0c0; border-top: 2px solid #dfdfdf; box-shadow: inset 0 1px 0 #fff; }
@@ -742,6 +759,27 @@ body {
               </section>
 
               <!-- Recycle Bin -->
+              <section class="win" id="win-display" data-win="display" hidden aria-label="Display Properties">
+                <div class="win-title"><span class="t">Display Properties</span><button class="win-btn" type="button" data-close aria-label="Close">×</button></div>
+                <div class="win-body">
+                  <div class="disp">
+                    <div class="disp-mon" aria-hidden="true"><div class="disp-screen" id="dispPreview"></div><div class="disp-stand"></div></div>
+                    <div class="disp-label">Wallpaper:</div>
+                    <div class="disp-list" id="dispList" role="listbox" aria-label="Wallpaper"></div>
+                    <div class="disp-btns"><button class="w98-btn" type="button" id="dispOk">OK</button><button class="w98-btn" type="button" data-close>Cancel</button><button class="w98-btn" type="button" id="dispApply">Apply</button></div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- right-click menu on the desktop -->
+              <div class="ctx" id="deskCtx" hidden role="menu" aria-label="Desktop menu">
+                <button class="ctx-item" type="button" role="menuitem" disabled>Arrange Icons</button>
+                <button class="ctx-item" type="button" role="menuitem" data-ctx="refresh">Refresh</button>
+                <div class="ctx-sep"></div>
+                <button class="ctx-item" type="button" role="menuitem" data-ctx="wallpaper">Change Wallpaper…</button>
+                <button class="ctx-item" type="button" role="menuitem" data-ctx="wallpaper">Properties</button>
+              </div>
+
               <section class="win" id="win-recycle" data-win="recycle" hidden aria-label="Recycle Bin">
                 <div class="win-title"><span class="t">Recycle Bin</span><button class="win-btn" type="button" data-min aria-label="Minimize">–</button><button class="win-btn" type="button" data-close aria-label="Close">×</button></div>
                 <div class="win-menu"><span>File</span><span>Edit</span><span>Help</span></div>
@@ -1201,7 +1239,66 @@ body {
   }
 
   /* the desk wizard: an original pixel assistant, not a paperclip */
+  /* ---------- Wallpaper (right-click the desktop) ---------- */
+  // Original wallpapers. To add one, drop an image in room/ and add a line here.
+  const PAW = encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'><g fill='#2f6f6f'><ellipse cx='14' cy='18' rx='5' ry='4'/><circle cx='8' cy='11' r='2'/><circle cx='12' cy='8' r='2'/><circle cx='17' cy='8' r='2'/><circle cx='21' cy='11' r='2'/></g><g fill='#2f6f6f' transform='translate(28 28)'><ellipse cx='14' cy='18' rx='5' ry='4'/><circle cx='8' cy='11' r='2'/><circle cx='12' cy='8' r='2'/><circle cx='17' cy='8' r='2'/><circle cx='21' cy='11' r='2'/></g></svg>`);
+  const WALLPAPERS = [
+    { id: 'teal', name: '(None)', css: 'none', bg: '#008080' },
+    { id: 'hills', name: 'Hills', css: 'url("room/wall-hills.webp")', bg: '#4d8fd6' },
+    { id: 'night', name: 'Toronto Nights', css: 'url("room/wall-night.webp")', bg: '#0b0a2a' },
+    { id: 'linusxp', name: 'Linus XP', css: 'url("room/wallpapers/4k-version-of-linus-windows-xp-wallpaper-v0-u3e2l1jt0ar61.webp")', bg: '#2e6fd6' },
+    { id: 'paws', name: 'Muscles Was Here', css: `url("data:image/svg+xml,${PAW}")`, bg: '#3a8a8a', tile: true },
+  ];
+  let wallId = (() => { try { return localStorage.getItem('gabe-wallpaper') || 'teal'; } catch (e) { return 'teal'; } })(), wallPick = wallId;
+  function wallStyle(el, w) {
+    el.style.backgroundColor = w.bg; el.style.backgroundImage = w.css === 'none' ? 'none' : w.css;
+    el.style.backgroundSize = w.tile ? '56px 56px' : 'cover'; el.style.backgroundRepeat = w.tile ? 'repeat' : 'no-repeat';
+  }
+  function setWallpaper(id) {
+    const w = WALLPAPERS.find((x) => x.id === id) || WALLPAPERS[0]; wallId = w.id;
+    wallStyle(deskRoot, w); try { localStorage.setItem('gabe-wallpaper', w.id); } catch (e) { /* this visit only */ }
+  }
+  function renderWallList() {
+    const list = $('#dispList'); list.textContent = '';
+    WALLPAPERS.forEach((w) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'disp-opt'; b.setAttribute('role', 'option');
+      b.textContent = w.name; b.setAttribute('aria-selected', String(w.id === wallPick));
+      b.addEventListener('click', () => { wallPick = w.id; renderWallList(); });
+      b.addEventListener('dblclick', () => { wallPick = w.id; setWallpaper(w.id); closeWin('display'); });
+      list.appendChild(b);
+    });
+    wallStyle($('#dispPreview'), WALLPAPERS.find((x) => x.id === wallPick) || WALLPAPERS[0]);
+  }
+  function openDisplay() { wallPick = wallId; renderWallList(); openWin('display'); }
+  $('#dispApply').addEventListener('click', () => setWallpaper(wallPick));
+  $('#dispOk').addEventListener('click', () => { setWallpaper(wallPick); closeWin('display'); });
+  setWallpaper(wallId);
+  // the right-click (or long-press) menu on empty desktop
+  const ctx = $('#deskCtx');
+  const onDesktopBg = (t) => !t.closest('.win, .wicon, .start, .wiz, .taskbar, .ctx, #repos a');
+  function showCtx(x, y) {
+    const box = deskDesktop.getBoundingClientRect(); ctx.hidden = false;
+    ctx.style.left = Math.min(x - box.left, box.width - ctx.offsetWidth - 4) + 'px';
+    ctx.style.top = Math.min(y - box.top, box.height - 30 - ctx.offsetHeight - 2) + 'px';
+    const first = ctx.querySelector('.ctx-item:not(:disabled)'); first && first.focus({ preventScroll: true });
+  }
+  const hideCtx = () => { ctx.hidden = true; };
+  deskDesktop.addEventListener('contextmenu', (e) => { if (!onDesktopBg(e.target)) return; e.preventDefault(); toggleStart(false); showCtx(e.clientX, e.clientY); });
+  let pressT;
+  deskDesktop.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1 || !onDesktopBg(e.target)) return;
+    const t = e.touches[0]; clearTimeout(pressT); pressT = setTimeout(() => showCtx(t.clientX, t.clientY), 550);
+  }, { passive: true });
+  ['touchend', 'touchmove', 'touchcancel'].forEach((ev) => deskDesktop.addEventListener(ev, () => clearTimeout(pressT), { passive: true }));
+  document.addEventListener('pointerdown', (e) => { if (!ctx.hidden && !e.target.closest('.ctx')) hideCtx(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !ctx.hidden) { e.stopPropagation(); hideCtx(); } }, true);
+  ctx.addEventListener('click', (e) => {
+    const it = e.target.closest('[data-ctx]'); if (!it) return; hideCtx();
+    if (it.dataset.ctx === 'wallpaper') openDisplay();
+    if (it.dataset.ctx === 'refresh') { deskDesktop.style.visibility = 'hidden'; setTimeout(() => { deskDesktop.style.visibility = ''; }, 90); }
+  });
   const WIZ_TIPS = [
+    'Right-click the desktop to change the wallpaper. Long-press works on a phone.',
     'Welcome to Gabriel’s PC. Double-click a shortcut. Or single-click — it’s your computer now.',
     'The games are real. Minesweeper: right-click to plant a flag. On a phone, turn on Flag mode.',
     'Solitaire: double-click a card to send it straight up to the foundations.',

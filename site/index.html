@@ -440,9 +440,6 @@ body {
     <div class="grp" role="group" aria-label="Temperature"><span>Temp</span>
       <button type="button" data-t="auto" aria-pressed="true">Live</button><button type="button" data-t="-20" aria-pressed="false">&minus;20&deg;</button><button type="button" data-t="0" aria-pressed="false">0&deg;</button><button type="button" data-t="22" aria-pressed="false">22&deg;</button><button type="button" data-t="35" aria-pressed="false">35&deg;</button>
     </div>
-    <div class="grp" role="group" aria-label="Gabriel"><span>Gabe</span>
-      <button type="button" id="pvKick">Kick me out</button><button type="button" id="pvLetIn">Let me in</button>
-    </div>
     <span id="wxStatus">Loading Toronto weather&hellip;</span>
   </div>
 
@@ -689,8 +686,7 @@ body {
   }
   function showOutside(slam) {
     closeLayers(); hideTip(); balloon.classList.remove('show');
-    const ph = document.documentElement.dataset.phase || 'night';
-    $('#outImg').setAttribute('href', 'room/room-' + ph + '.webp');
+    $('#outImg').setAttribute('href', 'room/room-day.webp');
     outside.hidden = false; slam ? outside.setAttribute('data-slam', '') : outside.removeAttribute('data-slam');
     tickOutside(); clearInterval(outT); outT = setInterval(tickOutside, 250);
     $('#knock').focus();
@@ -707,7 +703,7 @@ body {
     $('#hot-me').focus({ preventScroll: true });
     setTimeout(() => { speak(612, 425, line); talk(1400); }, 150);
   }
-  /* Developer override: type "sudo" at the door, open the page with #letmein, or use the preview panel. */
+  /* Developer override: type "sudo" at the door. */
   function letMeIn() {
     kicked = null; try { localStorage.removeItem(KEY); } catch (e) { /* nothing stored */ }
     if (!outside.hidden) comeBackIn('Oh! Sorry, didn\u2019t realise you were staff.');
@@ -722,13 +718,6 @@ body {
     typed = (typed + e.key.toLowerCase()).slice(-4);
     if (typed === 'sudo') { typed = ''; letMeIn(); }
   });
-  $('#pvKick').addEventListener('click', () => { kicked = window.RoomLogic.kick(kicked, Date.now()); save(kicked); showOutside(true); });
-  $('#pvLetIn').addEventListener('click', letMeIn);
-  function checkHash() {
-    if (location.hash !== '#letmein') return;
-    letMeIn(); history.replaceState(null, '', location.pathname + location.search);
-  }
-  window.addEventListener('hashchange', checkHash); checkHash();
   if (window.RoomLogic.cooldownLeft(kicked, Date.now())) showOutside(false);
   const pan = $('#pan'); requestAnimationFrame(() => { pan.scrollLeft = (pan.scrollWidth - pan.clientWidth) / 2; });
 })();

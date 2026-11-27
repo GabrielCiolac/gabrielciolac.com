@@ -12,7 +12,9 @@ The homepage is a point-and-click room: `site/index.html` (hotspots, puppet anim
 
 **Time and weather:** the room swaps between four paintings (`room/room-{dawn,day,dusk,night}.webp`) using Toronto's sunrise and sunset, and the window shows live weather and temperature. A NAS cron job (`/root/bin/fetch-weather`, hourly at :03, source in `ops/fetch-weather.py`) writes Open-Meteo data to `/mnt/.ix-apps/app_mounts/gabrielciolac-site/data/weather.json`, which is bind-mounted read-only and served as `/data/weather.json`, so visitors never contact Open-Meteo themselves (the page only falls back to it if the file is missing). Add `#preview` to the URL to flip through every time of day, weather and temperature. The logic lives in `site/room/logic.js`.
 
-**Tests:** `node --test test/*.test.js` (logic, assets, no internal IPs) and `python3 -m unittest discover -s test -p 'test_*.py'` (deploy hook). CI runs both before building an image.
+**The computer:** clicking the desk computer opens a Windows 98-style desktop — teal background, taskbar, Start menu, a pixel Desk Wizard, and working Minesweeper and Solitaire. Game rules live in `site/room/win98.js` (loaded by the page and by the tests). Deep links for testing: `#desk`, `#desk-mines`, `#desk-sol`, `#desk-about`, `#desk-wizard`.
+
+**Tests:** `node --test test/*.test.js` (room logic, game rules, page script, assets, no internal IPs) and `python3 -m unittest discover -s test -p 'test_*.py'` (deploy hook). CI runs both before building an image.
 
 The NAS-side scripts are versioned in `ops/` (`deploy-hook.py`, `deploy-hook-run`, `site-autodeploy`, `fetch-weather.py`); copy them to `/root/bin/` on the NAS after changing them.
 

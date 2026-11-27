@@ -20,10 +20,22 @@ test('there is a painted room for every time of day', () => {
   for (const p of PHASES) assert.ok(fs.existsSync(path.join(site, 'room', `room-${p}.webp`)), `missing room-${p}.webp`);
 });
 
-test('the page loads the logic module before its own script', () => {
+test('the page loads the logic modules before its own script', () => {
   const logic = html.indexOf('src="room/logic.js"');
+  const games = html.indexOf('src="room/win98.js"');
   const inline = html.lastIndexOf('<script>');
-  assert.ok(logic > 0 && logic < inline);
+  assert.ok(logic > 0 && logic < inline, 'logic.js loads before the page script');
+  assert.ok(games > logic && games < inline, 'win98.js loads after logic.js and before the page script');
+});
+
+test('every desktop shortcut opens a real window', () => {
+  const opens = new Set([...html.matchAll(/data-open="([^"]+)"/g)].map((m) => m[1]));
+  const wins = new Set([...html.matchAll(/data-win="([^"]+)"/g)].map((m) => m[1]));
+  assert.ok(opens.size > 3);
+  for (const id of opens) {
+    if (id === 'wizard') continue; // the wizard is a pop-up, not a window
+    assert.ok(wins.has(id), `data-open="${id}" has no window with that data-win`);
+  }
 });
 
 test('no internal network addresses in the shipped site or nginx config', () => {
@@ -33,8 +45,10 @@ test('no internal network addresses in the shipped site or nginx config', () => 
   }
 });
 
-test('the Dockerfile cache-busts the exact script tag the page uses', () => {
+test('the Dockerfile cache-busts the exact script tags the page uses', () => {
   const docker = fs.readFileSync(path.join(__dirname, '..', 'Dockerfile'), 'utf8');
   assert.ok(html.includes('src="room/logic.js"'), 'page should reference room/logic.js plainly; the build adds ?v=');
+  assert.ok(html.includes('src="room/win98.js"'), 'page should reference room/win98.js plainly; the build adds ?v=');
   assert.match(docker, /src=\\"room\/logic\.js\\"/);
+  assert.match(docker, /src=\\"room\/win98\.js\\"/);
 });

@@ -129,6 +129,15 @@ body {
 #canTilt.pour { transform: rotate(-32deg); }
 .drop { animation: drop .5s ease-in infinite; }
 @keyframes drop { from { transform: translate(0,0); opacity: 1; } to { transform: translate(-14px, 50px); opacity: 0; } }
+/* holiday art: decor painted at night like Muscles; hats painted in daylight like the plant */
+[data-phase="day"] .nightlit, [data-phase="day"] #hot-cat .spot image { filter: brightness(1.35) saturate(.95); }
+[data-phase="dawn"] .nightlit { filter: brightness(1.15) sepia(.1); }
+[data-phase="dusk"] .nightlit { filter: brightness(1.08) sepia(.2) saturate(1.1); }
+#hot-cat image.cathat { filter: none; }
+[data-phase="night"] #hot-cat image.cathat { filter: brightness(.6) saturate(.8); }
+[data-phase="dusk"] #hot-cat image.cathat { filter: brightness(.85) sepia(.2); }
+[data-phase="dawn"] #hot-cat image.cathat { filter: brightness(.92) sepia(.12); }
+[data-phase="day"] #hot-cat image.cathat { filter: none; }
 /* preview panel (open with #preview) */
 .preview { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 14px; padding: 10px 14px;
   background: #1b0f24; border: 3px solid var(--ink); border-radius: 12px; font-size: 13px; color: var(--muted); }
@@ -246,6 +255,7 @@ body {
     <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
     <radialGradient id="gCrt"><stop offset="0" stop-color="#7cf2c4" stop-opacity=".8"/><stop offset="1" stop-color="#7cf2c4" stop-opacity="0"/></radialGradient>
     <radialGradient id="gLamp"><stop offset="0" stop-color="#ffcf6a" stop-opacity=".9"/><stop offset="1" stop-color="#ff9a3a" stop-opacity="0"/></radialGradient>
+    <mask id="gabeHide" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1536"><rect x="0" y="0" width="1024" height="1536" fill="#fff"/><image id="gabeHideImg" x="0" y="0" width="1" height="1"/></mask>
     <mask id="mGlass" maskUnits="userSpaceOnUse" x="660" y="80" width="340" height="400"><image id="glassMaskImg" href="room/glass-mask.png" x="660" y="80" width="340" height="400"/></mask>
     <clipPath id="clipWin"><path d="M757 112 Q830 92 895 97 Q960 100 985 110 L987 460 L680 452 Q676 400 690 340 Q705 270 735 225 Z"/></clipPath>
     <filter id="cloudBlur" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="14"/></filter>
@@ -347,6 +357,11 @@ body {
     </g>
   </g>
 
+  <!-- holiday decorations: one group per holiday, shown by applyHoliday() -->
+  <g id="decor" style="pointer-events:none">
+    <g data-holiday="christmas" style="display:none"><image class="nightlit" href="room/xmas-tree.webp" x="915.6" y="338.6" width="194.1" height="376.6"/></g>
+  </g>
+
   <!-- Muscles wanders: one spot is shown at a time (sill = her own layers over the empty sill) -->
   <g id="hot-cat" class="hot" tabindex="0" role="button" aria-label="Muscles the cat, asleep on the windowsill" data-label="Pet Muscles">
     <g class="spot" data-spot="sill">
@@ -356,6 +371,10 @@ body {
       <g class="zzz" id="zzz" font-family="Chewy, cursive" fill="#fff1d6" stroke="#1b0f24" stroke-width="3" paint-order="stroke">
         <text x="852" y="388" font-size="20">z</text><text x="866" y="368" font-size="26">z</text><text x="882" y="344" font-size="32">Z</text>
       </g>
+    </g>
+    <g class="spot" data-spot="tree" style="display:none">
+      <ellipse class="hit" pointer-events="all" cx="929" cy="660" rx="80" ry="50"/>
+      <g class="breathe"><image href="room/cat-xmas-tree.webp" x="837.1" y="601.5" width="184" height="118"/></g>
     </g>
     <g class="spot" data-spot="rug" style="display:none">
       <ellipse class="hit" pointer-events="all" cx="928" cy="756" rx="73" ry="95"/>
@@ -386,11 +405,12 @@ body {
     <g transform="translate(442.7 420.5) scale(.321)">
       <path class="hit" pointer-events="all" d="M230 40 L700 40 L720 640 L790 380 L950 380 L960 700 L800 900 L830 1500 L190 1500 L150 1100 L170 700 L250 640 Z"/>
       <g class="breathe2">
-        <g id="meRest"><image href="room/gabe-rest.webp?v=cel1" x="177" y="42" width="762" height="1464"/></g>
+        <g id="meRest" class="headMask"><image href="room/gabe-rest.webp?v=cel1" x="177" y="42" width="762" height="1464"/></g>
         <g id="meWave" style="display:none">
           <g id="meHand"><image href="room/gabe-hand.webp?v=cel1" x="752" y="381" width="192" height="275"/></g>
-          <image href="room/gabe-wave.webp?v=cel1" x="177" y="42" width="762" height="1464"/>
+          <image class="headMask" href="room/gabe-wave.webp?v=cel1" x="177" y="42" width="762" height="1464"/>
         </g>
+        <g id="gabeHat" style="display:none"><image id="gabeHatImg" x="0" y="0" width="1" height="1"/></g>
         <g id="lids" style="display:none" fill="#fde9b5" stroke="#1b0f24" stroke-width="7" stroke-linecap="round">
           <ellipse cx="474" cy="397" rx="37" ry="58"/><ellipse cx="547" cy="391" rx="45" ry="64"/>
           <path d="M440 402 Q474 418 508 402 M505 396 Q547 414 590 396" fill="none"/>
@@ -502,6 +522,9 @@ body {
     </div>
     <div class="grp" role="group" aria-label="Plant"><span>Plant</span>
       <button type="button" data-plant="5">Wilted</button><button type="button" data-plant="30">Droopy</button><button type="button" data-plant="60">Fine</button><button type="button" data-plant="90">Bloom</button><button type="button" data-plant="100">Full</button>
+    </div>
+    <div class="grp" role="group" aria-label="Holiday"><span>Holiday</span>
+      <button type="button" data-hol="auto" aria-pressed="true">Live</button><button type="button" data-hol="none" aria-pressed="false">None</button><button type="button" data-hol="christmas" aria-pressed="false">Christmas</button><button type="button" data-hol="halloween" aria-pressed="false">Halloween</button><button type="button" data-hol="newyear" aria-pressed="false">New Year</button><button type="button" data-hol="easter" aria-pressed="false">Easter</button><button type="button" data-hol="stjean" aria-pressed="false">St-Jean</button><button type="button" data-hol="canada" aria-pressed="false">Canada Day</button><button type="button" data-hol="thanksgiving" aria-pressed="false">Thanksgiving</button><button type="button" data-hol="birthday" aria-pressed="false">Birthday</button>
     </div>
     <span id="wxStatus">Loading Toronto weather&hellip;</span>
   </div>
@@ -618,7 +641,8 @@ body {
       const mad = R.pesterLine(annoy);
       if (mad === 'kick') { kickOut(); return; }
       if (mad) { speak(612, 425, mad); talk(Math.min(2600, 600 + mad.length * 45)); return; }
-      const line = LINES[li++ % LINES.length];
+      const greet = (HOLIDAY_ART[holiday] || {}).greet;
+      const line = li === 0 && greet ? (li++, greet) : LINES[li++ % LINES.length];
       speak(612, 425, line);
       if (li % 2 === 1) wave(); else talk(Math.min(2600, 600 + line.length * 45));
       return;
@@ -831,6 +855,58 @@ body {
     plantSaved = { m: Number(b.dataset.plant), t: Date.now() }; savePlant(plantSaved); refusals = 0; showPlant();
     setSay('Plant set to ' + b.textContent.toLowerCase() + '.');
   }));
+  /* ---------- Holidays ---------- */
+  // Art that exists per holiday. Gabe's hat is in his sprite frame (1024x1536); hide = the bit of hair the hat squashes.
+  // Muscles' hat: sprite size, brim centre and brim width in sprite px; it is placed on her head in every pose.
+  const HOLIDAY_ART = {
+    christmas: {
+      decor: true, catSpot: 'tree', dropSpots: ['rug'],
+      gabeHat: { href: 'room/gabe-hat-christmas.webp', x: 249, y: 109, w: 443, h: 315, hide: { href: 'room/gabe-hide-christmas.png', x: 248, y: 39, w: 463, h: 604 } },
+      catHat: { href: 'room/cathat-christmas.webp', w: 181, h: 134, cx: 59.6, cy: 103.1, bw: 113.8 },
+      greet: 'Merry Christmas! Muscles already found the presents.',
+    },
+    halloween: { greet: 'Happy Halloween! Mind the cobwebs.' },
+    newyear: { greet: 'Happy New Year!' },
+    easter: { greet: 'Happy Easter! There might be eggs hidden in here.' },
+    stjean: { greet: 'Bonne Saint-Jean!' },
+    canada: { greet: 'Happy Canada Day!' },
+    thanksgiving: { greet: 'Happy Thanksgiving!' },
+    birthday: { greet: 'It\u2019s my birthday! Thanks for stopping by.' },
+  };
+  let holiday = null, holSel = 'auto';
+  function setHref(el, href) { if (href) el.setAttribute('href', href); else el.removeAttribute('href'); }
+  function applyHoliday() {
+    const R2 = window.RoomLogic, t = R2.torontoDate(new Date());
+    const next = holSel === 'auto' ? R2.holidayFor(t.y, t.m, t.d) : holSel === 'none' ? null : holSel;
+    if (next === holiday && document.documentElement.dataset.holiday !== undefined) return;
+    holiday = next; const art = HOLIDAY_ART[holiday] || {};
+    if (holiday) document.documentElement.dataset.holiday = holiday; else document.documentElement.dataset.holiday = '';
+    document.querySelectorAll('#decor > g').forEach((g) => { g.style.display = art.decor && g.dataset.holiday === holiday ? '' : 'none'; });
+    // Gabe's hat, and hide the hair it squashes
+    const gh = art.gabeHat;
+    $('#gabeHat').style.display = gh ? '' : 'none';
+    if (gh) { const im = $('#gabeHatImg'); setHref(im, gh.href); ['x', 'y'].forEach((k) => im.setAttribute(k, gh[k])); im.setAttribute('width', gh.w); im.setAttribute('height', gh.h); }
+    const hide = gh && gh.hide, hm = $('#gabeHideImg');
+    if (hide) { setHref(hm, hide.href); hm.setAttribute('x', hide.x); hm.setAttribute('y', hide.y); hm.setAttribute('width', hide.w); hm.setAttribute('height', hide.h); }
+    document.querySelectorAll('.headMask').forEach((el) => { if (hide) el.setAttribute('mask', 'url(#gabeHide)'); else el.removeAttribute('mask'); });
+    // Muscles' hat on every pose that doesn't already have one painted in
+    document.querySelectorAll('#hot-cat image.cathat').forEach((el) => el.remove());
+    const ch = art.catHat;
+    if (ch) {
+      const NS3 = 'http://www.w3.org/2000/svg';
+      const put = (parent, key) => {
+        const [x, y, w, r] = CAT_HEAD[key], s = (w * 1.15) / ch.bw, im = document.createElementNS(NS3, 'image');
+        im.setAttribute('class', 'cathat'); im.setAttribute('href', ch.href);
+        im.setAttribute('x', -ch.cx); im.setAttribute('y', -ch.cy); im.setAttribute('width', ch.w); im.setAttribute('height', ch.h);
+        im.setAttribute('transform', `translate(${x} ${y + w * 0.12}) rotate(${r}) scale(${s.toFixed(3)})`);
+        parent.appendChild(im);
+      };
+      put($('#catSleep'), 'sill'); put($('#catAwake'), 'sillAwake');
+      ['rug', 'papers', 'keys', 'door'].forEach((k) => put(document.querySelector(`#hot-cat .spot[data-spot="${k}"] .breathe`), k));
+    }
+    // if Muscles is somewhere that doesn't exist this holiday (or the holiday has a spot for her), move her
+    if (typeof placeCat === 'function') { if (!catSpots().includes(catSpot) || (art.catSpot && catSpot !== art.catSpot && Math.random() < .5)) placeCat(pickSpot(null)); }
+  }
   /* ---------- Muscles wanders the room ---------- */
   const CAT_SPOTS = {
     sill:   { x: 770,  y: 362, say: 'Mrrrp.',     label: 'asleep on the windowsill',          note: 'Muscles gives you a slow blink.' },
@@ -838,6 +914,12 @@ body {
     papers: { x: 200,  y: 560, say: 'Mrp.',       label: 'loafing on the newspapers',         note: 'Muscles is guarding the newspapers. Nobody gets to read them.' },
     keys:   { x: 1250, y: 566, say: 'Mew!',       label: 'lying on the computer keyboard',    note: 'Muscles has typed \u201cffffffffjjjjjjj\u201d into the terminal.' },
     door:   { x: 356,  y: 480, say: '\u2026',     label: 'staring at the mail slot',          note: 'Muscles is waiting for the mail. It\u2019s always the mail.' },
+    tree:   { x: 929,  y: 590, say: 'Mrrrrp.',    label: 'asleep under the Christmas tree',   note: 'Muscles is guarding the presents. Nothing gets opened before the 25th.' },
+  };
+  // where her head is in each pose (painting coords): x, y = top of head, w = head width, r = tilt in degrees
+  const CAT_HEAD = {
+    sill: [818, 418, 58, -7], sillAwake: [824, 405, 58, 5], rug: [922, 780, 52, -8],
+    papers: [262, 583, 72, 12], keys: [1312, 588, 64, 12], door: [312, 510, 44, -25],
   };
   const catEl = $('#hot-cat');
   let patT;
@@ -852,9 +934,14 @@ body {
     catEl.querySelectorAll('.spot').forEach((g) => { g.style.display = g.dataset.spot === spot ? '' : 'none'; });
     catEl.setAttribute('aria-label', 'Muscles the cat, ' + CAT_SPOTS[spot].label);
   }
+  function catSpots() {
+    const h = HOLIDAY_ART[holiday] || {}, drop = h.dropSpots || [];
+    return Object.keys(CAT_SPOTS).filter((k) => !drop.includes(k) && (k !== 'tree' || h.catSpot === 'tree'));
+  }
   function pickSpot(not) {
-    const pool = Object.keys(CAT_SPOTS).filter((k) => k !== not);
-    pool.push('sill'); // she likes the sill best
+    const pool = catSpots().filter((k) => k !== not);
+    const fav = (HOLIDAY_ART[holiday] || {}).catSpot || 'sill';
+    pool.push(fav, fav); // her favourite spot (the sill, or the holiday spot) is likelier
     const next = pool[Math.floor(Math.random() * pool.length)];
     return next === not ? pool[0] : next;
   }
@@ -866,7 +953,11 @@ body {
     }
     setTimeout(wander, 45000 + Math.random() * 45000);
   }
-  placeCat(pickSpot(null)); setTimeout(wander, 45000 + Math.random() * 45000);
+  applyHoliday(); placeCat(pickSpot(null)); setTimeout(wander, 45000 + Math.random() * 45000);
+  setInterval(applyHoliday, 10 * 60 * 1000);
+  document.querySelectorAll('[data-hol]').forEach((b, _, all) => b.addEventListener('click', () => {
+    holSel = b.dataset.hol; all.forEach((x) => x.setAttribute('aria-pressed', String(x === b))); applyHoliday();
+  }));
   /* ---------- Pester Gabriel too much and he kicks you out ---------- */
   const KEY = 'gabe-kicked-out', outside = $('#outside');
   let annoy = 0, annoyAt = null, outT, muffleT, typed = '';

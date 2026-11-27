@@ -85,5 +85,43 @@
     return h * 60 + m;
   }
 
-  return { PHASES, THERMO, minutesOf, phaseFor, weatherFor, thermoTopY, weatherLine, openMeteoUrl, parseOpenMeteo, torontoMinutes };
+  /* ---------- Pestering Gabriel ----------
+     Every click on him adds one to an annoyance level that wears off over time.
+     Reach KICK_AT and he shows you the door, for a cooldown that grows with repeat offences. */
+  const PESTER = { decayMs: 4000, warnAt: 4, kickAt: 8, baseCooldownMs: 60 * 1000, maxCooldownMs: 10 * 60 * 1000, forgetAfterMs: 24 * 60 * 60 * 1000 };
+  const PESTER_LINES = ['Okay, okay. I heard you.', 'You\u2019re poking me.', 'Seriously. Stop clicking me.', 'One more and you\u2019re out.'];
+
+  /* Annoyance after one more click at nowMs, given the level and time of the previous click. */
+  function pester(level, lastMs, nowMs) {
+    const decayed = lastMs == null ? 0 : Math.max(0, (level || 0) - Math.floor((nowMs - lastMs) / PESTER.decayMs));
+    return decayed + 1;
+  }
+  /* What he says at that level: a warning line, 'kick', or null for his normal chatter. */
+  function pesterLine(level) {
+    if (level >= PESTER.kickAt) return 'kick';
+    if (level < PESTER.warnAt) return null;
+    return PESTER_LINES[Math.min(level - PESTER.warnAt, PESTER_LINES.length - 1)];
+  }
+  /* Cooldown for the nth kick (1-based): 1 min, 2, 4, 8, then capped at 10. */
+  function cooldownFor(kicks) {
+    return Math.min(PESTER.maxCooldownMs, PESTER.baseCooldownMs * Math.pow(2, Math.max(0, kicks - 1)));
+  }
+  /* Record a kick on the saved state {kicks, lastKickMs, untilMs}; offences older than a day are forgotten. */
+  function kick(saved, nowMs) {
+    const prev = saved && saved.lastKickMs != null && nowMs - saved.lastKickMs < PESTER.forgetAfterMs ? saved.kicks || 0 : 0;
+    const kicks = prev + 1;
+    return { kicks, lastKickMs: nowMs, untilMs: nowMs + cooldownFor(kicks) };
+  }
+  /* Milliseconds left on the cooldown (0 when you may come back in). */
+  function cooldownLeft(saved, nowMs) {
+    return saved && saved.untilMs ? Math.max(0, saved.untilMs - nowMs) : 0;
+  }
+  /* "m:ss" for a countdown, rounding up so it never shows 0:00 while still locked. */
+  function clock(ms) {
+    const s = Math.ceil(Math.max(0, ms) / 1000);
+    return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  }
+
+  return { PHASES, THERMO, minutesOf, phaseFor, weatherFor, thermoTopY, weatherLine, openMeteoUrl, parseOpenMeteo, torontoMinutes,
+    PESTER, pester, pesterLine, cooldownFor, kick, cooldownLeft, clock };
 });

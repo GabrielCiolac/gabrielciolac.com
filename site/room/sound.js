@@ -86,13 +86,70 @@
     click(t) { burst(t, { freq: 3200, q: 2, peak: 0.18, d: 0.02 }); },
     switch(t) { burst(t, { freq: 1800, q: 4, peak: 0.35, d: 0.025 }); burst(t + 0.06, { freq: 900, q: 4, peak: 0.2, d: 0.03 }); },
     knock(t) { [0, 0.16, 0.32].forEach((k) => { burst(t + k, { freq: 160, q: 1.2, peak: 0.7, d: 0.09, type: 'lowpass' }); tone(110, t + k, { peak: 0.2, d: 0.08 }); }); },
-    // Muscles purring: low rumble with a ~25 Hz flutter
-    purr(t, secs = 1.6) {
-      const s = noise(), lp = ctx.createBiquadFilter(), g = ctx.createGain(), am = ctx.createGain(), lfo = ctx.createOscillator();
-      lp.type = 'lowpass'; lp.frequency.value = 230; lfo.frequency.value = 24; am.gain.value = 0.5;
-      lfo.connect(am.gain); s.connect(lp); lp.connect(am); am.connect(g); g.connect(master);
-      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5, t + 0.25); g.gain.exponentialRampToValueAtTime(0.0001, t + secs);
-      s.start(t); s.stop(t + secs + 0.1); lfo.start(t); lfo.stop(t + secs + 0.1);
+    // Muscles purring: a ~25 Hz flutter on a low rumble, swelling on each breath in and out
+    purr(t, secs = 3.2) {
+      const s = noise(), lp = ctx.createBiquadFilter(), g = ctx.createGain(), am = ctx.createGain(), lfo = ctx.createOscillator(), lfoAmt = ctx.createGain();
+      lp.type = 'lowpass'; lp.frequency.value = 210; lfo.frequency.value = 25; lfoAmt.gain.value = 0.45; am.gain.value = 0.55;
+      lfo.connect(lfoAmt); lfoAmt.connect(am.gain); s.connect(lp); lp.connect(am); am.connect(g); g.connect(master);
+      const breath = 0.8;                                  // in (louder, a touch higher), out (softer)
+      g.gain.setValueAtTime(0.0001, t);
+      for (let x = t, n = 0; x < t + secs; x += breath, n++) {
+        g.gain.linearRampToValueAtTime(n % 2 ? 0.32 : 0.6, x + breath * 0.45);
+        g.gain.linearRampToValueAtTime(0.12, x + breath * 0.95);
+        lp.frequency.setValueAtTime(n % 2 ? 180 : 240, x);
+      }
+      g.gain.linearRampToValueAtTime(0.0001, t + secs + 0.2);
+      s.start(t); s.stop(t + secs + 0.3); lfo.start(t); lfo.stop(t + secs + 0.3);
+    },
+    // a hand patting fur: two soft, muffled brushes
+    pat(t) { [0, 0.23].forEach((k) => burst(t + k, { freq: 700, q: 0.5, peak: 0.12, d: 0.12, type: 'lowpass' })); },
+    // the chirpy little trill cats make when they wake up happy
+    mrrp(t) {
+      const o = ctx.createOscillator(), g = ctx.createGain(), f = ctx.createBiquadFilter(), trem = ctx.createOscillator(), tg = ctx.createGain();
+      o.type = 'sawtooth'; f.type = 'bandpass'; f.frequency.value = 900; f.Q.value = 1.6;
+      o.frequency.setValueAtTime(330, t); o.frequency.linearRampToValueAtTime(560, t + 0.22); o.frequency.linearRampToValueAtTime(470, t + 0.34);
+      trem.frequency.value = 32; tg.gain.value = 0.5; trem.connect(tg); tg.connect(g.gain);
+      env(g, t, 0.03, 0.12, 0.33); o.connect(f); f.connect(g); g.connect(master);
+      o.start(t); o.stop(t + 0.45); trem.start(t); trem.stop(t + 0.45);
+    },
+
+    /* --- Minesweeper --- */
+    tick(t) { burst(t, { freq: 2600, q: 3, peak: 0.14, d: 0.015 }); tone(880, t, { type: 'square', peak: 0.02, d: 0.03 }); },
+    // a big empty area opening: a quick flurry of ticks, more squares = longer flurry
+    cascade(t, n = 10) {
+      const k = Math.min(18, Math.max(4, Math.round(n / 3)));
+      for (let i = 0; i < k; i++) burst(t + i * 0.022, { freq: 2000 + i * 90, q: 3, peak: 0.1, d: 0.012 });
+      tone(660, t, { type: 'triangle', peak: 0.05, d: 0.18 }); tone(990, t + 0.06, { type: 'triangle', peak: 0.04, d: 0.18 });
+    },
+    flag(t) { const o = tone(500, t, { type: 'triangle', peak: 0.12, d: 0.09 }); o.frequency.exponentialRampToValueAtTime(1300, t + 0.07); burst(t, { freq: 4000, q: 1, peak: 0.05, d: 0.03 }); },
+    unflag(t) { const o = tone(1200, t, { type: 'triangle', peak: 0.1, d: 0.09 }); o.frequency.exponentialRampToValueAtTime(450, t + 0.08); },
+    // you hit a mine: a muffled boom with a sinking thud underneath
+    boom(t) {
+      burst(t, { freq: 900, q: 0.4, peak: 0.6, d: 0.6, type: 'lowpass' });
+      burst(t + 0.02, { freq: 220, q: 0.6, peak: 0.7, d: 1.1, type: 'lowpass' });
+      const o = tone(110, t, { peak: 0.5, d: 0.9 }); o.frequency.exponentialRampToValueAtTime(32, t + 0.8);
+    },
+    // board cleared: a bright little original fanfare
+    win(t) {
+      const bus = echo(0.14, 0.25, 0.3);
+      [[523.25, 0], [659.25, 0.1], [783.99, 0.2], [1046.5, 0.32], [783.99, 0.46], [1046.5, 0.56]].forEach(([f, k]) => {
+        tone(f, t + k, { type: 'square', peak: 0.06, d: 0.16, to: bus }); tone(f, t + k, { type: 'triangle', peak: 0.12, d: 0.3, to: bus });
+      });
+      [1318.5, 1568.0, 2093.0].forEach((f, i) => tone(f, t + 0.7 + i * 0.05, { peak: 0.05, d: 0.6, to: bus }));
+    },
+
+    /* --- logging off --- */
+    // an original shutdown chime: the startup bells, falling and settling
+    shutdown(t) {
+      const bus = echo(0.24, 0.32, 0.4);
+      [987.77, 783.99, 587.33, 493.88, 392.0].forEach((f, i) => tone(f, t + i * 0.15, { type: 'triangle', peak: 0.18, d: 1.2, to: bus }));
+      [196.0, 246.94, 293.66].forEach((f) => tone(f, t + 0.55, { a: 0.3, peak: 0.07, d: 1.6, to: bus, detune: -4 }));
+    },
+    // the CRT switching off: the whine dropping away and the picture popping
+    crtoff(t) {
+      const o = tone(15000, t, { peak: 0.02, a: 0.01, d: 0.5 }); o.frequency.exponentialRampToValueAtTime(6000, t + 0.45);
+      burst(t + 0.05, { freq: 3000, q: 0.8, peak: 0.25, d: 0.06 });
+      burst(t + 0.08, { freq: 160, q: 0.7, peak: 0.35, d: 0.2, type: 'lowpass' });
     },
     // water from the can: a handful of bubbly blips
     glug(t) {

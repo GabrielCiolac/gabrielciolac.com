@@ -1730,7 +1730,7 @@ body {
     easter: {
       decor: true, dropSpots: ['rug'], 
       gabeHat: { href: 'room/gabe-hat-easter.webp', x: 270, y: 15, w: 469, h: 627, hide: { href: 'room/gabe-hide-easter.png', x: 248, y: 39, w: 462, h: 604 } },
-      catHat: { href: 'room/cathat-easter.webp', w: 142, h: 198, cx: 73.2, cy: 182.4, bw: 93.5, k: 1.15 },
+      catHat: { href: 'room/cathat-easter.webp', w: 142, h: 103, cx: 71, cy: 103.2, bw: 141.5, k: 1.05, drop: 0.2 },
       greet: 'Happy Easter! There are eggs hidden in here somewhere.',
     },
     stjean: {
@@ -1784,8 +1784,9 @@ body {
         const [x, y, w, r] = CAT_HEAD[key], s = (w * (ch.k || 1.15)) / ch.bw, im = document.createElementNS(NS3, 'image');
         im.setAttribute('class', 'cathat'); im.setAttribute('href', ch.href);
         im.setAttribute('x', -ch.cx); im.setAttribute('y', -ch.cy); im.setAttribute('width', ch.w); im.setAttribute('height', ch.h);
-        im.setAttribute('transform', `translate(${x} ${y + w * 0.12}) rotate(${r}) scale(${s.toFixed(3)})`);
-        parent.appendChild(im);
+        im.setAttribute('transform', `translate(${x} ${y + w * (ch.drop || 0.12)}) rotate(${r}) scale(${s.toFixed(3)})`);
+        // ears and the like go behind her head so they look like they grow out of it
+        if (ch.behind) parent.insertBefore(im, parent.firstChild); else parent.appendChild(im);
       };
       put($('#catSleep'), 'sill'); put($('#catAwake'), 'sillAwake');
       ['rug', 'papers', 'keys', 'door'].forEach((k) => put(document.querySelector(`#hot-cat .spot[data-spot="${k}"] .breathe`), k));

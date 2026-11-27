@@ -32,3 +32,9 @@ test('no internal network addresses in the shipped site or nginx config', () => 
     assert.doesNotMatch(text, /\b(?:192\.168|10\.\d+|172\.(?:1[6-9]|2\d|3[01]))\.\d+\.\d+\b/, name);
   }
 });
+
+test('the Dockerfile cache-busts the exact script tag the page uses', () => {
+  const docker = fs.readFileSync(path.join(__dirname, '..', 'Dockerfile'), 'utf8');
+  assert.ok(html.includes('src="room/logic.js"'), 'page should reference room/logic.js plainly; the build adds ?v=');
+  assert.match(docker, /src=\\"room\/logic\.js\\"/);
+});

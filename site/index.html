@@ -520,6 +520,13 @@ body {
   <clipPath id="clipBehindDesk"><path d="M0 0 H1536 V560 L1160 596 L1038 628 V1024 H0 Z"/></clipPath>
   <g id="decor" clip-path="url(#clipBehindDesk)" style="pointer-events:none">
     <g data-holiday="christmas" style="display:none"><image class="nightlit" href="room/xmas-tree.webp" x="915.6" y="338.6" width="194.1" height="376.6"/></g>
+    <g data-holiday="halloween" style="display:none"><image class="nightlit" href="room/decor-halloween.webp" x="881.2" y="380.8" width="313.7" height="281.6"/></g>
+    <g data-holiday="newyear" style="display:none"><image class="nightlit" href="room/decor-newyear.webp" x="957.4" y="346.0" width="182.8" height="360.9"/></g>
+    <g data-holiday="easter" style="display:none"><image class="nightlit" href="room/decor-easter.webp" x="941.4" y="484.7" width="182.4" height="162.5"/></g>
+    <g data-holiday="thanksgiving" style="display:none"><image class="nightlit" href="room/decor-thanksgiving.webp" x="863.3" y="345.2" width="271.9" height="320.7"/></g>
+    <g data-holiday="birthday" style="display:none"><image class="nightlit" href="room/decor-birthday.webp" x="958.2" y="352.3" width="172.3" height="348.0"/></g>
+    <g data-holiday="canada" style="display:none"><image class="nightlit" href="room/decor-canada.webp" x="644.7" y="37.2" width="368.4" height="104.7"/></g>
+    <g data-holiday="stjean" style="display:none"><image class="nightlit" href="room/decor-stjean.webp" x="690.0" y="42" width="340.6" height="79.3"/></g>
   </g>
 
   <!-- Christmas lights: swags on the curtain rod and over the door; click to switch on/off -->
@@ -1708,13 +1715,48 @@ body {
       catHat: { href: 'room/cathat-christmas.webp', w: 181, h: 134, cx: 59.6, cy: 103.1, bw: 113.8 },
       greet: 'Merry Christmas! Muscles already found the presents.',
     },
-    halloween: { greet: 'Happy Halloween! Mind the cobwebs.' },
-    newyear: { greet: 'Happy New Year!' },
-    easter: { greet: 'Happy Easter! There might be eggs hidden in here.' },
-    stjean: { greet: 'Bonne Saint-Jean!' },
-    canada: { greet: 'Happy Canada Day!' },
-    thanksgiving: { greet: 'Happy Thanksgiving!' },
-    birthday: { greet: 'It\u2019s my birthday! Thanks for stopping by.' },
+    halloween: {
+      decor: true, dropSpots: ['rug'], 
+      gabeHat: { href: 'room/gabe-hat-halloween.webp', x: 303, y: 168, w: 460, h: 556, hide: { href: 'room/gabe-hide-halloween.png', x: 248, y: 39, w: 463, h: 723 } },
+      catHat: { href: 'room/cathat-halloween.webp', w: 171, h: 154, cx: 90.0, cy: 142.1, bw: 146.5, k: 1.15 },
+      greet: 'Happy Halloween! Do you like my costume?',
+    },
+    newyear: {
+      decor: true, dropSpots: ['rug'], 
+      gabeHat: { href: 'room/gabe-hat-newyear.webp', x: 287, y: 44, w: 398, h: 319, hide: { href: 'room/gabe-hide-newyear.png', x: 248, y: 39, w: 463, h: 604 } },
+      catHat: { href: 'room/cathat-newyear.webp', w: 132, h: 203, cx: 67.0, cy: 187.2, bw: 126.5, k: 1.15 },
+      greet: 'Happy New Year! Muscles stayed up till midnight. Barely.',
+    },
+    easter: {
+      decor: true, dropSpots: ['rug'], 
+      gabeHat: { href: 'room/gabe-hat-easter.webp', x: 270, y: 15, w: 469, h: 627, hide: { href: 'room/gabe-hide-easter.png', x: 248, y: 39, w: 462, h: 604 } },
+      catHat: { href: 'room/cathat-easter.webp', w: 142, h: 103, cx: 71, cy: 103.2, bw: 141.5, k: 1.05, drop: 0.2 },
+      greet: 'Happy Easter! There are eggs hidden in here somewhere.',
+    },
+    stjean: {
+      decor: true, 
+      gabeHat: { href: 'room/gabe-hat-stjean.webp', x: 353, y: 158, w: 420, h: 230, hide: { href: 'room/gabe-hide-stjean.png', x: 248, y: 39, w: 463, h: 604 } },
+      catHat: { href: 'room/cathat-stjean.webp', w: 153, h: 129, cx: 76.4, cy: 109.6, bw: 152.8, k: 0.9 },
+      greet: 'Bonne Saint-Jean!',
+    },
+    canada: {
+      decor: true, 
+      gabeHat: { href: 'room/gabe-hat-canada.webp', x: 352, y: 129, w: 404, h: 262, hide: { href: 'room/gabe-hide-canada.png', x: 248, y: 39, w: 463, h: 604 } },
+      catHat: { href: 'room/cathat-canada.webp', w: 127, h: 200, cx: 64.2, cy: 184.0, bw: 125.0, k: 1.15 },
+      greet: 'Happy Canada Day!',
+    },
+    thanksgiving: {
+      decor: true, dropSpots: ['rug'], 
+      gabeHat: { href: 'room/gabe-hat-thanksgiving.webp', x: 288, y: 160, w: 429, h: 202, hide: { href: 'room/gabe-hide-thanksgiving.png', x: 248, y: 39, w: 462, h: 604 } },
+      catHat: { href: 'room/cathat-thanksgiving.webp', w: 173, h: 111, cx: 86.5, cy: 66.9, bw: 173.0, k: 1.35 },
+      greet: 'Happy Thanksgiving! I\u2019m thankful you stopped by.',
+    },
+    birthday: {
+      decor: true, dropSpots: ['rug'], 
+      gabeHat: { href: 'room/gabe-hat-birthday.webp', x: 509, y: 43, w: 231, h: 582, hide: { href: 'room/gabe-hide-birthday.png', x: 248, y: 39, w: 463, h: 604 } },
+      catHat: { href: 'room/cathat-birthday.webp', w: 124, h: 191, cx: 62.1, cy: 175.5, bw: 123.2, k: 1.15 },
+      greet: 'It\u2019s my birthday! Thanks for stopping by.',
+    },
   };
   let holiday = null, holSel = 'auto';
   function setHref(el, href) { if (href) el.setAttribute('href', href); else el.removeAttribute('href'); }
@@ -1739,11 +1781,12 @@ body {
     if (ch) {
       const NS3 = 'http://www.w3.org/2000/svg';
       const put = (parent, key) => {
-        const [x, y, w, r] = CAT_HEAD[key], s = (w * 1.15) / ch.bw, im = document.createElementNS(NS3, 'image');
+        const [x, y, w, r] = CAT_HEAD[key], s = (w * (ch.k || 1.15)) / ch.bw, im = document.createElementNS(NS3, 'image');
         im.setAttribute('class', 'cathat'); im.setAttribute('href', ch.href);
         im.setAttribute('x', -ch.cx); im.setAttribute('y', -ch.cy); im.setAttribute('width', ch.w); im.setAttribute('height', ch.h);
-        im.setAttribute('transform', `translate(${x} ${y + w * 0.12}) rotate(${r}) scale(${s.toFixed(3)})`);
-        parent.appendChild(im);
+        im.setAttribute('transform', `translate(${x} ${y + w * (ch.drop || 0.12)}) rotate(${r}) scale(${s.toFixed(3)})`);
+        // ears and the like go behind her head so they look like they grow out of it
+        if (ch.behind) parent.insertBefore(im, parent.firstChild); else parent.appendChild(im);
       };
       put($('#catSleep'), 'sill'); put($('#catAwake'), 'sillAwake');
       ['rug', 'papers', 'keys', 'door'].forEach((k) => put(document.querySelector(`#hot-cat .spot[data-spot="${k}"] .breathe`), k));

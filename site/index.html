@@ -82,9 +82,10 @@ body {
 [data-phase="day"] .flick { opacity: .2 !important; animation: none; }
 .twinkle { transition: opacity 1.6s; }
 [data-phase="day"] .twinkle, [data-phase="dusk"] .twinkle, [data-phase="dawn"] .twinkle { opacity: 0; }
-[data-phase="day"] #hot-me > g { filter: brightness(1.32) saturate(1.06) contrast(.97); }
-[data-phase="dawn"] #hot-me > g { filter: brightness(1.12) sepia(.12) hue-rotate(-12deg) saturate(1.05); }
-[data-phase="dusk"] #hot-me > g { filter: brightness(1.06) sepia(.2) hue-rotate(-14deg) saturate(1.15); }
+/* Gabriel's cel is drawn in flat daylight colours: dim him to match the other phases */
+[data-phase="night"] #hot-me > g { filter: brightness(.6) saturate(.75) contrast(1.05); }
+[data-phase="dawn"] #hot-me > g { filter: brightness(.92) sepia(.14) hue-rotate(-12deg) saturate(1.05); }
+[data-phase="dusk"] #hot-me > g { filter: brightness(.82) sepia(.25) hue-rotate(-14deg) saturate(1.1); }
 [data-phase="day"] #hot-cat image { filter: brightness(1.35) saturate(.95); }
 [data-phase="dawn"] #hot-cat image { filter: brightness(1.15) sepia(.1); }
 [data-phase="dusk"] #hot-cat image { filter: brightness(1.08) sepia(.2) saturate(1.1); }
@@ -294,21 +295,22 @@ body {
     </g>
   </g>
 
-  <!-- Gabriel: a cel cut-out puppet (two drawn frames + moving parts) -->
-  <ellipse cx="616" cy="902" rx="92" ry="14" fill="#12061c" opacity=".5" filter="url(#soft)" style="pointer-events:none"/>
+  <!-- Gabriel: a 90s cel cut-out puppet (two drawn frames + a wrist that waves) -->
+  <ellipse cx="612" cy="900" rx="104" ry="14" fill="#12061c" opacity=".5" filter="url(#soft)" style="pointer-events:none"/>
   <g id="hot-me" class="hot" tabindex="0" role="button" aria-label="Gabriel: say hi" data-label="Say hi to Gabriel">
-    <g transform="translate(422.9 327.6) scale(.3865)">
-      <path class="hit" pointer-events="all" d="M330 50 L640 50 L660 330 L760 360 L800 900 L700 1000 L760 1494 L250 1494 L300 1000 L240 900 L280 360 L340 330 Z"/>
+    <g transform="translate(442.7 420.5) scale(.321)">
+      <path class="hit" pointer-events="all" d="M230 40 L700 40 L720 640 L790 380 L950 380 L960 700 L800 900 L830 1500 L190 1500 L150 1100 L170 700 L250 640 Z"/>
       <g class="breathe2">
-        <g id="meRest"><image href="room/gabe-rest.webp" x="243" y="45" width="508" height="1449"/></g>
+        <g id="meRest"><image href="room/gabe-rest.webp" x="177" y="42" width="762" height="1464"/></g>
         <g id="meWave" style="display:none">
-          <image href="room/gabe-wave.webp" x="243" y="45" width="568" height="1449"/>
-          <g id="meHand"><image href="room/gabe-hand.webp" x="636" y="184" width="175" height="320"/></g>
+          <g id="meHand"><image href="room/gabe-hand.webp" x="752" y="381" width="192" height="275"/></g>
+          <image href="room/gabe-wave.webp" x="177" y="42" width="762" height="1464"/>
         </g>
-        <g id="lids" style="display:none" fill="#b87746" stroke="#1b0f24" stroke-width="4" stroke-linecap="round">
-          <ellipse cx="457" cy="183" rx="18" ry="13"/><ellipse cx="515" cy="180" rx="18" ry="13"/>
+        <g id="lids" style="display:none" fill="#fde9b5" stroke="#1b0f24" stroke-width="7" stroke-linecap="round">
+          <ellipse cx="474" cy="397" rx="37" ry="58"/><ellipse cx="547" cy="391" rx="45" ry="64"/>
+          <path d="M440 402 Q474 418 508 402 M505 396 Q547 414 590 396" fill="none"/>
         </g>
-        <ellipse id="mouth" cx="492" cy="236" rx="17" ry="0" fill="#5a1f2e" stroke="#1b0f24" stroke-width="4" style="display:none"/>
+        <ellipse id="mouth" cx="548" cy="522" rx="34" ry="0" transform="rotate(-22 548 522)" fill="#7a2233" stroke="#1b0f24" stroke-width="7" style="display:none"/>
       </g>
     </g>
   </g>
@@ -462,12 +464,12 @@ body {
     (function step(t) {
       if (!waving) { hand.removeAttribute('transform'); return; }
       const a = Math.sin((t - t0) / 1000 * 2 * Math.PI * 2.2) * 13;
-      hand.setAttribute('transform', `rotate(${a.toFixed(1)} 762 470)`); requestAnimationFrame(step);
+      hand.setAttribute('transform', `rotate(${a.toFixed(1)} 822 645)`); requestAnimationFrame(step);
     })(t0);
     clearTimeout(waveT); waveT = setTimeout(() => { waving = false; $('#meRest').style.display = ''; $('#meWave').style.display = 'none'; }, 1900);
   }
   function talk(ms) {
-    const m = $('#mouth'), shapes = [9, 4, 12, 6, 2, 10, 5]; let i = 0; m.style.display = '';
+    const m = $('#mouth'), shapes = [14, 6, 18, 9, 3, 15, 7]; let i = 0; m.style.display = '';
     clearInterval(talkT); talkT = setInterval(() => { m.setAttribute('ry', shapes[i++ % shapes.length]); }, 110);
     setTimeout(() => { clearInterval(talkT); m.style.display = 'none'; }, ms);
   }
@@ -479,7 +481,7 @@ body {
     boing(el);
     if (el.id === 'hot-me') {
       const line = LINES[li++ % LINES.length];
-      speak(616, 330, line);
+      speak(612, 425, line);
       if (li % 2 === 1) wave(); else talk(Math.min(2600, 600 + line.length * 45));
       return;
     }
@@ -498,7 +500,7 @@ body {
       liq.classList.add('bob'); liq.setAttribute('y', y - 5); liq.setAttribute('height', h + 5);
       setTimeout(() => { liq.setAttribute('y', y); liq.setAttribute('height', h); setTimeout(() => liq.classList.remove('bob'), 400); }, 380);
       const t = state.tSel === 'auto' ? state.tempC : Number(state.tSel), code = state.wxSel === 'auto' ? state.code : Number(state.wxSel);
-      speak(616, 330, R.weatherLine(t, R.weatherFor(code))); talk(1800); return;
+      speak(612, 425, R.weatherLine(t, R.weatherFor(code))); talk(1800); return;
     }
     if (el.id === 'hot-window') { speak(840, 120, 'Toronto at night. The CN Tower is blinking.'); return; }
     if (el.id === 'hot-plaque') { $('#lightbox').tabIndex = -1; setTimeout(() => openLayer('#lightbox'), 200); return; }

@@ -700,7 +700,7 @@ body {
   </g>
 
   <!-- the guestbook on its lectern by the door -->
-  <g id="hot-guestbook" class="hot" tabindex="0" role="button" aria-label="Guestbook on a lectern by the door: sign it" data-label="Sign the guestbook">
+  <g id="hot-guestbook" class="hot" tabindex="0" role="button" aria-label="Guestbook on a lectern by the door: read it and sign it" data-label="Sign the guestbook">
     <path class="hit" pointer-events="all" d="M292 474 L384 474 L384 560 L360 562 L368 650 L300 650 L310 562 L290 560 Z"/>
     <image class="nightlit" href="room/guestbook.webp" x="289" y="472.4" width="96.4" height="177.8"/>
   </g>
@@ -1095,6 +1095,9 @@ body {
       <button class="slot" id="slotSound" type="button" aria-pressed="false" aria-label="Sound: off" data-label="Turn the sound on">
         <svg viewBox="0 0 44 40"><path d="M6 15 H14 L24 7 V33 L14 25 H6 Z" fill="#fff1d6" stroke="#1b0f24" stroke-width="3" stroke-linejoin="round"/><g class="snd-on" fill="none" stroke="#1b0f24" stroke-width="3" stroke-linecap="round"><path d="M29 14 Q33 20 29 26"/><path d="M33 10 Q40 20 33 30"/></g><g class="snd-off" stroke="#c23a3a" stroke-width="3.5" stroke-linecap="round"><path d="M29 14 L39 26 M39 14 L29 26"/></g></svg>
       </button>
+      <button class="slot" data-target="hot-guestbook" aria-label="Guestbook: sign it" data-label="Sign the guestbook">
+        <svg viewBox="0 0 44 40"><path d="M22 10 Q13 5 3 8 L3 33 Q13 30 22 34 Q31 30 41 33 L41 8 Q31 5 22 10 Z" fill="#fff1d6" stroke="#1b0f24" stroke-width="3" stroke-linejoin="round"/><path d="M22 10 V34" stroke="#1b0f24" stroke-width="2.5"/><path d="M7 15 H17 M7 20 H15 M26 15 H36" stroke="#c9a46a" stroke-width="2" stroke-linecap="round"/><path d="M26 25 q2 -4 4 0 t4 0 q1 -3 3 -1" fill="none" stroke="#b3261e" stroke-width="2.4" stroke-linecap="round"/><path d="M8 34 L8 39 L10.5 37 L13 39 L13 33" fill="#b3261e" stroke="#1b0f24" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </button>
       <button class="slot" data-target="hot-album" aria-label="Photo album: photography" data-label="Flip through the album">
         <svg viewBox="0 0 44 40"><path d="M6 6 L36 4 L38 34 L8 36 Z" fill="#7a4c9a" stroke="#1b0f24" stroke-width="3" stroke-linejoin="round"/><path d="M6 6 L12 6 L14 36 L8 36 Z" fill="#4e2c66" stroke="#1b0f24" stroke-width="2"/><path d="M17 12 L33 11 L34 27 L18 28 Z" fill="#f5a37a" stroke="#1b0f24" stroke-width="2"/><path d="M18 28 L23 20 L27 24 L30 19 L34 27 Z" fill="#5a2a5e"/></svg>
       </button>
@@ -1168,11 +1171,15 @@ body {
   const kPatDown = sv(44, 42, `<g transform='translate(0 6)'>${kPalm}</g><path d='M6 3 Q8 0 10 3 M15 2 Q17 -1 19 2 M24 3 Q26 0 28 3' fill='none' stroke='#1b0f24' stroke-width='2' stroke-linecap='round'/>`);
   const kBulb = sv(32, 40, `<path d='M16 3 Q28 3 28 15 Q28 22 21 27 L21 31 L11 31 L11 27 Q4 22 4 15 Q4 3 16 3 Z' fill='#ffe066' ${INK}/>`
     + `<path d='M11 34 H21 M12 37 H20' fill='none' ${INK}/><path d='M10 12 Q11 8 15 7' fill='none' stroke='#fff' stroke-width='2.5' stroke-linecap='round'/>`);
+  const kGuest = sv(44, 38, `<path d='M22 9 Q13 4 3 7 L3 31 Q13 28 22 32 Q31 28 41 31 L41 7 Q31 4 22 9 Z' fill='#fff1d6' ${INK}/>`
+    + `<path d='M22 9 V32' fill='none' stroke='#1b0f24' stroke-width='2'/><path d='M7 13 H17 M7 17 H15 M26 13 H36' fill='none' stroke='#c9a46a' stroke-width='1.8' stroke-linecap='round'/>`
+    + `<path d='M26 22 q2 -4 4 0 t4 0 q1 -3 3 -1' fill='none' stroke='#b3261e' stroke-width='2' stroke-linecap='round'/>`
+    + `<path d='M37 26 L43 14' stroke='#1b0f24' stroke-width='5' stroke-linecap='round'/><path d='M37 26 L43 14' stroke='#ffc24d' stroke-width='2.4' stroke-linecap='round'/><path d='M36 28 L37 26' stroke='#1b0f24' stroke-width='2' stroke-linecap='round'/>`);
   const C = {
     read: cur(kGlasses, 22, 13, 'zoom-in'), water: cur(kCan, 3, 8, 'pointer'), power: cur(kPower, 17, 17, 'pointer'),
-    write: cur(kQuill, 3, 33, 'pointer'), talk: cur(kTalk, 6, 3, 'pointer'), bulb: cur(kBulb, 16, 16, 'pointer'), patUp: cur(kPatUp, 22, 22, 'pointer'), patDown: cur(kPatDown, 22, 22, 'pointer'),
+    write: cur(kQuill, 3, 33, 'pointer'), talk: cur(kTalk, 6, 3, 'pointer'), guest: cur(kGuest, 36, 28, 'pointer'), bulb: cur(kBulb, 16, 16, 'pointer'), patUp: cur(kPatUp, 22, 22, 'pointer'), patDown: cur(kPatDown, 22, 22, 'pointer'),
   };
-  const KIND = { read: ['hot-news', 'hot-album', 'hot-frames', 'hot-plaque'], water: ['hot-plant'], power: ['hot-pc'], write: ['hot-mail', 'hot-guestbook'], talk: ['hot-me'], bulb: ['hot-lights'], patUp: ['hot-cat'] };
+  const KIND = { read: ['hot-news', 'hot-album', 'hot-frames', 'hot-plaque'], water: ['hot-plant'], power: ['hot-pc'], write: ['hot-mail'], guest: ['hot-guestbook'], talk: ['hot-me'], bulb: ['hot-lights'], patUp: ['hot-cat'] };
   const rules = Object.entries(KIND).map(([k, ids]) => ids.map((id) => `#${id},.slot[data-target="${id}"]`).join(',') + `{cursor:${C[k]}}`).join(' ');
   const css = document.createElement('style');
   css.textContent = `.wrap{cursor:${cur(arrow, 4, 3, 'default')}} .hot,.slot,.btn{cursor:${cur(hand, 15, 3, 'pointer')}} ${rules}`;

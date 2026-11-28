@@ -259,6 +259,58 @@ body {
 .back li button { display: block; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px dotted #9b8e6a; padding: 5px 0; font: 15px/1.25 "Old Standard TT", Georgia, serif; color: #1d1a16; cursor: inherit; }
 .back li button[aria-current="true"] { font-weight: 700; } .back li small { display: block; font-size: 11px; opacity: .65; }
 @media (max-width: 760px) { .courier-ov { position: fixed; z-index: 60; padding: 0; } .paper { width: 100%; height: 100%; max-height: none; border: 0; box-shadow: none; padding: 14px 18px 28px !important; } .paper-x { margin: 0 -6px 4px 8px; } .paper-main { grid-template-columns: 1fr; } .back { border-left: 0; border-top: 1px solid #1d1a16; padding: 8px 0 0; } .paper { transform: none; padding: 10px 12px 16px; } }
+/* the photo book: prints mounted on cream pages; flip one over to read the back */
+.albumov { position: absolute; inset: 0; z-index: 6; background: rgba(10,5,16,.82); display: grid; place-items: center; padding: 12px; }
+.photobook { position: relative; box-sizing: border-box; width: min(980px, 100%); max-height: 100%; overflow: auto; padding: 12px 18px 14px;
+  color: var(--paper); background: linear-gradient(135deg, #5a3577, #2c173c); border: 5px solid var(--ink); border-radius: 14px 18px 12px 16px;
+  box-shadow: 12px 12px 0 rgba(0,0,0,.5), inset 0 0 0 2px rgba(255,255,255,.08); animation: pop .35s cubic-bezier(.3,1.7,.5,1); }
+.album-x { position: sticky; float: right; top: 0; margin: -6px -10px 0 0; z-index: 3; }
+.album-head { text-align: center; }
+.album-head h2 { margin: 0; font: 400 clamp(24px, 3.6vw, 34px)/1 var(--f-show); color: var(--gold); }
+.album-sub { margin: 2px 0 10px; font: italic 13px var(--f-body); color: var(--muted); }
+.album-pages { display: grid; grid-template-columns: 1fr 1fr; background: #5a3a20; border: 3px solid var(--ink); border-radius: 6px; overflow: hidden; }
+.album-page { min-height: min(52vh, 430px); padding: 18px; background: #fbf1d9; display: grid; place-items: center; }
+.album-page:first-child { box-shadow: inset -16px 0 22px -16px rgba(60,35,10,.55); }
+.album-page:last-child { box-shadow: inset 16px 0 22px -16px rgba(60,35,10,.55); }
+.album-page.album-blank::after { content: ""; width: 62%; aspect-ratio: 4 / 3; border: 2px dashed #e0d2b0; border-radius: 3px; }
+/* a mounted print: paper border in front, ruled index card on the back */
+.print { position: relative; width: 100%; max-width: 340px; padding: 0; background: none; border: 0; perspective: 1400px; cursor: inherit; }
+.album-page:nth-child(odd) .print { transform: rotate(-.7deg); }
+.album-page:nth-child(even) .print { transform: rotate(.6deg); }
+.print-inner { position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; transform-style: preserve-3d; transition: transform .65s cubic-bezier(.3,1.1,.4,1); }
+.print.flipped .print-inner { transform: rotateY(180deg); }
+.print-face, .print-back { position: absolute; inset: 0; display: block; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 3px; }
+.print-face { padding: 10px 10px 26px; background: #fdfbf4; box-shadow: 0 3px 0 #d8c9a6, 0 8px 16px rgba(60,35,10,.32); display: grid; place-items: center; }
+.print-face img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; box-shadow: 0 0 0 1px rgba(0,0,0,.06); }
+.print-back { transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 18px 20px; text-align: left;
+  background: repeating-linear-gradient(#fffaf0 0 27px, #e6d9bb 27px 28px); border: 1px solid #c9b48a; box-shadow: 0 3px 0 #d8c9a6, 0 8px 16px rgba(60,35,10,.32); color: #3a2416; }
+.print-note { display: block; font: 400 22px/1.25 var(--f-show); color: #4a3a6a; transform: rotate(-1.2deg); overflow-wrap: anywhere; }
+.print-title { display: block; font: 700 12px/1.2 var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: #6b2a1f; }
+.print-meta { display: block; font: 600 12px/1.3 var(--f-body); letter-spacing: .04em; color: #7a6544; text-transform: uppercase; }
+.print-flip { display: block; margin-top: auto; font: italic 11px var(--f-body); color: #9b8e6a; }
+.print:focus-visible { outline: 4px solid var(--gold); outline-offset: 4px; }
+.album-empty { grid-column: 1 / -1; min-height: min(52vh, 430px); display: grid; place-content: center; justify-items: center; gap: 10px; padding: 30px; text-align: center;
+  background: #fbf1d9; color: #6b5a3a; }
+.album-empty b { font: 400 clamp(22px, 3vw, 31px)/1.1 var(--f-show); color: #6b2a1f; }
+.album-empty p { margin: 0; max-width: 38ch; font: 15px/1.5 var(--f-body); }
+.album-empty .corners { width: 86px; height: 70px; display: grid; place-items: center; border: 2px dashed #c9b48a; border-radius: 4px; font: 26px var(--f-show); color: #c9b48a; }
+.album-nav { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 10px; }
+.album-nav button { width: 46px; height: 42px; font: 20px/1 var(--f-body); color: var(--ink); background: var(--gold); border: 3px solid var(--ink); border-radius: 10px; box-shadow: 0 3px 0 var(--ink); cursor: inherit; }
+.album-nav button:disabled { opacity: .35; }
+.album-nav button:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.album-nav button:focus-visible { outline: 3px solid var(--crt); outline-offset: 2px; }
+#albumPageNo { min-width: 128px; text-align: center; font: 600 13px var(--f-body); color: var(--muted); letter-spacing: .03em; }
+.album-status { margin: 6px 0 0; min-height: 1.2em; text-align: center; font: 13px var(--f-body); color: var(--muted); }
+@media (max-width: 760px) {
+  .albumov { position: fixed; z-index: 60; padding: 0; }
+  .photobook { width: 100%; height: 100%; max-height: none; border: 0; border-radius: 0; box-shadow: none; padding: 10px 12px 18px; }
+  .album-x { position: fixed; top: 10px; right: 10px; float: none; margin: 0; width: 40px; height: 40px; }
+  .album-pages { grid-template-columns: 1fr; }
+  .album-page { min-height: 0; padding: 14px; }
+  .album-page + .album-page { border-top: 1px dotted #c9b48a; }
+  .album-page:first-child, .album-page:last-child { box-shadow: none; }
+  .print { max-width: 100%; }
+}
 /* preview panel (open with #preview) */
 .preview { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 14px; padding: 10px 14px;
   background: #1b0f24; border: 3px solid var(--ink); border-radius: 12px; font-size: 13px; color: var(--muted); }
@@ -374,7 +426,7 @@ body {
   min-width: 130px; max-width: calc(100% - 8px); max-height: calc(100% - 38px); }
 #win-computer { width: min(380px, calc(100% - 10px)); }
 #win-about { width: min(450px, calc(100% - 10px)); }
-#win-photos, #win-recycle, #win-shutdown { width: min(330px, calc(100% - 10px)); }
+#win-recycle, #win-shutdown { width: min(330px, calc(100% - 10px)); }
 #win-mines { width: 310px; }
 #win-sol { width: min(540px, calc(100% - 10px)); }
 .win-title { display: flex; align-items: center; gap: 4px; height: 20px; padding: 0 2px 0 3px; flex: none;
@@ -622,7 +674,7 @@ body {
   </g>
 
   <!-- painted-in hotspots: the cursor changes over them, as in the old games -->
-  <g id="hot-frames" class="hot" tabindex="0" role="button" aria-label="Framed photos: see Gabriel's photography" data-label="Look at the photos">
+  <g id="hot-frames" class="hot" tabindex="0" role="button" aria-label="Framed photographs: open Gabriel's photo book" data-label="Look at the photographs">
     <path class="hit" pointer-events="all" d="M414 118 L548 126 L586 266 L580 384 L462 372 L466 250 L412 244 Z"/>
   </g>
   <!-- snow day: a crackling fireplace on the old CRT (drawn in a flat 126x110 box, mapped onto the tilted glass) -->
@@ -666,7 +718,7 @@ body {
   <g id="hot-pc" class="hot" tabindex="0" role="button" aria-label="Computer: open Gabriel's GitHub and LinkedIn" data-label="Boot up the computer">
     <path class="hit" pointer-events="all" d="M1250 440 Q1380 420 1515 470 L1525 740 L1380 790 L1120 700 L1130 640 L1240 630 Z"/>
   </g>
-  <g id="hot-album" class="hot" tabindex="0" role="button" aria-label="Photo album: see Gabriel's photography" data-label="Flip through the album">
+  <g id="hot-album" class="hot" tabindex="0" role="button" aria-label="Photo book on the desk: flip through Gabriel's photographs" data-label="Flip through the photo book">
     <path class="hit" pointer-events="all" d="M1222 280 L1312 278 L1300 368 L1214 362 Z"/>
   </g>
   <g id="hot-window" class="hot" tabindex="0" role="button" aria-label="Window over Toronto" data-label="Look out the window">
@@ -881,6 +933,22 @@ body {
         </div>
       </article>
     </div>
+    <div class="albumov" id="albumOv" hidden role="dialog" aria-modal="true" aria-labelledby="albumTitle">
+      <div class="photobook" id="albumBook">
+        <button class="map-x album-x" id="albumClose" type="button" aria-label="Close the photo book">&times;</button>
+        <header class="album-head">
+          <h2 id="albumTitle">Photographs</h2>
+          <p class="album-sub">Flip a print over to read the back.</p>
+        </header>
+        <div class="album-pages" id="albumPages"></div>
+        <div class="album-nav" id="albumNav">
+          <button type="button" id="albumPrev" aria-label="Previous page">&#9664;</button>
+          <span id="albumPageNo" aria-live="polite"></span>
+          <button type="button" id="albumNext" aria-label="Next page">&#9654;</button>
+        </div>
+        <p class="album-status" id="albumStatus" role="status"></p>
+      </div>
+    </div>
     <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Taiga Nomad plaque, close-up">
       <div class="plaque" id="plaqueCard">
         <span class="side l">Taiga Motors Inc.</span>
@@ -923,10 +991,6 @@ body {
                 <button class="wicon" type="button" data-open="solitaire">
                   <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="6" width="16" height="22" rx="2" fill="#fff" stroke="#000" transform="rotate(-8 12 17)"/><rect x="11" y="5" width="17" height="23" rx="2" fill="#fff" stroke="#000"/><text x="19.5" y="15" text-anchor="middle" font-family="Georgia, serif" font-size="10" fill="#b3132b">♥</text><text x="19.5" y="25" text-anchor="middle" font-family="Georgia, serif" font-size="10" fill="#b3132b">♦</text></svg>
                   <span>Solitaire</span>
-                </button>
-                <button class="wicon" type="button" data-open="photos">
-                  <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h10l3-3h13v21H3z" fill="#b07ad0" stroke="#000"/><rect x="7" y="12" width="18" height="13" fill="#fff6e4" stroke="#000"/><path d="M8 24l5-7 4 4 3-3 4 6z" fill="#5a2a5e"/><circle cx="11" cy="16" r="2" fill="#ffc24d"/></svg>
-                  <span>Photos</span>
                 </button>
                 <button class="wicon" type="button" data-open="recycle">
                   <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 10h16l-2 18H10z" fill="#c8c8c8" stroke="#000"/><path d="M6 7h20v4H6z" fill="#d9d9d9" stroke="#000"/><path d="M13 5h6v2h-6z" fill="#c8c8c8" stroke="#000"/><path d="M12 14h8M12 18h8M12 22h8" stroke="#008000" stroke-width="2"/></svg>
@@ -1014,13 +1078,6 @@ body {
                 </div>
               </section>
 
-              <!-- Photos -->
-              <section class="win" id="win-photos" data-win="photos" hidden aria-label="Photos">
-                <div class="win-title"><span class="t">Photos</span><button class="win-btn" type="button" data-min aria-label="Minimize">–</button><button class="win-btn" type="button" data-close aria-label="Close">×</button></div>
-                <div class="win-menu"><span>File</span><span>View</span><span>Help</span></div>
-                <div class="win-body"><div class="np"><p>The photo album is coming soon.</p><p>Right now the camera roll is mostly Muscles asleep in various rectangles.</p></div></div>
-              </section>
-
               <!-- Recycle Bin -->
               <section class="win" id="win-display" data-win="display" hidden aria-label="Display Properties">
                 <div class="win-title"><span class="t">Display Properties</span><button class="win-btn" type="button" data-close aria-label="Close">×</button></div>
@@ -1065,7 +1122,6 @@ body {
                   <button class="start-item" type="button" role="menuitem" data-open="solitaire"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="11" y="5" width="17" height="23" rx="2" fill="#fff" stroke="#000"/><text x="19.5" y="20" text-anchor="middle" font-family="Georgia, serif" font-size="12" fill="#b3132b">♦</text></svg>Solitaire</button>
                   <div class="start-sep"></div>
                   <button class="start-item" type="button" role="menuitem" data-open="about"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 3h13l6 6v20H7z" fill="#fff6e4" stroke="#000"/><path d="M20 3v7h6" fill="none" stroke="#000"/><path d="M11 15h11M11 19h11M11 23h8" stroke="#000"/></svg>README.TXT</button>
-                  <button class="start-item" type="button" role="menuitem" data-open="photos"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h10l3-3h13v21H3z" fill="#b07ad0" stroke="#000"/><rect x="7" y="12" width="18" height="13" fill="#fff6e4" stroke="#000"/><path d="M8 24l5-7 4 4 3-3 4 6z" fill="#5a2a5e"/></svg>Photos</button>
                   <div class="start-sep"></div>
                   <button class="start-item" type="button" role="menuitem" data-open="wizard"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3l7 13H9z" fill="#5a2a9a" stroke="#000"/><path d="M5 17h22l-3 5H8z" fill="#3f1f73" stroke="#000"/><path d="M14 9l1 2 2 .3-1.5 1.4.4 2-1.9-1-1.9 1 .4-2L11 11.3l2-.3z" fill="#ffe14d"/></svg>Desk Wizard<span class="arrow">▶</span></button>
                   <div class="start-sep"></div>
@@ -1146,7 +1202,7 @@ body {
       <button class="slot" data-target="hot-guestbook" aria-label="Guestbook: sign it" data-label="Sign the guestbook">
         <svg viewBox="0 0 44 40"><path d="M22 10 Q13 5 3 8 L3 33 Q13 30 22 34 Q31 30 41 33 L41 8 Q31 5 22 10 Z" fill="#fff1d6" stroke="#1b0f24" stroke-width="3" stroke-linejoin="round"/><path d="M22 10 V34" stroke="#1b0f24" stroke-width="2.5"/><path d="M7 15 H17 M7 20 H15 M26 15 H36" stroke="#c9a46a" stroke-width="2" stroke-linecap="round"/><path d="M26 25 q2 -4 4 0 t4 0 q1 -3 3 -1" fill="none" stroke="#b3261e" stroke-width="2.4" stroke-linecap="round"/><path d="M8 34 L8 39 L10.5 37 L13 39 L13 33" fill="#b3261e" stroke="#1b0f24" stroke-width="1.6" stroke-linejoin="round"/></svg>
       </button>
-      <button class="slot" data-target="hot-album" aria-label="Photo album: photography" data-label="Flip through the album">
+      <button class="slot" data-target="hot-album" aria-label="Photo book: photography" data-label="Flip through the photo book">
         <svg viewBox="0 0 44 40"><path d="M6 6 L36 4 L38 34 L8 36 Z" fill="#7a4c9a" stroke="#1b0f24" stroke-width="3" stroke-linejoin="round"/><path d="M6 6 L12 6 L14 36 L8 36 Z" fill="#4e2c66" stroke="#1b0f24" stroke-width="2"/><path d="M17 12 L33 11 L34 27 L18 28 Z" fill="#f5a37a" stroke="#1b0f24" stroke-width="2"/><path d="M18 28 L23 20 L27 24 L30 19 L34 27 Z" fill="#5a2a5e"/></svg>
       </button>
     </div>
@@ -1182,6 +1238,7 @@ body {
 
 <script src="room/logic.js"></script>
 <script src="room/win98.js"></script>
+<script src="room/album.js"></script>
 <script src="room/sound.js"></script>
 <script>
 (() => {
@@ -1240,7 +1297,6 @@ body {
     'hot-news':   ['Thinking Outside My Room', 'The first issue is still at the printer. Check back soon.'],
     'hot-mail':   ['Write me a letter', MAIL_TO ? '' : 'The mailbox isn’t set up yet. For now, find me on LinkedIn through the computer.'],
     'hot-pc':     ['Booting up…', 'Opens a chunky old desktop: GitHub, LinkedIn, Minesweeper and Solitaire.'],
-    'hot-album':  ['The photo album', 'Still sorting through the photos. The album is coming soon.'],
     'hot-plaque': ['Taiga Nomad, SN #013', 'March 18, 2022. Proud to be part of the realization of the first production electric snowmobile.'],
   };
   let bt;
@@ -1324,6 +1380,7 @@ body {
       openCourier(); return;
     }
     if (el.id === 'hot-guestbook') { openGuestbook(); return; }
+    if (el.id === 'hot-album' || el.id === 'hot-frames') { openAlbum(); return; }
     if (el.id === 'hot-lights') { window.RoomSound && window.RoomSound.play('switch'); setLights(!lightsOn); setSay(lightsOn ? 'Click. The lights twinkle back on.' : 'Click. The lights go dark.'); return; }
     if (el.id === 'hot-cat') {
       const sp = CAT_SPOTS[catSpot]; catPetAt = Date.now();
@@ -1351,7 +1408,7 @@ body {
     if (el.id === 'hot-plaque') { $('#lightbox').tabIndex = -1; setTimeout(() => openLayer('#lightbox'), 200); return; }
     if (el.id === 'hot-pc') { setTimeout(openDesk, 200); return; }
     if (el.id === 'hot-mail' && MAIL_TO) { location.href = 'mailto:' + MAIL_TO + '?subject=' + encodeURIComponent('A letter from your website'); return; }
-    const [t, b] = NOTES[el.id === 'hot-frames' ? 'hot-album' : el.id];
+    const [t, b] = NOTES[el.id];
     setTimeout(() => { $('#noteTitle').textContent = t; $('#noteBody').textContent = b; openLayer('#scrim', '#noteClose'); }, 240);
   }
   $('#lightbox').addEventListener('click', closeLayers);
@@ -2636,6 +2693,123 @@ body {
   const paperHash = () => /^#(paper|courier)(\/|$)/.test(location.hash);
   if (paperHash()) setTimeout(() => openCourier(safeSlug(location.hash.split('/')[1])), 400);
   window.addEventListener('hashchange', () => { if (paperHash() && $('#courierOv').hidden) openCourier(safeSlug(location.hash.split('/')[1])); });
+
+  /* ---------- The photo book: prints from PocketBase, with a note on the back ---------- */
+  const PHOTOS = 'api/collections/photos/records', ALBUM = window.RoomAlbum;
+  let albumItems = null, albumError = false, albumLoading = null, albumPage = 0;
+  async function loadPhotos() {
+    if (albumItems) return albumItems;
+    if (!albumLoading) albumLoading = (async () => {
+      try {
+        const r = await fetch(`${PHOTOS}?perPage=200&fields=id,title,note,place,taken_at,order,created,image`);
+        if (!r.ok) throw new Error('photos ' + r.status);
+        albumItems = ALBUM.sortPhotos(((await r.json()).items) || []);
+        albumError = false;
+      } catch (e) {
+        albumError = true;   // leave albumItems empty so the next visit tries again
+      } finally { albumLoading = null; }
+      return albumItems || [];
+    })();
+    return albumLoading;
+  }
+  function printNode(rec, index) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'print'; b.setAttribute('aria-pressed', 'false');
+    b.setAttribute('aria-label', `${ALBUM.altText(rec, index)}. Flip over to read the back.`);
+    const inner = document.createElement('span'); inner.className = 'print-inner';
+    const front = document.createElement('span'); front.className = 'print-face';
+    const src = ALBUM.photoUrl(rec);
+    if (src) {
+      const img = document.createElement('img');
+      img.src = src; img.alt = ALBUM.altText(rec, index); img.decoding = 'async';
+      front.append(img);
+    }
+    const back = document.createElement('span'); back.className = 'print-back';
+    const title = String(rec.title || '').trim();
+    if (title) { const t = document.createElement('span'); t.className = 'print-title'; t.textContent = title; back.append(t); }
+    const note = document.createElement('span'); note.className = 'print-note'; note.textContent = ALBUM.noteText(rec);
+    const meta = document.createElement('span'); meta.className = 'print-meta'; meta.textContent = ALBUM.backMeta(rec);
+    const hint = document.createElement('span'); hint.className = 'print-flip'; hint.textContent = 'flip back';
+    back.append(note, meta, hint);
+    inner.append(front, back); b.append(inner);
+    b.addEventListener('click', () => {
+      const on = b.classList.toggle('flipped');
+      b.setAttribute('aria-pressed', String(on));
+      window.RoomSound && window.RoomSound.play('page');
+    });
+    return b;
+  }
+  function emptyAlbum(error) {
+    const box = document.createElement('div'); box.className = 'album-empty';
+    const c = document.createElement('span'); c.className = 'corners'; c.setAttribute('aria-hidden', 'true'); c.textContent = '✦';
+    const b = document.createElement('b'); b.textContent = error ? 'The book wouldn’t open' : 'No prints in the book yet';
+    const p = document.createElement('p'); p.textContent = error ? 'Try again in a little while.' : 'The darkroom is still warming up. Check back soon for photographs.';
+    box.append(c, b, p); return box;
+  }
+  function renderAlbum() {
+    const pages = $('#albumPages'), n = albumItems ? albumItems.length : 0;
+    pages.textContent = '';
+    $('#albumPrev').disabled = true; $('#albumNext').disabled = true; $('#albumPageNo').textContent = '';
+    $('#albumNav').hidden = !n;
+    if (!n) { pages.append(emptyAlbum(albumError)); return; }
+    albumPage = ALBUM.clampPage(albumPage, n);
+    const items = ALBUM.spreadAt(albumItems, albumPage);
+    for (let i = 0; i < ALBUM.PER_SPREAD; i++) {
+      const page = document.createElement('div'); page.className = 'album-page';
+      if (items[i]) page.append(printNode(items[i], albumPage * ALBUM.PER_SPREAD + i));
+      else page.classList.add('album-blank');
+      pages.append(page);
+    }
+    $('#albumPrev').disabled = albumPage <= 0;
+    $('#albumNext').disabled = albumPage >= ALBUM.spreadCount(n) - 1;
+    $('#albumPageNo').textContent = `${albumPage * ALBUM.PER_SPREAD + 1}–${Math.min(n, (albumPage + 1) * ALBUM.PER_SPREAD)} of ${n}`;
+  }
+  function turnAlbum(delta) {
+    const n = albumItems ? albumItems.length : 0, next = ALBUM.clampPage(albumPage + delta, n);
+    if (next === albumPage) return;
+    albumPage = next; window.RoomSound && window.RoomSound.play('page');
+    renderAlbum(); $('#albumBook').scrollTop = 0;
+  }
+  async function openAlbum() {
+    hideTip(); lastFocus = document.activeElement;
+    $('#albumOv').hidden = false; $('#albumPages').textContent = ''; $('#albumPageNo').textContent = '';
+    $('#albumPrev').disabled = true; $('#albumNext').disabled = true; $('#albumStatus').textContent = 'Opening the book…';
+    $('#albumClose').focus({ preventScroll: true });
+    await loadPhotos();
+    if ($('#albumOv').hidden) return;    // closed again before the prints arrived
+    $('#albumStatus').textContent = '';
+    renderAlbum();
+    history.replaceState(null, '', '#album');
+  }
+  function closeAlbum() {
+    $('#albumOv').hidden = true; albumPage = 0;
+    if (/^#album(\/|$)/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search);
+    lastFocus && lastFocus.focus && lastFocus.focus();
+  }
+  $('#albumClose').addEventListener('click', closeAlbum);
+  $('#albumOv').addEventListener('click', (e) => { if (e.target.id === 'albumOv') closeAlbum(); });
+  $('#albumPrev').addEventListener('click', () => turnAlbum(-1));
+  $('#albumNext').addEventListener('click', () => turnAlbum(1));
+  document.addEventListener('keydown', (e) => {
+    if ($('#albumOv').hidden) return;
+    if (e.key === 'Escape') { closeAlbum(); return; }
+    if ((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('.print')) return; // the print button handles it
+    if (e.key === 'ArrowLeft') { e.preventDefault(); turnAlbum(-1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); turnAlbum(1); }
+  });
+  // swipe sideways on the pages to turn them; a tap still flips the print
+  let albumSwipe = null;
+  $('#albumPages').addEventListener('touchstart', (e) => { const t = e.changedTouches[0]; albumSwipe = { x: t.clientX, y: t.clientY }; }, { passive: true });
+  $('#albumPages').addEventListener('touchend', (e) => {
+    if (!albumSwipe) return;
+    const t = e.changedTouches[0], dx = t.clientX - albumSwipe.x, dy = t.clientY - albumSwipe.y;
+    albumSwipe = null;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy)) turnAlbum(dx < 0 ? 1 : -1);
+  }, { passive: true });
+  // gabrielciolac.com/#album opens the book
+  const albumHash = () => location.hash === '#album' || location.hash.startsWith('#album/');
+  if (albumHash()) setTimeout(openAlbum, 400);
+  window.addEventListener('hashchange', () => { if (albumHash() && $('#albumOv').hidden) openAlbum(); });
 
   /* ---------- Muscles wanders the room ---------- */
   const CAT_SPOTS = {

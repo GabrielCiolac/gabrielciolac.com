@@ -14,6 +14,8 @@ The homepage is a point-and-click room: `site/index.html` (hotspots, puppet anim
 
 **The computer:** clicking the desk computer opens a Windows 98-style desktop — teal background, taskbar, Start menu, a pixel Desk Wizard, and working Minesweeper and Solitaire. Game rules live in `site/room/win98.js` (loaded by the page and by the tests). Deep links for testing: `#desk`, `#desk-mines`, `#desk-sol`, `#desk-about`, `#desk-wizard`.
 
+**The photo book:** the album on the desk and the framed prints on the wall open a book of photographs. Prints live in a PocketBase `photos` collection (filled in from the dashboard, like the blog): each record has an image, an optional title, place, date, and a short `note` that appears when you flip the print over. Ordering is `order` ascending (1, 2, 3&hellip;), then `taken_at` newest first. The page only asks for PocketBase's resized thumbnails, and nginx returns 404 for a photo file without `?thumb=`, so the camera's original &mdash; EXIF and GPS included &mdash; never leaves the NAS. Deep link: `#album`.
+
 **Tests:** `node --test test/*.test.js` (room logic, game rules, page script, assets, no internal IPs) and `python3 -m unittest discover -s test -p 'test_*.py'` (deploy hook). CI runs both before building an image.
 
 The NAS-side scripts are versioned in `ops/` (`deploy-hook.py`, `deploy-hook-run`, `site-autodeploy`, `fetch-weather.py`); copy them to `/root/bin/` on the NAS after changing them.

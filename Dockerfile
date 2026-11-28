@@ -12,4 +12,7 @@ RUN cd /usr/share/nginx/html && \
     grep -q "room/win98.js?v=$v" index.html && \
     v=$(sha256sum room/sound.js | cut -c1-10) && \
     sed -i "s|src=\"room/sound.js\"|src=\"room/sound.js?v=$v\"|" index.html && \
-    grep -q "room/sound.js?v=$v" index.html
+    grep -q "room/sound.js?v=$v" index.html && \
+    v=$(sha256sum room/album.js | cut -c1-10) && \
+    sed -i "s|src=\"room/album.js\"|src=\"room/album.js?v=$v\"|" index.html && \
+    grep -q "room/album.js?v=$v" index.html
